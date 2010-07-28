@@ -1,0 +1,7 @@
+name = Conduit
+description = Job distrubtion system.
+package = Conduit
+core = 7.x
+files[] = conduit.module
+files[] = conduit.install
+dependencies[] = path

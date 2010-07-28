@@ -1,0 +1,110 @@
+<?php
+/**
+ * @file
+ * Provides installation functions.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Implements hook_install().
+ */
+function conduit_install() {
+  // Create all the fields.
+  foreach (conduit_install_fields() as $field) {
+    field_create_field($field);
+  }
+
+  // Create all the instances for our fields.
+  foreach (conduit_install_instances() as $instance) {
+    $instance['entity_type'] = 'node';
+    field_create_instance($instance);
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function conduit_uninstall() {
+  // Delete all nodes of conduit content types.
+  $types = array_keys(conduit_node_info());
+  $nids = db_select('node')
+    ->fields('node', array('nid'))
+    ->condition('type', $types, 'IN')
+    ->execute()
+    ->fetchCol();
+  if ($nids) {
+    node_delete_multiple($nids);
+  }
+
+  // Delete fields.
+  foreach (array_keys(conduit_install_fields()) as $field) {
+    field_delete_field($field);
+  }
+
+  // Remove field instances.
+  foreach ($types as $type) {
+    $instances = field_info_instances('node', $type);
+    foreach ($instances as $instance_name => $instance) {
+      field_delete_instance($instance);
+    }
+  }
+
+  // Delete content types.
+  foreach ($types as $type) {
+    node_type_delete($type);
+  }
+
+  // Purge all field infromation
+  field_purge_batch(1000); // @TODO wtf?
+}
+
+function conduit_install_fields() {
+  $t = get_t();
+  return array(
+    'conduit_key' => array(
+      'field_name' => 'conduit_key',
+      'type' => 'text',
+      'settings' => array(
+        'max_length' => 32,
+      ),
+    ),
+    'conduit_url' => array(
+      'field_name' => 'conduit_url',
+      'type' => 'text',
+      'settings' => array(
+        'max_length' => 256,
+      ),
+    ),
+  );
+}
+
+function conduit_install_instances() {
+  $t = get_t();
+  return array(
+    'conduit_key' => array(
+      'bundle' => 'conduit_client',
+      'field_name' => 'conduit_key',
+      'label' => $t('Key'),
+      'description' => $t('Unique key used for identification during XML-RPC communciation.'),
+      'required' => TRUE,
+      'widget' => array(
+        'type' => 'text_textfield',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
+    ),
+    'conduit_url' => array(
+      'bundle' => 'conduit_client',
+      'field_name' => 'conduit_url',
+      'label' => $t('URL'),
+      'description' => $t('URL to display when referencing client.'),
+      'widget' => array(
+        'type' => 'text_textfield',
+      ),
+    ),
+  );
+}

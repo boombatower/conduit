@@ -1,0 +1,121 @@
+<?php
+/**
+ * @file
+ * Main conduit module file which provides primary Drupal hook implementations.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Always return: status, messages, result.
+ * Use client hash which should include client key + time + salt.
+ */
+
+/**
+ * Implements hook_node_info().
+ *
+ * Worker:
+ *  - key
+ *  - performance_rating
+ *  - plugins
+ * Client:
+ *  - key
+ *  - url
+ */
+function conduit_node_info() {
+  $info = array();
+
+  $info['conduit_client'] = array(
+    'name' => t('Conduit client'),
+    'base' => 'conduit_client',
+    'description' => t('Controls the conduit.'),
+    'has_title' => TRUE,
+  );
+  $info['conduit_worker'] = array(
+    'name' => t('Conduit worker'),
+    'base' => 'conduit_worker',
+    'description' => t('Performs queued jobs.'),
+  );
+
+  $info['conduit_group'] = array(
+    'name' => t('Conduit group'),
+    'base' => 'conduit_group',
+    'description' => t('Groups jobs together and can be used to create a hierarchy.'),
+  );
+  $info['conduit_job'] = array(
+    'name' => t('Conduit job'),
+    'base' => 'conduit_job',
+    'description' => t('Job to be performed.'),
+  );
+
+  return $info;
+}
+
+/**
+ * Implements hook_xmlrpc().
+ *
+ * All methods require authentication hash as the first parameter and will
+ * return the standard conduit return value.
+ *
+ * <code>
+ *   return array(
+ *     'status' => ['authentication', 'accepted', 'denied']
+ *     'messages' => array( [messages explaining status and/or what was done.] ),
+ *     'result' => array( [structured data array containing the result of the
+ *                         requested opperation.] )
+ *   );
+ * </code>
+ *
+ * Methods:
+ * - job.create(array job)
+ * - job.queue(int job_id)
+ * - job.status(array job_ids)
+ * - job.summary(int job_id)
+ * - job.detail(int job_id)
+ * - job.delete(int job_id)
+ * - group.create(array group)
+ * - group.delete(int group_id)
+ * - server.status()
+ */
+function conduit_xmlrpc() {
+  conduit_include('xmlrpc');
+
+  // List of provided methods.
+  $methods = array(
+    'job.create' => t('Create a job.'),
+    'job.queue' => t('Place an existing job in the queue.'),
+    'job.status' => t('Query the status of a job or list of jobs.'),
+    'job.summary' => t('Retrieve the summary of the result of a job.'),
+    'job.detail' => t('Retrieve the detailed result of a job.'),
+    'job.delete' => t('Delete a job.'),
+    'group.create' => t('Create a job group.'),
+    'group.delete' => t('Delete a job group.'),
+    'server.status' => t('Query the server status.'),
+  );
+
+  // Generate hook_xmlrpc() XML-RPC definitions.
+  $xmlrpc = array();
+  foreach ($methods as $method => $description) {
+    $xmlrpc[$method] = array(
+      'conduit.' . $method,
+      'conduit_xmlrpc_' . str_replace('.', '_', $method),
+      array('struct', 'string', 'int'),
+      $description,
+    );
+  }
+
+  // Remove the third parameter or change data-type based on API definitions.
+  $xmlrpc['job.create'][2][2] = 'struct';
+  $xmlrpc['job.status'][2][2] = 'array';
+  $xmlrpc['group.create'][2][2] = 'struct';
+  unset($xmlrpc['server.status'][2][2]);
+
+  return $xmlrpc;
+}
+
+/**
+ * Load a conduit include file.
+ */
+function conduit_include($include) {
+  require_once 'includes/' . $include . '.inc';
+}
