@@ -6,3 +6,4 @@ files[] = conduit.module
 files[] = conduit.install
 files[] = includes/client.inc
 dependencies[] = path
+dependencies[] = pathauto

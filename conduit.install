@@ -21,9 +21,13 @@ function conduit_install() {
     field_create_instance($instance);
   }
 
-  // Publish all content types, but nothing more.
+  // Set content type specific variables.
   foreach (array_keys(conduit_node_info()) as $type) {
+    // Publish all content types, but nothing more.
     variable_set('node_options_' . $type, array('status'));
+
+    // Set pathauto patterns.
+    variable_set('pathauto_node_' . $type . '_pattern', str_replace('_', '/', $type) . '/[node:title]');
   }
 }
 
@@ -66,6 +70,7 @@ function conduit_uninstall() {
   // Remove content type settings variables.
   foreach (array_keys(conduit_node_info()) as $type) {
     variable_del('node_options_' . $type);
+    variable_del('pathauto_node_' . $type . '_pattern');
   }
 }
 
