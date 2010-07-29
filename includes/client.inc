@@ -22,6 +22,18 @@ function conduit_form_conduit_client_node_form_alter(&$form, &$form_state) {
     $form['client'][$key] = $form[$key];
     unset($form[$key]);
   }
+}
 
-  $form['#validate'][] = 'conduit_client_node_form_validate';
+/**
+ * Implements hook_validate(): conduit_client.
+ */
+function conduit_client_validate($node, $form = array()) {
+  if (form_get_errors()) {
+    return;
+  }
+
+  $key = $node->conduit_key[LANGUAGE_NONE][0]['value'];
+  if (drupal_strlen($key) < 32 || drupal_strlen($key) > 64) {
+    form_set_error('conduit_key', t('Key must be at least 32 and no more then 64 characters in length.'));
+  }
 }

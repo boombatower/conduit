@@ -87,7 +87,7 @@ function conduit_install_fields() {
       'field_name' => 'conduit_key',
       'type' => 'text',
       'settings' => array(
-        'max_length' => 32,
+        'max_length' => 64,
       ),
     ),
   );
@@ -110,9 +110,6 @@ function conduit_install_instances() {
       'required' => TRUE,
       'widget' => array(
         'type' => 'text_textfield',
-        'settings' => array(
-          'size' => 32,
-        ),
       ),
       'display' => array(
         'default' => array(
