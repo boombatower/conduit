@@ -74,6 +74,12 @@ function conduit_uninstall() {
   }
 }
 
+/**
+ * Field definitions to be installed.
+ *
+ * @return
+ *   List of field definitions.
+ */
 function conduit_install_fields() {
   $t = get_t();
   return array(
@@ -87,6 +93,12 @@ function conduit_install_fields() {
   );
 }
 
+/**
+ * Field instances to be created.
+ *
+ * @return
+ *   List of field instances.
+ */
 function conduit_install_instances() {
   $t = get_t();
   return array(
