@@ -56,7 +56,7 @@ function conduit_uninstall() {
   }
 
   // Purge all field infromation
-  field_purge_batch(1000); // @TODO wtf?
+  field_purge_batch(1000);
 }
 
 function conduit_install_fields() {
@@ -86,10 +86,13 @@ function conduit_install_instances() {
       'bundle' => 'conduit_client',
       'field_name' => 'conduit_key',
       'label' => $t('Key'),
-      'description' => $t('Unique key used for identification during XML-RPC communciation.'),
+      'description' => $t('Unique key used for identification during inter-server communciation.'),
       'required' => TRUE,
       'widget' => array(
         'type' => 'text_textfield',
+        'settings' => array(
+          'size' => 32,
+        ),
       ),
       'display' => array(
         'default' => array(
