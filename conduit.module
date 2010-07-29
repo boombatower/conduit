@@ -29,7 +29,6 @@ function conduit_node_info() {
     'name' => t('Conduit client'),
     'base' => 'conduit_client',
     'description' => t('Controls the conduit.'),
-    'has_title' => TRUE,
   );
   $info['conduit_worker'] = array(
     'name' => t('Conduit worker'),
