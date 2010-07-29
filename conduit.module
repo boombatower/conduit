@@ -100,9 +100,11 @@ function conduit_validate($node, $form = array()) {
   }
 
   // Check conduit key length.
-  $key = $node->conduit_key[LANGUAGE_NONE][0]['value'];
-  if (drupal_strlen($key) < 32 || drupal_strlen($key) > 64) {
-    form_set_error('conduit_key', t('Key must be at least 32 and no more then 64 characters in length.'));
+  if (isset($node->conduit_key)) {
+    $key = $node->conduit_key[LANGUAGE_NONE][0]['value'];
+    if (drupal_strlen($key) < 32 || drupal_strlen($key) > 64) {
+      form_set_error('conduit_key', t('Key must be at least 32 and no more then 64 characters in length.'));
+    }
   }
 }
 
