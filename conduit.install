@@ -20,6 +20,11 @@ function conduit_install() {
     $instance['entity_type'] = 'node';
     field_create_instance($instance);
   }
+
+  // Publish all content types, but nothing more.
+  foreach (array_keys(conduit_node_info()) as $type) {
+    variable_set('node_options_' . $type, array('status'));
+  }
 }
 
 /**
@@ -57,6 +62,11 @@ function conduit_uninstall() {
 
   // Purge all field infromation
   field_purge_batch(1000);
+
+  // Remove content type settings variables.
+  foreach (array_keys(conduit_node_info()) as $type) {
+    variable_del('node_options_' . $type);
+  }
 }
 
 function conduit_install_fields() {
@@ -67,13 +77,6 @@ function conduit_install_fields() {
       'type' => 'text',
       'settings' => array(
         'max_length' => 32,
-      ),
-    ),
-    'conduit_url' => array(
-      'field_name' => 'conduit_url',
-      'type' => 'text',
-      'settings' => array(
-        'max_length' => 256,
       ),
     ),
   );
@@ -98,15 +101,6 @@ function conduit_install_instances() {
         'default' => array(
           'type' => 'hidden',
         ),
-      ),
-    ),
-    'conduit_url' => array(
-      'bundle' => 'conduit_client',
-      'field_name' => 'conduit_url',
-      'label' => $t('URL'),
-      'description' => $t('URL to display when referencing client.'),
-      'widget' => array(
-        'type' => 'text_textfield',
       ),
     ),
   );

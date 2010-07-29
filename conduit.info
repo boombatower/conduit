@@ -4,4 +4,5 @@ package = Conduit
 core = 7.x
 files[] = conduit.module
 files[] = conduit.install
+files[] = includes/client.inc
 dependencies[] = path
