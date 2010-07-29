@@ -29,6 +29,7 @@ function conduit_install() {
     // Set pathauto patterns.
     variable_set('pathauto_node_' . $type . '_pattern', str_replace('_', '/', $type) . '/[node:title]');
   }
+  variable_set('node_options_conduit_job', array('status', 'revision'));
 }
 
 /**
