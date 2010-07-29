@@ -83,11 +83,25 @@ function conduit_uninstall() {
 function conduit_install_fields() {
   $t = get_t();
   return array(
+    // Conduit client fields.
     'conduit_key' => array(
       'field_name' => 'conduit_key',
       'type' => 'text',
       'settings' => array(
         'max_length' => 64,
+      ),
+    ),
+
+    // Conduit worker fields.
+    'conduit_plugins' => array(
+      'field_name' => 'conduit_plugins',
+      'type' => 'list',
+      'cardinality' => -1,
+      'settings' => array(
+        'max_length' => 64,
+        'allowed_values' =>
+          "foo|bar\n" .
+          "foo2|bar2\n", // @TODO: Get a list of plugins and update when new modules installed.
       ),
     ),
   );
@@ -102,11 +116,12 @@ function conduit_install_fields() {
 function conduit_install_instances() {
   $t = get_t();
   return array(
-    'conduit_key' => array(
+    // Conduit client instances.
+    'client_conduit_key' => array(
       'bundle' => 'conduit_client',
       'field_name' => 'conduit_key',
       'label' => $t('Key'),
-      'description' => $t('Unique key used for identification during inter-server communciation.'),
+      'description' => $t('Unique key used for identification during inter-server communciation. Must be between 32 and 64 characters in length.'),
       'required' => TRUE,
       'widget' => array(
         'type' => 'text_textfield',
@@ -115,6 +130,33 @@ function conduit_install_instances() {
         'default' => array(
           'type' => 'hidden',
         ),
+      ),
+    ),
+
+    // Conduit worker instances.
+    'worker_conduit_key' => array(
+      'bundle' => 'conduit_worker',
+      'field_name' => 'conduit_key',
+      'label' => $t('Key'),
+      'description' => $t('Unique key used for identification during inter-server communciation. Must be between 32 and 64 characters in length.'),
+      'required' => TRUE,
+      'widget' => array(
+        'type' => 'text_textfield',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
+    ),
+    'worker_conduit_plugins' => array(
+      'bundle' => 'conduit_worker',
+      'field_name' => 'conduit_plugins',
+      'label' => $t('Plugins'),
+      'description' => $t('Plugins supported by the worker.'),
+      'required' => TRUE,
+      'widget' => array(
+        'type' => 'options_buttons',
       ),
     ),
   );

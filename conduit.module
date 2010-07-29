@@ -11,8 +11,6 @@
  * Use client hash which should include client key + time + salt.
  */
 
-conduit_include('client');
-
 /**
  * Implements hook_node_info().
  *
@@ -28,28 +26,86 @@ function conduit_node_info() {
 
   $info['conduit_client'] = array(
     'name' => t('Conduit client'),
-    'base' => 'conduit_client',
+    'base' => 'conduit',
     'description' => t('Controls the conduit.'),
   );
   $info['conduit_worker'] = array(
     'name' => t('Conduit worker'),
-    'base' => 'conduit_worker',
+    'base' => 'conduit',
     'description' => t('Performs queued jobs.'),
   );
 
   $info['conduit_group'] = array(
     'name' => t('Conduit group'),
-    'base' => 'conduit_group',
+    'base' => 'conduit',
     'description' => t('Groups jobs together and can be used to create a hierarchy.'),
   );
   $info['conduit_job'] = array(
     'name' => t('Conduit job'),
-    'base' => 'conduit_job',
+    'base' => 'conduit',
     'description' => t('Job to be performed.'),
   );
 
   return $info;
 }
+
+/**
+ * Implements hook_form().
+ */
+function conduit_form($node, $form_state) {
+  return node_content_form($node, $form_state);
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function conduit_form_alter(&$form, &$form_state, $form_id) {
+  // Check for conduit node form.
+  foreach (array_keys(conduit_node_info()) as $type) {
+    if ($form_id == $type . '_node_form') {
+      $found = TRUE;
+      break;
+    }
+  }
+
+  // If not found then return.
+  if (empty($found)) {
+    return;
+  }
+
+  // Set title description using type.
+  $type = str_replace('conduit_', '', $type);
+  $form['title']['#description'] = t('Displayed when referencing @type.', array('@type' => $type));
+
+  // Move all conduit fields into a fieldset.
+  $form[$type] = array(
+    '#type' => 'fieldset',
+    '#title' => ucfirst(t('@type', array('@type' => $type))),
+  );
+  foreach (element_children($form) as $key) {
+    if ($key == 'title' || strpos($key, 'conduit_') === 0) {
+      $form[$type][$key] = $form[$key];
+      unset($form[$key]);
+    }
+  }
+}
+
+/**
+ * Implements hook_validate().
+ */
+function conduit_validate($node, $form = array()) {
+  // If errors found by previous validation functions do not bother.
+  if (form_get_errors()) {
+    return;
+  }
+
+  // Check conduit key length.
+  $key = $node->conduit_key[LANGUAGE_NONE][0]['value'];
+  if (drupal_strlen($key) < 32 || drupal_strlen($key) > 64) {
+    form_set_error('conduit_key', t('Key must be at least 32 and no more then 64 characters in length.'));
+  }
+}
+
 
 /**
  * Implements hook_xmlrpc().
