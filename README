@@ -1,0 +1,36 @@
+
+Conduit - Job distrubtion system.
+
+AUTHOR
+------
+Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+
+DESCRIPTION
+-----------
+Conduit is a job distrubtion system that provides an extremely flexible
+platform that can be configured in a variety of ways to get the desired result.
+
+The general building blocks of conduit are described below.
+
+-- Client --
+The client is the controller who decides what jobs are created and run, views
+the results, and controls and configuration of jobs properties.
+
+-- Worker --
+The worker is responsible for completing jobs and reporting the results back to
+the central conduit server.
+
+-- Group --
+A group is a generic container that can be used to build a tree structure that
+can be either complex or simple depending on the needs for a particular
+situation. Each group may have a set of properties which are recursively
+aggregated to the groups bellow with presidence given the the deeper nested
+group.
+
+-- Job --
+A job contains the instructions necessary to complete a task. Jobs must always
+be nested in a group and will gain all the properties of the group to which it
+belongs, but may override any of the properties or add new ones. Once a job has
+been completed the result is stored and the job may be queued again. If a job
+is run multiple times then the results are stored as revisions which can be
+viewed to provide a history of the results for a particular job.
