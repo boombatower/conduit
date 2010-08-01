@@ -84,7 +84,7 @@ function conduit_uninstall() {
 function conduit_install_fields() {
   $t = get_t();
   return array(
-    // Conduit client fields.
+    // Conduit client and worker fields.
     'conduit_key' => array(
       'field_name' => 'conduit_key',
       'type' => 'text',
@@ -103,6 +103,28 @@ function conduit_install_fields() {
         'allowed_values' =>
           "foo|bar\n" .
           "foo2|bar2\n", // @TODO: Get a list of plugins and update when new modules installed.
+      ),
+    ),
+
+    // Conduti group and job fields.
+    'conduit_properties' => array(
+      'field_name' => 'conduit_properties',
+      'type' => 'text_long',
+    ),
+
+    // Conduit group fields.
+    'conduit_owner' => array(
+      'field_name' => 'conduit_owner',
+      'type' => 'node_reference',
+      'settings' => array(
+        'referenceable_types' => array('conduit_client'),
+      ),
+    ),
+    'conduit_parent' => array(
+      'field_name' => 'conduit_parent',
+      'type' => 'node_reference',
+      'settings' => array(
+        'referenceable_types' => array('conduit_group'),
       ),
     ),
   );
@@ -158,6 +180,47 @@ function conduit_install_instances() {
       'required' => TRUE,
       'widget' => array(
         'type' => 'options_buttons',
+      ),
+    ),
+
+    // Conduit group instances.
+    'group_conduit_owner' => array(
+      'bundle' => 'conduit_group',
+      'field_name' => 'conduit_owner',
+      'label' => $t('Owner'),
+      'description' => $t('Client that owns the group and thus controls the jobs within it.'),
+      'required' => TRUE,
+      'widget' => array(
+        'type' => 'node_reference_autocomplete',
+        'settings' => array(
+          'autocomplete_match' => 'starts_with'
+        ),
+      ),
+    ),
+    'group_conduit_parent' => array(
+      'bundle' => 'conduit_group',
+      'field_name' => 'conduit_parent',
+      'label' => $t('Parent'),
+      'description' => $t('Optional reference to parent group.'),
+      'widget' => array(
+        'type' => 'node_reference_autocomplete',
+        'settings' => array(
+          'autocomplete_match' => 'starts_with'
+        ),
+      ),
+    ),
+    'group_conduit_properties' => array(
+      'bundle' => 'conduit_group',
+      'field_name' => 'conduit_properties',
+      'label' => $t('Properties'),
+      'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
+      'widget' => array(
+        'type' => 'text_textarea',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'conduit_properties',
+        ),
       ),
     ),
   );

@@ -14,12 +14,16 @@
 /**
  * Implements hook_node_info().
  *
- * Worker:
- *  - key
- *  - performance_rating
- *  - plugins
  * Client:
  *  - key
+ * Worker:
+ *  - key
+ *  - plugins
+ *
+ * Group:
+ *  - owner
+ *  - parent
+ *  - properties
  */
 function conduit_node_info() {
   $info = array();
@@ -106,8 +110,58 @@ function conduit_validate($node, $form = array()) {
       form_set_error('conduit_key', t('Key must be at least 32 and no more then 64 characters in length.'));
     }
   }
+
+  // Ensure properties are in valid php syntax.
+  if (isset($node->conduit_properties)) {
+    $properties = $node->conduit_properties[LANGUAGE_NONE][0]['value'];
+    $properties = conduit_properties($properties);
+    if (!is_array($properties)) {
+      form_set_error('conduit_properties', t('Properties must be valid PHP syntax.'));
+    }
+  }
 }
 
+/**
+ * Implements hook_field_formatter_info().
+ */
+function conduit_field_formatter_info() {
+  return array(
+    'conduit_properties' => array(
+      'label' => t('Conduit properties'),
+      'description' => t('Represent properties in an easy to read manor.'),
+      'field types' => array('text_long'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function conduit_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  switch ($display['type']) {
+    case 'conduit_properties':
+      foreach ($items as $delta => $item) {
+        $element[$delta]['#type'] = 'markup';
+        $properties = conduit_properties($item['value']);
+        $element[$delta]['#markup'] = highlight_string('<?php ' . var_export($properties, TRUE), TRUE);
+      }
+      break;
+  }
+
+  return $element;
+}
+
+/**
+ * Evaluate properties input string.
+ *
+ * @return
+ *   Evaluated value.
+ */
+function conduit_properties($string) {
+  return @eval('return array(' . $string . ');');
+}
 
 /**
  * Implements hook_xmlrpc().
