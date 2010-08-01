@@ -106,7 +106,7 @@ function conduit_install_fields() {
       ),
     ),
 
-    // Conduti group and job fields.
+    // Conduit group and job fields.
     'conduit_properties' => array(
       'field_name' => 'conduit_properties',
       'type' => 'text_long',
@@ -122,6 +122,15 @@ function conduit_install_fields() {
     ),
     'conduit_parent' => array(
       'field_name' => 'conduit_parent',
+      'type' => 'node_reference',
+      'settings' => array(
+        'referenceable_types' => array('conduit_group'),
+      ),
+    ),
+
+    // Conduit job fields.
+    'conduit_group' => array(
+      'field_name' => 'conduit_group',
       'type' => 'node_reference',
       'settings' => array(
         'referenceable_types' => array('conduit_group'),
@@ -193,7 +202,7 @@ function conduit_install_instances() {
       'widget' => array(
         'type' => 'node_reference_autocomplete',
         'settings' => array(
-          'autocomplete_match' => 'starts_with'
+          'autocomplete_match' => 'starts_with',
         ),
       ),
     ),
@@ -205,12 +214,40 @@ function conduit_install_instances() {
       'widget' => array(
         'type' => 'node_reference_autocomplete',
         'settings' => array(
-          'autocomplete_match' => 'starts_with'
+          'autocomplete_match' => 'starts_with',
         ),
       ),
     ),
     'group_conduit_properties' => array(
       'bundle' => 'conduit_group',
+      'field_name' => 'conduit_properties',
+      'label' => $t('Properties'),
+      'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
+      'widget' => array(
+        'type' => 'text_textarea',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'conduit_properties',
+        ),
+      ),
+    ),
+
+    // Conduit job instances.
+    'group_conduit_group' => array(
+      'bundle' => 'conduit_job',
+      'field_name' => 'conduit_group',
+      'label' => $t('Group'),
+      'description' => $t('Group to which job belongs.'),
+      'widget' => array(
+        'type' => 'node_reference_autocomplete',
+        'settings' => array(
+          'autocomplete_match' => 'starts_with',
+        ),
+      ),
+    ),
+    'job_conduit_properties' => array(
+      'bundle' => 'conduit_job',
       'field_name' => 'conduit_properties',
       'label' => $t('Properties'),
       'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),

@@ -24,6 +24,9 @@
  *  - owner
  *  - parent
  *  - properties
+ * Job:
+ *  - group
+ *  - properties
  */
 function conduit_node_info() {
   $info = array();
