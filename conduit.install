@@ -239,6 +239,7 @@ function conduit_install_instances() {
       'field_name' => 'conduit_group',
       'label' => $t('Group'),
       'description' => $t('Group to which job belongs.'),
+      'required' => TRUE,
       'widget' => array(
         'type' => 'node_reference_autocomplete',
         'settings' => array(
