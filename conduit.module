@@ -232,5 +232,5 @@ function conduit_xmlrpc() {
  * Load a conduit include file.
  */
 function conduit_include($include) {
-  require_once 'includes/' . $include . '.inc';
+  require_once drupal_get_path('module', 'conduit') . '/includes/' . $include . '.inc';
 }
