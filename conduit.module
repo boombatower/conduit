@@ -225,7 +225,7 @@ function conduit_xmlrpc() {
   $xmlrpc['group.create'][2][2] = 'struct';
   unset($xmlrpc['server.status'][2][2]);
 
-  return $xmlrpc;
+  return array_values($xmlrpc);
 }
 
 /**
