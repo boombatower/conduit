@@ -136,6 +136,11 @@ function conduit_install_fields() {
         'referenceable_types' => array('conduit_group'),
       ),
     ),
+    'conduit_log' => array(
+      'field_name' => 'conduit_log',
+      'type' => 'text_long',
+      'cardinality' => -1,
+    ),
   );
 }
 
@@ -259,6 +264,15 @@ function conduit_install_instances() {
         'default' => array(
           'type' => 'conduit_properties',
         ),
+      ),
+    ),
+    'job_conduit_log' => array(
+      'bundle' => 'conduit_job',
+      'field_name' => 'conduit_log',
+      'label' => $t('Log'),
+      'description' => $t('Log created during completion of job by worker.'),
+      'widget' => array(
+        'type' => 'text_textarea',
       ),
     ),
   );

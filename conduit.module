@@ -84,6 +84,11 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
   $type = str_replace('conduit_', '', $type);
   $form['title']['#description'] = t('Displayed when referencing @type.', array('@type' => $type));
 
+  // If conduit_log field is present theat hide it.
+  if (isset($form['conduit_log'])) {
+    $form['conduit_log']['#access'] = FALSE;
+  }
+
   // Move all conduit fields into a fieldset.
   $form[$type] = array(
     '#type' => 'fieldset',
