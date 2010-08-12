@@ -2,8 +2,16 @@ name = Conduit
 description = Job distrubtion system.
 package = Conduit
 core = 7.x
+files[] = conduit.drush.inc
 files[] = conduit.module
 files[] = conduit.install
-files[] = includes/client.inc
+files[] = conduit.test
+
+files[] = includes/plugins.inc
+files[] = includes/queue.inc
+
+files[] = plugins/server/script.inc
+
+dependencies[] = ctools
 dependencies[] = node_reference
 dependencies[] = pathauto
