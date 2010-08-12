@@ -163,11 +163,6 @@ function conduit_node_load($nodes, $types) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form = array()) {
-  // If errors found by previous validation functions do not bother.
-  if (form_get_errors()) {
-    return;
-  }
-
   // Check conduit key length.
   if (isset($node->conduit_key)) {
     $key = $node->conduit_key[LANGUAGE_NONE][0]['value'];
