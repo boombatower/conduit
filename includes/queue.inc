@@ -6,6 +6,12 @@
  * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
  */
 
+/**
+ * Create queue item(s) for a job.
+ *
+ * @param $job
+ *   Job node.
+ */
 function conduit_queue_create($job) {
   $queue = DrupalQueue::get('conduit_job');
 
@@ -23,6 +29,12 @@ function conduit_queue_create($job) {
   }
 }
 
+/**
+ * Claim an item from the queue.
+ *
+ * @return
+ *   An array of merged properties for the job and the queue item or FALSE.
+ */
 function conduit_queue_claim() {
   // Attempt to claim an item from the queue.
   $queue = DrupalQueue::get('conduit_job');
@@ -37,10 +49,22 @@ function conduit_queue_claim() {
   return FALSE;
 }
 
+/**
+ * Release a queue item.
+ *
+ * @param
+ *   Queue item object.
+ */
 function conduit_queue_release($item) {
   return DrupalQueue::get('conduit_job')->releaseItem($item);
 }
 
+/**
+ * Delete a item from the queue.
+ *
+ * @param $item
+ *   Queue item object.
+ */
 function conduit_queue_delete($item) {
   return DrupalQueue::get('conduit_job')->deleteItem($item);
 }
