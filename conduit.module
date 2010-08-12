@@ -103,6 +103,56 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
+ * Implements hook_node_load().
+ *
+ * All the conduit specific data should already be loaded, but some of it
+ * requires processing and all the conduit data will be placed in an easy to
+ * access format instead of the abstract field api format for reading. This has
+ * to be done in hook_node_load() instead of hook_load() since fields are not
+ * present in hook_load().
+ */
+function conduit_node_load($nodes, $types) {
+  // Look for any conduit types among the list of node types.
+  $found = FALSE;
+  foreach (array_keys(conduit_node_info()) as $type) {
+    if (in_array($type, $types)) {
+      $found = TRUE;
+      break;
+    }
+  }
+
+  // Only process nodes if a conduit type is present.
+  if (!$found) {
+    return;
+  }
+
+  foreach ($nodes as $node) {
+    if (strpos($node->type, 'conduit_') !== 0) {
+      continue;
+    }
+    $node->conduit = array();
+
+    // If group or job then initialize properties array.
+    if ($node->type == 'conduit_group' || $node->type == 'conduit_job') {
+      $node->conduit['properties'] = array();
+    }
+
+    if (isset($node->conduit_properties[LANGUAGE_NONE][0]['value'])) {
+      $node->conduit['properties'] = conduit_properties($node->conduit_properties[LANGUAGE_NONE][0]['value']);
+    }
+    if (isset($node->conduit_owner[LANGUAGE_NONE][0]['nid'])) {
+      $node->conduit['owner'] = $node->conduit_owner[LANGUAGE_NONE][0]['nid'];
+    }
+    if (isset($node->conduit_parent[LANGUAGE_NONE][0]['nid'])) {
+      $node->conduit['parent'] = $node->conduit_parent[LANGUAGE_NONE][0]['nid'];
+    }
+    if (isset($node->conduit_group[LANGUAGE_NONE][0]['nid'])) {
+      $node->conduit['group'] = $node->conduit_group[LANGUAGE_NONE][0]['nid'];
+    }
+  }
+}
+
+/**
  * Implements hook_validate().
  */
 function conduit_validate($node, $form = array()) {
