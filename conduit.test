@@ -1,0 +1,121 @@
+<?php
+/**
+ * @file
+ * Provide test for conduit functionality.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+class ConduitTestCase extends DrupalWebTestCase {
+
+}
+
+class ConduitNodeTestCase extends ConduitTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Custom node type handling',
+      'description' => 'Ensure that the validation, editting, and display of conduit node types works properly.',
+      'group' => 'Conduit',
+    );
+  }
+
+  protected function setUp() {
+    parent::setUp('conduit');
+
+    $permissions = array();
+    foreach (array_keys(conduit_node_info()) as $type) {
+      $permissions[] = 'create ' . $type . ' content';
+      $permissions[] = 'edit own ' . $type . ' content';
+      $permissions[] = 'delete own ' . $type . ' content';
+    }
+    $user = $this->drupalCreateUser($permissions);
+    $this->drupalLogin($user);
+  }
+
+  protected function testNodeTypes() {
+    $this->checkClient();
+    $this->checkGroup();
+    $this->checkJob();
+    $this->checkWorker();
+  }
+
+  protected function checkClient() {
+    $client = array(
+      'conduit_key[und][0][value]' => '',
+    );
+    $this->drupalPost('node/add/conduit-client', $client, t('Save'));
+    $this->assertText('Title field is required.');
+    $this->assertText('Key field is required.');
+
+    $client = array(
+      'title' => 'Client 1',
+      'conduit_key[und][0][value]' => 'a',
+    );
+    $this->drupalPost(NULL, $client, 'Save');
+    $this->assertText('Key must be at least 32 and no more then 64 characters in length.');
+
+    $client['conduit_key[und][0][value]'] = $this->randomName(100);
+    $this->drupalPost(NULL, $client, 'Save');
+
+    $client = array(
+      'title' => 'Client 1',
+    );
+    $this->drupalPost('node/add/conduit-client', $client, 'Save');
+    $this->assertText('Conduit client Client 1 has been created.');
+
+    // Ensure that pathauto created a default path and client is viewable.
+    $this->drupalGet('conduit/client/client-1');
+    $this->assertText('Client 1', 'Client 1 is viewable at auto generated path');
+  }
+
+  protected function checkGroup() {
+    $group = array(
+      'conduit_properties[und][0][value]' => ') invalid syntax',
+    );
+    $this->drupalPost('node/add/conduit-group', $group, 'Save');
+    $this->assertText('Title field is required.');
+    $this->assertText('Owner field is required.');
+    $this->assertText('Properties must be valid PHP syntax.');
+
+    $group = array(
+      'title' => 'Group 1',
+      'conduit_owner[und][0][nid]' => 'Client 1',
+      'conduit_properties[und][0][value]' => "'foo' => 'bar'",
+    );
+    $this->drupalPost(NULL, $group, 'Save');
+    $this->assertText('Conduit group Group 1 has been created.');
+
+    // Ensure that pathauto created a default path and group is viewable.
+    $this->drupalGet('conduit/group/group-1');
+    $this->assertText('Group 1', 'Group 1 is viewable at auto generated path');
+    $this->assertLink('Client 1');
+    $this->assertText('foo', 'Found property');
+  }
+
+  protected function checkJob() {
+    $job = array(
+      'conduit_properties[und][0][value]' => ') invalid syntax',
+    );
+    $this->drupalPost('node/add/conduit-job', $job, 'Save');
+    $this->assertText('Title field is required.');
+    $this->assertText('Group field is required.');
+    $this->assertText('Properties must be valid PHP syntax.');
+
+    $job = array(
+      'title' => 'Job 1',
+      'conduit_group[und][0][nid]' => 'Group 1',
+      'conduit_properties[und][0][value]' => "'foo' => 'bar'",
+    );
+    $this->drupalPost(NULL, $job, 'Save');
+    $this->assertText('Conduit job Job 1 has been created.');
+
+    // Ensure that pathauto created a default path and job is viewable.
+    $this->drupalGet('conduit/job/job-1');
+    $this->assertText('Job 1', 'Job 1 is viewable at auto generated path');
+    $this->assertLink('Group 1');
+    $this->assertText('foo', 'Found property');
+  }
+
+  protected function checkWorker() {
+  }
+}
