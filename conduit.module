@@ -86,6 +86,11 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
   $type = str_replace('conduit_', '', $type);
   $form['title']['#description'] = t('Displayed when referencing @type.', array('@type' => $type));
 
+  // If key is present, but not set the create a random key.
+  if (isset($form['conduit_key']) && empty($form['conduit_key'][LANGUAGE_NONE][0]['value']['#default_value'])) {
+    $form['conduit_key'][LANGUAGE_NONE][0]['value']['#default_value'] = md5(mt_rand(1000, 1000000000));
+  }
+
   // If conduit_log field is present theat hide it.
   if (isset($form['conduit_log'])) {
     $form['conduit_log']['#access'] = FALSE;
