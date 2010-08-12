@@ -182,6 +182,26 @@ function conduit_validate($node, $form = array()) {
 }
 
 /**
+ * Implements hook_node_insert().
+ */
+function conduit_node_insert($node) {
+  if ($node->type == 'conduit_job') {
+    conduit_include('queue');
+    conduit_queue_create($node);
+  }
+}
+
+/**
+ * Implements hook_update().
+ */
+function conduit_node_update($node) {
+  if ($node->type == 'conduit_job') {
+    conduit_include('queue');
+    conduit_queue_create($node);
+  }
+}
+
+/**
  * Implements hook_field_formatter_info().
  */
 function conduit_field_formatter_info() {
