@@ -11,6 +11,8 @@
  * Use client hash which should include client key + time + salt.
  */
 
+conduit_include('plugins');
+
 /**
  * Implements hook_node_info().
  *
