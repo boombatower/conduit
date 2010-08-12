@@ -19,11 +19,25 @@
  * - result consists of string key PATCH_APPLY and details array
  */
 
+/**
+ * Fetch metadata on a specific server plugin.
+ *
+ * @param $server
+ *   Name of server plugin.
+ * @return
+ *   An array of information about the requested server plugin.
+ */
 function conduit_plugins_server_get($server) {
   ctools_include('plugins');
   return ctools_get_plugins('conduit', 'server', $server);
 }
 
+/**
+ * Fetch metadata for all server plugins.
+ *
+ * @return
+ *   An array of arrays with information about all available server plugins.
+ */
 function conduit_plugins_server_get_all() {
   ctools_include('plugins');
   return ctools_get_plugins('conduit', 'server');
@@ -42,7 +56,7 @@ function conduit_ctools_plugin_server() {
  * Implements hook_ctools_plugin_directory().
  */
 function conduit_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'conduit' && ($plugin == 'server' || $plugin == 'worker')) { // @TODO should worker plugins be implement in conduit base module?
+  if ($module == 'conduit' && ($plugin == 'server' || $plugin == 'worker')) {
     return 'plugins/' . $plugin;
   }
 }
