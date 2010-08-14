@@ -382,6 +382,9 @@ function conduit_xmlrpc() {
 
 /**
  * Load a conduit include file.
+ *
+ * @param $include
+ *   Name of include file, exluding the .inc.
  */
 function conduit_include($include) {
   require_once drupal_get_path('module', 'conduit') . '/includes/' . $include . '.inc';
