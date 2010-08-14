@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Provide script job type server plugin.
+ * Provide command execution job type server plugin.
  *
  * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
  */
