@@ -79,6 +79,14 @@ function conduit_uninstall() {
 
   // Remove job queue.
   DrupalQueue::get('conduit_job')->deleteQueue();
+
+  // Remove variables.
+  $variables = array(
+    'conduit_least_time',
+  );
+  foreach ($variables as $variable) {
+    variable_del($variable);
+  }
 }
 
 /**
