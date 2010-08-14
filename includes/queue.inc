@@ -43,8 +43,9 @@ function conduit_queue_claim() {
     // properties, and return the properties array.
     $job = node_load($item->data['nid'], $item->data['vid']);
     $job->conduit['properties']['item'] = $item;
-    // @TODO Load group properties recursively.
-    return $job->conduit['properties'];
+
+    // Load group properties recursively and merge in default properties.
+    return conduit_properties_merge($job);
   }
   return FALSE;
 }

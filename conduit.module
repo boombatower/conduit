@@ -223,14 +223,32 @@ function conduit_field_formatter_view($entity_type, $entity, $field, $instance, 
   switch ($display['type']) {
     case 'conduit_properties':
       foreach ($items as $delta => $item) {
-        $element[$delta]['#type'] = 'markup';
         $properties = conduit_properties($item['value']);
+        $element[$delta]['#type'] = 'markup';
         $element[$delta]['#markup'] = highlight_string('<?php ' . var_export($properties, TRUE), TRUE);
       }
       break;
   }
 
   return $element;
+}
+
+/**
+ * Implements hook_node_view_alter().
+ *
+ * Add the inherited, or merged, display of properties to the node view.
+ */
+function conduit_node_view_alter(&$build) {
+  if ($build['#view_mode'] == 'full' && isset($build['conduit_properties'])) {
+    $properties_inherit = conduit_properties_merge($build['#node']);
+    if ($build['#node']->conduit['properties'] != $properties_inherit) {
+      $build['conduit_properties_inherit'] = array(
+        '#type' => 'markup',
+        '#markup' => highlight_string('<?php ' . var_export($properties_inherit, TRUE), TRUE),
+        '#weight' => $build['conduit_properties']['#weight'] + 0.1,
+      );
+    }
+  }
 }
 
 /**
@@ -241,6 +259,63 @@ function conduit_field_formatter_view($entity_type, $entity, $field, $instance, 
  */
 function conduit_properties($string) {
   return @eval('return array(' . $string . ');');
+}
+
+/**
+ * Merge group and default properties together with entity's properties.
+ *
+ * The properties are merged in such a way that the lower the item is on the
+ * list the more precedence it has and will those override any properties with
+ * the same key from above. The order is as follows: defaults, groups, and job.
+ * A tree of groups will be treated in same manor with the root group having
+ * the least precedence.
+ *
+ * @param $entity
+ *   Either a group or job node.
+ * @return
+ *   Associative array of properties.
+ */
+function conduit_properties_merge($entity) {
+  // Start with the properties of the entity.
+  $properties = $entity->conduit['properties'];
+
+  // Find the relevant parent group or group the entity belongs to. If a group
+  // is found (only a root level group entity will not have one) then recurse
+  // through the group tree and merge the properties with those of the entity.
+  if ($entity->type == 'conduit_group') {
+    $group = !empty($entity->conduit['parent']) ? $entity->conduit['parent'] : NULL;
+  }
+  else if ($entity->type == 'conduit_job') {
+    $group = $entity->conduit['group'];
+  }
+  $properties = $group ? conduit_properties_recurse_groups(node_load($group), $properties) : $properties;
+
+  // If the merged list of properties contains a plugin key (all jobs must)
+  // then merge the default properties specified by the plugin with the rest of
+  // the properties.
+  if (!empty($properties['plugin'])) {
+    $plugin = conduit_plugins_server_get($properties['plugin']);
+    $properties = array_replace_recursive($plugin['default properties'], $properties);
+  }
+  return $properties;
+}
+
+/**
+ * Recursively merge the properties of a group hierarchy.
+ *
+ * @param $group
+ *   The current group node being processed.
+ * @param $properties
+ *   The current array of merged properties.
+ * @return
+ *   Associative array of properties.
+ */
+function conduit_properties_recurse_groups($group, array $properties = array()) {
+  $properties = array_replace_recursive($group->conduit['properties'], $properties);
+  if (!empty($group->conduit['parent'])) {
+    $properties = conduit_properties_recurse_groups(node_load($group->conduit['parent']), $properties);
+  }
+  return $properties;
 }
 
 /**

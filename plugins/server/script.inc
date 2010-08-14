@@ -10,6 +10,7 @@ $plugin = array(
   'title' => t('Script'),
   'description' => t('Provides basic script execution.'),
   'queue build' => 'conduit_script_queue_build',
+  'default properties' => array(),
 );
 
 /**
