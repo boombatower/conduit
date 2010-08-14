@@ -56,7 +56,7 @@ function conduit_ctools_plugin_server() {
  * Implements hook_ctools_plugin_directory().
  */
 function conduit_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'conduit' && ($plugin == 'server' || $plugin == 'worker')) {
+  if ($module == 'conduit' && $plugin == 'server') {
     return 'plugins/' . $plugin;
   }
 }
