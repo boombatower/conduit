@@ -7,10 +7,12 @@
  */
 
 $plugin = array(
-  'title' => t('Script'),
-  'description' => t('Provides basic script execution.'),
+  'title' => t('Execute'),
+  'description' => t('Provides basic command execution.'),
   'queue build' => 'conduit_script_queue_build',
-  'default properties' => array(),
+  'default properties' => array(
+    'command' => 'echo "hello world"',
+  ),
 );
 
 /**
