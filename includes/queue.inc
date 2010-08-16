@@ -18,12 +18,13 @@ function conduit_queue_create($job) {
   // Plugin builds the item(s) to be queued in association with job.
   if ($plugin = conduit_plugins_server_get($job->conduit['properties']['plugin'])) {
     $items = $plugin['queue build']($job->conduit['properties']);
-    foreach ($items as $delta => $data) {
+    foreach ($items as $delta => $overrides) {
       $item = array(
         'nid' => $job->nid,
         'vid' => $job->vid,
         'delta' => $delta,
-      ) + $data;
+        'overrides' => $overrides,
+      );
       $queue->createItem($item);
     }
   }
@@ -40,9 +41,11 @@ function conduit_queue_claim() {
   $queue = DrupalQueue::get('conduit_job');
   if ($item = $queue->claimItem(variable_get('conduit_least_time', 3600))) {
     // Load the job node related to the item, add the item to the job
-    // properties, and return the properties array.
+    // properties, apply the property overrides, and merge the job properties
+    // with the groups and defaults.
     $job = node_load($item->data['nid'], $item->data['vid']);
     $job->conduit['properties']['item'] = $item;
+    $job->conduit['properties'] = array_replace_recursive($item->data['overrides'], $job->conduit['properties']);
 
     // Load group properties recursively and merge in default properties.
     return conduit_properties_merge($job);
