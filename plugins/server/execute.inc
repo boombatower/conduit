@@ -11,7 +11,7 @@ $plugin = array(
   'description' => t('Provides basic command execution.'),
   'queue build' => 'conduit_script_queue_build',
   'default properties' => array(
-    'command' => 'echo "hello world"',
+    'execute.command' => 'echo "hello world"',
   ),
 );
 
