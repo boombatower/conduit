@@ -68,7 +68,7 @@ function conduit_uninstall() {
     node_type_delete($type);
   }
 
-  // Purge all field infromation
+  // Purge all field information.
   field_purge_batch(1000);
 
   // Remove content type settings variables.
@@ -253,7 +253,7 @@ function conduit_install_instances() {
     ),
 
     // Conduit job instances.
-    'group_conduit_group' => array(
+    'job_conduit_group' => array(
       'bundle' => 'conduit_job',
       'field_name' => 'conduit_group',
       'label' => $t('Group'),

@@ -10,7 +10,7 @@ files[] = conduit.test
 files[] = includes/plugins.inc
 files[] = includes/queue.inc
 
-files[] = plugins/server/script.inc
+files[] = plugins/server/execute.inc
 
 dependencies[] = ctools
 dependencies[] = node_reference
