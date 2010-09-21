@@ -14,7 +14,7 @@ class ConduitNodeTestCase extends ConduitTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Custom node type handling',
-      'description' => 'Ensure that the validation, editting, and display of conduit node types works properly.',
+      'description' => 'Ensure that the validation, editing, and display of conduit node types works properly.',
       'group' => 'Conduit',
     );
   }

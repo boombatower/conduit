@@ -1,5 +1,5 @@
 name = Conduit
-description = Job distrubtion system.
+description = Job distribution system.
 package = Conduit
 core = 7.x
 files[] = conduit.drush.inc
