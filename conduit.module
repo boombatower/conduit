@@ -7,6 +7,14 @@
  */
 
 /**
+ * @mainpage Conduit
+ * Conduit is a job distribution system.
+ *
+ * For information on the base job properties see the
+ * @link worker_perform worker_perform() @endlink.
+ */
+
+/**
  * Always return: status, messages, result.
  * Use client hash which should include client key + time + salt.
  */
