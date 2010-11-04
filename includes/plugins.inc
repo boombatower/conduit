@@ -44,11 +44,11 @@ function conduit_plugins_server_get_all() {
 }
 
 /**
- * Implements hook_ctools_plugin_TYPE().
+ * Implements hook_ctools_plugin_type().
  */
-function conduit_ctools_plugin_server() {
+function conduit_ctools_plugin_type() {
   return array(
-    'cache' => TRUE,
+    'server' => array('cache' => TRUE),
   );
 }
 
