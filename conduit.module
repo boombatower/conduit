@@ -327,6 +327,34 @@ function conduit_properties_recurse_groups($group, array $properties = array()) 
 }
 
 /**
+ * Implements hook_modules_enabled().
+ *
+ * When any modules are enabled rebuild the list of allowed_values for
+ * conduit_plugins to ensure it is up-to-date.
+ */
+function conduit_modules_enabled() {
+  // Build list of allowed values.
+  $plugins = conduit_plugins_get_all();
+  $allowed_values = '';
+  foreach ($plugins as $name => $plugin) {
+    $allowed_values .= "$name|{$plugin['title']}\n";
+  }
+
+  // Grab the field definitions and update the conduit_plugins field.
+  module_load_include('install', 'conduit');
+  $fields = conduit_install_fields();
+  $fields['conduit_plugins']['settings']['allowed_values'] = trim($allowed_values);
+  field_update_field($fields['conduit_plugins']);
+}
+
+/**
+ * Implements hook_modules_disabled().
+ */
+function conduit_modules_disabled() {
+  conduit_modules_enabled();
+}
+
+/**
  * Implements hook_xmlrpc().
  *
  * All methods require authentication hash as the first parameter and will
