@@ -9,38 +9,35 @@
  */
 
 /**
- * server:
+ * conduit:
  * - default argument values
  * - list of result keys with textual representation
  * - some sort of result output for HTML, xml, and e-mail (possibly hook into node views)
  * - provide queue items
- *
- * worker:
- * - result consists of string key PATCH_APPLY and details array
  */
 
 /**
- * Fetch metadata on a specific server plugin.
+ * Fetch metadata on a specific conduit plugin.
  *
- * @param $server
- *   Name of server plugin.
+ * @param $conduit
+ *   Name of conduit plugin.
  * @return
- *   An array of information about the requested server plugin.
+ *   An array of information about the requested conduit plugin.
  */
-function conduit_plugins_server_get($server) {
+function conduit_plugins_get($conduit) {
   ctools_include('plugins');
-  return ctools_get_plugins('conduit', 'server', $server);
+  return ctools_get_plugins('conduit', 'conduit', $conduit);
 }
 
 /**
- * Fetch metadata for all server plugins.
+ * Fetch metadata for all conduit plugins.
  *
  * @return
- *   An array of arrays with information about all available server plugins.
+ *   An array of arrays with information about all available conduit plugins.
  */
-function conduit_plugins_server_get_all() {
+function conduit_plugins_get_all() {
   ctools_include('plugins');
-  return ctools_get_plugins('conduit', 'server');
+  return ctools_get_plugins('conduit', 'conduit');
 }
 
 /**
@@ -48,7 +45,7 @@ function conduit_plugins_server_get_all() {
  */
 function conduit_ctools_plugin_type() {
   return array(
-    'server' => array('cache' => TRUE),
+    'conduit' => array('cache' => TRUE),
   );
 }
 
@@ -56,7 +53,7 @@ function conduit_ctools_plugin_type() {
  * Implements hook_ctools_plugin_directory().
  */
 function conduit_ctools_plugin_directory($module, $plugin) {
-  if ($module == 'conduit' && $plugin == 'server') {
-    return 'plugins/' . $plugin;
+  if ($module == 'conduit' && $plugin == 'conduit') {
+    return 'plugins';
   }
 }
