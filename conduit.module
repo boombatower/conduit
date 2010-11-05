@@ -142,6 +142,7 @@ function conduit_node_load($nodes, $types) {
   }
 
   foreach ($nodes as $node) {
+    // Ensure the current node is a conduit node.
     if (strpos($node->type, 'conduit_') !== 0) {
       continue;
     }
@@ -194,6 +195,9 @@ function conduit_validate($node, $form = array(), &$form_state) {
  */
 function conduit_node_insert($node) {
   if ($node->type == 'conduit_job') {
+    // Since the node is brand new it will note have the ->conduit property
+    // which is used throughout the API, so force a load.
+    conduit_node_load(array($node), array($node->type));
     conduit_include('queue');
     conduit_queue_create($node);
   }
@@ -355,7 +359,7 @@ function conduit_properties_merge($entity) {
   // then merge the default properties specified by the plugin with the rest of
   // the properties.
   if (!empty($properties['plugin'])) {
-    $plugin = conduit_plugins_server_get($properties['plugin']);
+    $plugin = conduit_plugins_get($properties['plugin']);
     $properties = array_replace_recursive($plugin['default properties'], $properties);
   }
   return $properties;

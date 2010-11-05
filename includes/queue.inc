@@ -16,7 +16,7 @@ function conduit_queue_create($job) {
   $queue = DrupalQueue::get('conduit_job');
 
   // Plugin builds the item(s) to be queued in association with job.
-  if ($plugin = conduit_plugins_server_get($job->conduit['properties']['plugin'])) {
+  if ($plugin = conduit_plugins_get($job->conduit['properties']['plugin'])) {
     $items = $plugin['queue build']($job->conduit['properties']);
     foreach ($items as $delta => $overrides) {
       $item = array(
