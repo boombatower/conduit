@@ -10,6 +10,9 @@ function conduit_drush_command() {
     'description' => dt('Generate a basic setup.'),
     'aliases' => array('cb'),
   );
+  $items['conduit-complex'] = array(
+    'description' => dt('Generate a complex setup.'),
+  );
   $items['conduit-client'] = array(
     'description' => dt('Create a conduit client.'),
     'arguments' => array(
@@ -58,7 +61,23 @@ function conduit_drush_command() {
 function drush_conduit_basic() {
   $client = drush_conduit_client('Client 1');
   $group = drush_conduit_group('Group 1', $client->nid, "'foo' => 'bar'");
-  $job = drush_conduit_job('Job 1', $group->nid, "'bar' => 'baz'");
+  $job = drush_conduit_job('Job 1', $group->nid, "'plugin' => 'execute', 'bar' => 'baz'");
+  return array($client, $group, $job);
+}
+
+/**
+ * Generate a complex setup.
+ */
+function drush_conduit_complex() {
+  $client = drush_conduit_client('Client 1');
+  for ($i = 0; $i < 100; $i++) {
+    echo "\t";
+    $group = drush_conduit_group('Group ' . $i, $client->nid, "'foo' => 'bar {$client->nid}'");
+    for ($j = 0; $j < 5; $j++) {
+      echo "\t\t";
+      $job = drush_conduit_job('Job ' . $j, $group->nid, "'plugin' => 'execute', 'bar' => 'baz {$client->nid}.{$group->nid}'");
+    }
+  }
   return array($client, $group, $job);
 }
 
@@ -72,7 +91,7 @@ function drush_conduit_client($title = '', $key = NULL) {
   $client->title = $title;
   $client->conduit_key[LANGUAGE_NONE][0]['value'] = $key ? $key : md5(mt_rand(1000, 1000000000));
   node_save($client);
-  echo "Created client ({$client->nid}).\n";
+  echo "Created client #{$client->nid}.\n";
   return $client;
 }
 
@@ -87,7 +106,7 @@ function drush_conduit_group($title = '', $owner = NULL, $properties = '') {
   $group->conduit_owner[LANGUAGE_NONE][0]['nid'] = $owner;
   $group->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
   node_save($group);
-  echo "Created group ({$group->nid}).\n";
+  echo "Created group #{$group->nid}.\n";
   return $group;
 }
 
@@ -102,6 +121,6 @@ function drush_conduit_job($title = '', $group = NULL, $properties = '') {
   $job->conduit_group[LANGUAGE_NONE][0]['nid'] = $group;
   $job->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
   node_save($job);
-  echo "Created job ({$job->nid}).\n";
+  echo "Created job #{$job->nid}.\n";
   return $job;
 }
