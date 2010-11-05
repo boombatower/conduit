@@ -232,6 +232,13 @@ function conduit_view($node, $view_mode) {
         '#markup' => $view->preview('defualt', array($node->nid)),
         '#weight' => 10,
       );
+
+      $view = views_get_view('conduit_job');
+      $view->override_path = $_GET['q'];
+      $node->content['conduit_job'] = array(
+        '#markup' => $view->preview('defualt', array($node->nid)),
+        '#weight' => 11,
+      );
     }
   }
   return $node;
