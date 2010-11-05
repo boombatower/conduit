@@ -45,70 +45,6 @@ $handler->display->display_options['fields']['title']['alter']['html'] = 0;
 $handler->display->display_options['fields']['title']['hide_empty'] = 0;
 $handler->display->display_options['fields']['title']['empty_zero'] = 0;
 $handler->display->display_options['fields']['title']['link_to_node'] = 1;
-/* Filter: Node: Type */
-$handler->display->display_options['filters']['type']['id'] = 'type';
-$handler->display->display_options['filters']['type']['table'] = 'node';
-$handler->display->display_options['filters']['type']['field'] = 'type';
-$handler->display->display_options['filters']['type']['value'] = array(
-  'conduit_group' => 'conduit_group',
-);
-/* Filter: Node: Title */
-$handler->display->display_options['filters']['title']['id'] = 'title';
-$handler->display->display_options['filters']['title']['table'] = 'node';
-$handler->display->display_options['filters']['title']['field'] = 'title';
-$handler->display->display_options['filters']['title']['operator'] = 'contains';
-$handler->display->display_options['filters']['title']['exposed'] = TRUE;
-$handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
-$handler->display->display_options['filters']['title']['expose']['label'] = 'Group title';
-$handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
-$handler->display->display_options['filters']['title']['expose']['identifier'] = 'title';
-$handler->display->display_options['filters']['title']['case'] = 0;
-
-/* Display: Client */
-$handler = $view->new_display('embed', 'Client', 'client');
-$handler->display->display_options['defaults']['arguments'] = FALSE;
-/* Argument: Fields: conduit_owner (conduit_owner) */
-$handler->display->display_options['arguments']['conduit_owner_nid']['id'] = 'conduit_owner_nid';
-$handler->display->display_options['arguments']['conduit_owner_nid']['table'] = 'field_data_conduit_owner';
-$handler->display->display_options['arguments']['conduit_owner_nid']['field'] = 'conduit_owner_nid';
-$handler->display->display_options['arguments']['conduit_owner_nid']['default_action'] = 'not found';
-$handler->display->display_options['arguments']['conduit_owner_nid']['style_plugin'] = 'default_summary';
-$handler->display->display_options['arguments']['conduit_owner_nid']['default_argument_type'] = 'fixed';
-$handler->display->display_options['arguments']['conduit_owner_nid']['validate_type'] = 'node';
-$handler->display->display_options['arguments']['conduit_owner_nid']['validate_options']['types'] = array(
-  'conduit_client' => 'conduit_client',
-);
-$handler->display->display_options['arguments']['conduit_owner_nid']['validate_options']['access'] = 0;
-$handler->display->display_options['arguments']['conduit_owner_nid']['break_phrase'] = 0;
-$handler->display->display_options['arguments']['conduit_owner_nid']['not'] = 0;
-$handler->display->display_options['defaults']['filters'] = FALSE;
-/* Filter: Node: Type */
-$handler->display->display_options['filters']['type']['id'] = 'type';
-$handler->display->display_options['filters']['type']['table'] = 'node';
-$handler->display->display_options['filters']['type']['field'] = 'type';
-$handler->display->display_options['filters']['type']['value'] = array(
-  'conduit_group' => 'conduit_group',
-);
-/* Filter: Fields: conduit_parent (conduit_parent) */
-$handler->display->display_options['filters']['conduit_parent_nid']['id'] = 'conduit_parent_nid';
-$handler->display->display_options['filters']['conduit_parent_nid']['table'] = 'field_data_conduit_parent';
-$handler->display->display_options['filters']['conduit_parent_nid']['field'] = 'conduit_parent_nid';
-$handler->display->display_options['filters']['conduit_parent_nid']['operator'] = 'empty';
-/* Filter: Node: Title */
-$handler->display->display_options['filters']['title']['id'] = 'title';
-$handler->display->display_options['filters']['title']['table'] = 'node';
-$handler->display->display_options['filters']['title']['field'] = 'title';
-$handler->display->display_options['filters']['title']['operator'] = 'contains';
-$handler->display->display_options['filters']['title']['exposed'] = TRUE;
-$handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
-$handler->display->display_options['filters']['title']['expose']['label'] = 'Group title';
-$handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
-$handler->display->display_options['filters']['title']['expose']['identifier'] = 'title';
-$handler->display->display_options['filters']['title']['case'] = 0;
-
-/* Display: Group */
-$handler = $view->new_display('embed', 'Group', 'group');
-$handler->display->display_options['defaults']['arguments'] = FALSE;
 /* Argument: Fields: conduit_parent (conduit_parent) */
 $handler->display->display_options['arguments']['conduit_parent_nid']['id'] = 'conduit_parent_nid';
 $handler->display->display_options['arguments']['conduit_parent_nid']['table'] = 'field_data_conduit_parent';
@@ -118,8 +54,27 @@ $handler->display->display_options['arguments']['conduit_parent_nid']['style_plu
 $handler->display->display_options['arguments']['conduit_parent_nid']['default_argument_type'] = 'fixed';
 $handler->display->display_options['arguments']['conduit_parent_nid']['validate_type'] = 'node';
 $handler->display->display_options['arguments']['conduit_parent_nid']['validate_options']['types'] = array(
+  'conduit_client' => 'conduit_client',
   'conduit_group' => 'conduit_group',
 );
-$handler->display->display_options['arguments']['conduit_parent_nid']['validate_options']['access'] = 0;
+$handler->display->display_options['arguments']['conduit_parent_nid']['validate_options']['access'] = '1';
 $handler->display->display_options['arguments']['conduit_parent_nid']['break_phrase'] = 0;
 $handler->display->display_options['arguments']['conduit_parent_nid']['not'] = 0;
+/* Filter: Node: Type */
+$handler->display->display_options['filters']['type']['id'] = 'type';
+$handler->display->display_options['filters']['type']['table'] = 'node';
+$handler->display->display_options['filters']['type']['field'] = 'type';
+$handler->display->display_options['filters']['type']['value'] = array(
+  'conduit_group' => 'conduit_group',
+);
+/* Filter: Node: Title */
+$handler->display->display_options['filters']['title']['id'] = 'title';
+$handler->display->display_options['filters']['title']['table'] = 'node';
+$handler->display->display_options['filters']['title']['field'] = 'title';
+$handler->display->display_options['filters']['title']['operator'] = 'contains';
+$handler->display->display_options['filters']['title']['exposed'] = TRUE;
+$handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
+$handler->display->display_options['filters']['title']['expose']['label'] = 'Group title';
+$handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
+$handler->display->display_options['filters']['title']['expose']['identifier'] = 'title';
+$handler->display->display_options['filters']['title']['case'] = 0;

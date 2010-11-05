@@ -148,7 +148,7 @@ function conduit_node_load($nodes, $types) {
     $node->conduit = array();
 
     // If group or job then initialize properties array.
-    if ($node->type == 'conduit_group' || $node->type == 'conduit_job') {
+    if ($node->type == 'conduit_client' || $node->type == 'conduit_group' || $node->type == 'conduit_job') {
       $node->conduit['properties'] = array();
     }
 
@@ -218,7 +218,7 @@ function conduit_view($node, $view_mode) {
       $view = views_get_view('conduit_group');
       $view->override_path = $_GET['q'];
       $node->content['conduit_group'] = array(
-        '#markup' => $view->preview(substr($node->type, 8), array($node->nid)),
+        '#markup' => $view->preview('defualt', array($node->nid)),
         '#weight' => 10,
       );
     }
@@ -304,11 +304,13 @@ function conduit_properties_merge($entity) {
   // Start with the properties of the entity.
   $properties = $entity->conduit['properties'];
 
-  // Find the relevant parent group or group the entity belongs to. If a group
-  // is found (only a root level group entity will not have one) then recurse
-  // through the group tree and merge the properties with those of the entity.
+  // Find the relevant parent group or client the entity belongs to, then
+  // recurse through the group tree and merge the properties with those of the
+  // entity. If the entity is a client then it is the root element and thus
+  // does not belong to a group.
+  $group = FALSE;
   if ($entity->type == 'conduit_group') {
-    $group = !empty($entity->conduit['parent']) ? $entity->conduit['parent'] : NULL;
+    $group = $entity->conduit['parent'];
   }
   else if ($entity->type == 'conduit_job') {
     $group = $entity->conduit['group'];

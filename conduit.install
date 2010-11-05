@@ -120,7 +120,7 @@ function conduit_install_fields() {
       ),
     ),
 
-    // Conduit group and job fields.
+    // Conduit client, group, and job fields.
     'conduit_properties' => array(
       'field_name' => 'conduit_properties',
       'type' => 'text_long',
@@ -138,7 +138,7 @@ function conduit_install_fields() {
       'field_name' => 'conduit_parent',
       'type' => 'node_reference',
       'settings' => array(
-        'referenceable_types' => array('conduit_group'),
+        'referenceable_types' => array('conduit_client', 'conduit_group'),
       ),
     ),
 
@@ -180,6 +180,20 @@ function conduit_install_instances() {
       'display' => array(
         'default' => array(
           'type' => 'hidden',
+        ),
+      ),
+    ),
+    'client_conduit_properties' => array(
+      'bundle' => 'conduit_client',
+      'field_name' => 'conduit_properties',
+      'label' => $t('Properties'),
+      'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
+      'widget' => array(
+        'type' => 'text_textarea',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'conduit_properties',
         ),
       ),
     ),
@@ -230,6 +244,7 @@ function conduit_install_instances() {
       'field_name' => 'conduit_parent',
       'label' => $t('Parent'),
       'description' => $t('Optional reference to parent group.'),
+      'required' => TRUE,
       'widget' => array(
         'type' => 'node_reference_autocomplete',
         'settings' => array(
