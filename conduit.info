@@ -16,3 +16,4 @@ dependencies[] = ctools
 dependencies[] = list
 dependencies[] = node_reference
 dependencies[] = pathauto
+dependencies[] = views
