@@ -45,7 +45,7 @@ function conduit_plugins_get_all() {
  */
 function conduit_ctools_plugin_type() {
   return array(
-    'conduit' => array('cache' => TRUE),
+    'conduit' => array(),
   );
 }
 
