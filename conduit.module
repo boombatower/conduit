@@ -214,10 +214,14 @@ function conduit_node_update($node) {
  */
 function conduit_view($node, $view_mode) {
   if ($view_mode == 'full' && node_is_page($node)) {
-    $node->content['conduit_client_group'] = array(
-      '#markup' => views_embed_view('conduit_client_group', 'default', $node->nid),
-      '#weight' => 10,
-    );
+    if ($node->type == 'conduit_client' || $node->type == 'conduit_group') {
+      $view = views_get_view('conduit_group');
+      $view->override_path = $_GET['q'];
+      $node->content['conduit_group'] = array(
+        '#markup' => $view->preview(substr($node->type, 8), array($node->nid)),
+        '#weight' => 10,
+      );
+    }
   }
   return $node;
 }

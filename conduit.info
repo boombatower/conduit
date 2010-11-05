@@ -13,6 +13,7 @@ files[] = includes/queue.inc
 files[] = plugins/server/execute.inc
 
 dependencies[] = ctools
+dependencies[] = embed_views
 dependencies[] = list
 dependencies[] = node_reference
 dependencies[] = pathauto
