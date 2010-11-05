@@ -134,6 +134,8 @@ function conduit_install_fields() {
         'referenceable_types' => array('conduit_client'),
       ),
     ),
+
+    // Conduit group and job fields.
     'conduit_parent' => array(
       'field_name' => 'conduit_parent',
       'type' => 'node_reference',
@@ -143,13 +145,6 @@ function conduit_install_fields() {
     ),
 
     // Conduit job fields.
-    'conduit_group' => array(
-      'field_name' => 'conduit_group',
-      'type' => 'node_reference',
-      'settings' => array(
-        'referenceable_types' => array('conduit_group'),
-      ),
-    ),
     'conduit_log' => array(
       'field_name' => 'conduit_log',
       'type' => 'text_long',
@@ -243,7 +238,7 @@ function conduit_install_instances() {
       'bundle' => 'conduit_group',
       'field_name' => 'conduit_parent',
       'label' => $t('Parent'),
-      'description' => $t('Optional reference to parent group.'),
+      'description' => $t('Reference to parent client or group.'),
       'required' => TRUE,
       'widget' => array(
         'type' => 'node_reference_autocomplete',
@@ -268,11 +263,11 @@ function conduit_install_instances() {
     ),
 
     // Conduit job instances.
-    'job_conduit_group' => array(
+    'job_conduit_parent' => array(
       'bundle' => 'conduit_job',
-      'field_name' => 'conduit_group',
-      'label' => $t('Group'),
-      'description' => $t('Group to which job belongs.'),
+      'field_name' => 'conduit_parent',
+      'label' => $t('Parent'),
+      'description' => $t('Reference to parent client or group.'),
       'required' => TRUE,
       'widget' => array(
         'type' => 'node_reference_autocomplete',

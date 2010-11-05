@@ -32,7 +32,7 @@ function conduit_drush_command() {
       'title' => dt('Title of group.'),
       'owner' => dt('NID of client that owns the group.'),
       'properties' => dt('Valid PHP syntax for array excluding the array( ... ) wrapper.'),
-      'parent' => dt('NID of parent group.'),
+      'parent' => dt('NID of parent group or client.'),
     ),
     'examples' => array(
       'ccg "Group 1" 17' => 'Create a group with the title "Group 1" and owner with NID of 17.',
@@ -44,7 +44,7 @@ function conduit_drush_command() {
     'description' => dt('Create a conduit job.'),
     'arguments' => array(
       'title' => dt('Title of group.'),
-      'group' => dt('NID of group to which job belongs.'),
+      'parent' => dt('NID of parent group or client.'),
       'properties' => dt('Valid PHP syntax for array excluding the array( ... ) wrapper.'),
     ),
     'examples' => array(
@@ -121,12 +121,12 @@ function drush_conduit_group($title = '', $owner = NULL, $properties = '', $pare
 /**
  * Create a conduit job.
  */
-function drush_conduit_job($title = '', $group = NULL, $properties = '') {
+function drush_conduit_job($title = '', $parent = NULL, $properties = '') {
   $job = new stdClass();
   $job->type = 'conduit_job';
   $job->language = LANGUAGE_NONE;
   $job->title = $title;
-  $job->conduit_group[LANGUAGE_NONE][0]['nid'] = $group;
+  $job->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;
   $job->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
   node_save($job);
   echo "Created job #{$job->nid}.\n";

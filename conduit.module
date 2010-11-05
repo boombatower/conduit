@@ -308,14 +308,9 @@ function conduit_properties_merge($entity) {
   // recurse through the group tree and merge the properties with those of the
   // entity. If the entity is a client then it is the root element and thus
   // does not belong to a group.
-  $group = FALSE;
-  if ($entity->type == 'conduit_group') {
-    $group = $entity->conduit['parent'];
+  if ($entity->type == 'conduit_group' || $entity->type == 'conduit_job') {
+    $properties = conduit_properties_recurse_groups(node_load($entity->conduit['parent']), $properties);
   }
-  else if ($entity->type == 'conduit_job') {
-    $group = $entity->conduit['group'];
-  }
-  $properties = $group ? conduit_properties_recurse_groups(node_load($group), $properties) : $properties;
 
   // If the merged list of properties contains a plugin key (all jobs must)
   // then merge the default properties specified by the plugin with the rest of
