@@ -39,7 +39,7 @@ function conduit_queue_create($job) {
 function conduit_queue_claim() {
   // Attempt to claim an item from the queue.
   $queue = DrupalQueue::get('conduit_job');
-  if ($item = $queue->claimItem(variable_get('conduit_least_time', 3600))) {
+  if ($item = $queue->claimItem(variable_get('conduit_lease_time', 3600))) {
     // Load the job node related to the item, add the item to the job
     // properties, apply the property overrides, and merge the job properties
     // with the groups and defaults.

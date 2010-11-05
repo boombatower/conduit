@@ -86,7 +86,7 @@ function conduit_uninstall() {
 
   // Remove variables.
   $variables = array(
-    'conduit_least_time',
+    'conduit_lease_time',
   );
   foreach ($variables as $variable) {
     variable_del($variable);
