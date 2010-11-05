@@ -31,6 +31,7 @@ function conduit_drush_command() {
       'title' => dt('Title of group.'),
       'owner' => dt('NID of client that owns the group.'),
       'properties' => dt('Valid PHP syntax for array excluding the array( ... ) wrapper.'),
+      'parent' => dt('NID of parent group.'),
     ),
     'examples' => array(
       'ccg "Group 1" 17' => 'Create a group with the title "Group 1" and owner with NID of 17.',
@@ -70,12 +71,16 @@ function drush_conduit_basic() {
  */
 function drush_conduit_complex() {
   $client = drush_conduit_client('Client 1');
-  for ($i = 0; $i < 100; $i++) {
+  for ($i = 0; $i < 20; $i++) {
     echo "\t";
-    $group = drush_conduit_group('Group ' . $i, $client->nid, "'foo' => 'bar {$client->nid}'");
+    $group = drush_conduit_group('Group ' . $i, $client->nid, "'root' => '{$client->nid}'");
     for ($j = 0; $j < 5; $j++) {
       echo "\t\t";
-      $job = drush_conduit_job('Job ' . $j, $group->nid, "'plugin' => 'execute', 'bar' => 'baz {$client->nid}.{$group->nid}'");
+      $subgroup = drush_conduit_group('Sub-Group ' . $j, $client->nid, "'sub' => '{$client->nid}.{$group->nid}'", $group->nid);
+      for ($k = 0; $k < 5; $k++) {
+        echo "\t\t\t";
+        $job = drush_conduit_job('Job ' . $k, $subgroup->nid, "'plugin' => 'execute', 'job' => '{$client->nid}.{$group->nid}.{$subgroup->nid}'");
+      }
     }
   }
   return array($client, $group, $job);
@@ -98,13 +103,14 @@ function drush_conduit_client($title = '', $key = NULL) {
 /**
  * Create a conduit group.
  */
-function drush_conduit_group($title = '', $owner = NULL, $properties = '') {
+function drush_conduit_group($title = '', $owner = NULL, $properties = '', $parent = NULL) {
   $group = new stdClass();
   $group->type = 'conduit_group';
   $group->language = LANGUAGE_NONE;
   $group->title = $title;
   $group->conduit_owner[LANGUAGE_NONE][0]['nid'] = $owner;
   $group->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
+  $group->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;
   node_save($group);
   echo "Created group #{$group->nid}.\n";
   return $group;
