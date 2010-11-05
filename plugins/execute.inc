@@ -9,7 +9,7 @@
 $plugin = array(
   'title' => t('Execute'),
   'description' => t('Provides basic command execution.'),
-  'queue build' => 'conduit_script_queue_build',
+  'queue build' => 'conduit_execute_queue_build',
   'default properties' => array(
     'command' => 'echo "hello world"',
   ),
@@ -18,6 +18,6 @@ $plugin = array(
 /**
  * Queue one item with no additional data.
  */
-function conduit_script_queue_build(array $properties) {
+function conduit_execute_queue_build(array $properties) {
   return array(array());
 }
