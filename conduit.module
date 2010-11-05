@@ -214,6 +214,17 @@ function conduit_node_update($node) {
  */
 function conduit_view($node, $view_mode) {
   if ($view_mode == 'full' && node_is_page($node)) {
+    // Add a breakcrumb on group or job nodes.
+    if ($node->type == 'conduit_group' || $node->type == 'conduit_job') {
+      // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
+      // display them left-to-right so we need to reverse order and remove the
+      // current node from the list.
+      $breadcrumb = array_reverse(conduit_view_breadcrumb($node));
+      array_pop($breadcrumb);
+      drupal_set_breadcrumb($breadcrumb);
+    }
+
+    // Add a list of group on client or group nodes.
     if ($node->type == 'conduit_client' || $node->type == 'conduit_group') {
       $view = views_get_view('conduit_group');
       $view->override_path = $_GET['q'];
@@ -224,6 +235,27 @@ function conduit_view($node, $view_mode) {
     }
   }
   return $node;
+}
+
+/**
+ * Generate a set of breadcrumb links from the top node down.
+ *
+ * @param $node
+ *   Top node in tree.
+ * @param $breadcrumb
+ *   (Optional) Used internally to keep track of breadcrumbs.
+ * @return
+ *   A list of links ordered from the top node down.
+ */
+function conduit_view_breadcrumb($node, $breadcrumb = array()) {
+  // Add the current node to the breadcrumb.
+  $breadcrumb[] = l($node->title, 'node/' . $node->nid);
+
+  // If the node has a parent the recurse.
+  if (!empty($node->conduit['parent'])) {
+    $breadcrumb = conduit_view_breadcrumb(node_load($node->conduit['parent']), $breadcrumb);
+  }
+  return $breadcrumb;
 }
 
 /**
