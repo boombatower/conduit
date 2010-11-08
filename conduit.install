@@ -21,6 +21,9 @@ function conduit_install() {
     field_create_instance($instance);
   }
 
+  // Load module with constant definitions.
+  module_load_include('module', 'comment');
+
   // Set content type specific variables.
   foreach (array_keys(conduit_node_info()) as $type) {
     // Publish all content types, but nothing more.
@@ -149,6 +152,32 @@ function conduit_install_fields() {
     ),
 
     // Conduit job fields.
+    'conduit_done' => array(
+      'field_name' => 'conduit_done',
+      'type' => 'list_boolean',
+      'settings' => array(
+        'allowed_values' => "0|No\n1|Job finished\n",
+      ),
+    ),
+    'conduit_pass' => array(
+      'field_name' => 'conduit_pass',
+      'type' => 'list_boolean',
+      'settings' => array(
+        'allowed_values' => "0|No\n1|Job finished with no errors\n",
+      ),
+    ),
+    'conduit_chunk_count' => array(
+      'field_name' => 'conduit_chunk_count',
+      'type' => 'number_integer',
+    ),
+    'conduit_chunk_pass' => array(
+      'field_name' => 'conduit_chunk_pass',
+      'type' => 'list_boolean',
+      'cardinality' => -1,
+      'settings' => array(
+        'allowed_values' => "0|No\n1|Job chunk finished with no errors\n",
+      ),
+    ),
     'conduit_log' => array(
       'field_name' => 'conduit_log',
       'type' => 'text_long',
@@ -294,6 +323,42 @@ function conduit_install_instances() {
         ),
       ),
     ),
+    'job_conduit_done' => array(
+      'bundle' => 'conduit_job',
+      'field_name' => 'conduit_done',
+      'label' => $t('Log'),
+      'description' => $t('Indicates whether job has completed. Set to FALSE until all job chunks have reported.'),
+      'widget' => array(
+        'type' => 'options_onoff',
+      ),
+    ),
+    'job_conduit_pass' => array(
+      'bundle' => 'conduit_job',
+      'field_name' => 'conduit_pass',
+      'label' => $t('Pass'),
+      'description' => $t('Indicates whether all job chunks completed with no errors.'),
+      'widget' => array(
+        'type' => 'options_onoff',
+      ),
+    ),
+    'job_conduit_chunk_count' => array(
+      'bundle' => 'conduit_job',
+      'field_name' => 'conduit_chunk_count',
+      'label' => $t('Chunk count'),
+      'description' => $t('Number of chunks in the job.'),
+      'widget' => array(
+        'type' => 'number',
+      ),
+    ),
+    'job_conduit_chunk_pass' => array(
+      'bundle' => 'conduit_job',
+      'field_name' => 'conduit_chunk_pass',
+      'label' => $t('Chunk pass'),
+      'description' => $t('Indicates whether a particular job chunk completed with no errors.'),
+      'widget' => array(
+        'type' => 'options_onoff',
+      ),
+    ),
     'job_conduit_log' => array(
       'bundle' => 'conduit_job',
       'field_name' => 'conduit_log',
@@ -304,4 +369,55 @@ function conduit_install_instances() {
       ),
     ),
   );
+}
+
+/**
+ * Updates fields and field instances.
+ *
+ * This function can be called by a hook_update_N() routine to automatically
+ * update fields and instances.
+ */
+function conduit_update_fields() {
+  // Load field definitions.
+  $fields = field_read_fields();
+  $field_names = array_keys($fields);
+
+  // Update the fields.
+  foreach (conduit_install_fields() as $field_name => $field) {
+    if (in_array($field_name, $field_names)) {
+      field_update_field($field + $fields[$field_name]);
+    }
+    else {
+      field_create_field($field);
+    }
+  }
+
+  $instances = array();
+  foreach (conduit_node_info() as $bundle => $info) {
+    $instances = array_merge($instances, field_read_instances(array('bundle' => $bundle)));
+  }
+
+  // Update the field instances.
+  foreach (conduit_install_instances() as $conduit_instance) {
+    $exists = FALSE;
+    foreach ($instances as $instance) {
+      if ($conduit_instance['field_name'] == $instance['field_name'] && $conduit_instance['bundle'] == $instance['bundle']) {
+        $exists = TRUE;
+        break;
+      }
+    }
+    if ($exists) {
+      field_update_field($conduit_instance + $instance);
+    }
+    else {
+      $conduit_instance['entity_type'] = 'node';
+      field_create_instance($conduit_instance);
+    }
+  }
+
+  // Purge all field information.
+  field_purge_batch(1000);
+
+  // Display a message to the user.
+  return t('Fields and field instances were updated/created.');
 }
