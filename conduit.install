@@ -4,6 +4,7 @@
  * Provides installation functions.
  *
  * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ * @author Jim Berry ("boombatower", http://drupal.org/user/240748)
  */
 
 /**
@@ -56,17 +57,17 @@ function conduit_uninstall() {
     node_delete_multiple($nids);
   }
 
-  // Delete fields.
-  foreach (array_keys(conduit_install_fields()) as $field) {
-    field_delete_field($field);
-  }
-
   // Remove field instances.
   foreach ($types as $type) {
     $instances = field_info_instances('node', $type);
     foreach ($instances as $instance_name => $instance) {
       field_delete_instance($instance);
     }
+  }
+
+  // Delete fields.
+  foreach (array_keys(conduit_install_fields()) as $field) {
+    field_delete_field($field);
   }
 
   // Delete content types.
@@ -154,17 +155,13 @@ function conduit_install_fields() {
     // Conduit job fields.
     'conduit_done' => array(
       'field_name' => 'conduit_done',
-      'type' => 'list_boolean',
-      'settings' => array(
-        'allowed_values' => "0|No\n1|Job finished\n",
-      ),
+      'type' => 'number_boolean',
+      'instance_settings' => array('prefix' => 'Job finished', 'suffix' => ''),
     ),
     'conduit_pass' => array(
       'field_name' => 'conduit_pass',
-      'type' => 'list_boolean',
-      'settings' => array(
-        'allowed_values' => "0|No\n1|Job finished with no errors\n",
-      ),
+      'type' => 'number_boolean',
+      'instance_settings' => array('prefix' => 'Job finished with no errors', 'suffix' => ''),
     ),
     'conduit_chunk_count' => array(
       'field_name' => 'conduit_chunk_count',
@@ -172,11 +169,9 @@ function conduit_install_fields() {
     ),
     'conduit_chunk_pass' => array(
       'field_name' => 'conduit_chunk_pass',
-      'type' => 'list_boolean',
+      'type' => 'number_boolean',
       'cardinality' => -1,
-      'settings' => array(
-        'allowed_values' => "0|No\n1|Job chunk finished with no errors\n",
-      ),
+      'instance_settings' => array('prefix' => 'Job chunk', 'suffix' => 'finished with no errors'),
     ),
     'conduit_log' => array(
       'field_name' => 'conduit_log',
@@ -326,10 +321,11 @@ function conduit_install_instances() {
     'job_conduit_done' => array(
       'bundle' => 'conduit_job',
       'field_name' => 'conduit_done',
-      'label' => $t('Log'),
+      'label' => $t('Done'),
       'description' => $t('Indicates whether job has completed. Set to FALSE until all job chunks have reported.'),
+      'settings' => array('prefix' => 'Job finished', 'suffix' => ''),
       'widget' => array(
-        'type' => 'options_onoff',
+        'type' => 'boolean_checkbox',
       ),
     ),
     'job_conduit_pass' => array(
@@ -337,8 +333,9 @@ function conduit_install_instances() {
       'field_name' => 'conduit_pass',
       'label' => $t('Pass'),
       'description' => $t('Indicates whether all job chunks completed with no errors.'),
+      'settings' => array('prefix' => 'Job finished with no errors', 'suffix' => ''),
       'widget' => array(
-        'type' => 'options_onoff',
+        'type' => 'boolean_checkbox',
       ),
     ),
     'job_conduit_chunk_count' => array(
@@ -355,8 +352,9 @@ function conduit_install_instances() {
       'field_name' => 'conduit_chunk_pass',
       'label' => $t('Chunk pass'),
       'description' => $t('Indicates whether a particular job chunk completed with no errors.'),
+      'settings' => array('prefix' => 'Job chunk', 'suffix' => 'finished with no errors'),
       'widget' => array(
-        'type' => 'options_onoff',
+        'type' => 'boolean_checkbox',
       ),
     ),
     'job_conduit_log' => array(

@@ -12,6 +12,7 @@ files[] = includes/queue.inc
 
 files[] = plugins/server/execute.inc
 
+dependencies[] = boolean
 dependencies[] = ctools
 dependencies[] = list
 dependencies[] = number

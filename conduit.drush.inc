@@ -80,7 +80,7 @@ function drush_conduit_complex() {
       $subgroup = drush_conduit_group('Sub-Group ' . $j, $client->nid, "'sub-group' => '{$client->nid}.{$group->nid}'", $group->nid);
       for ($k = 0; $k < 5; $k++) {
         echo "\t\t\t";
-        $job = drush_conduit_job('Job ' . $k, $subgroup->nid, "'plugin' => 'execute', 'job' => '{$client->nid}.{$group->nid}.{$subgroup->nid}'");
+        $job = drush_conduit_job($subgroup->nid, $k, 'Job ' . $k, $subgroup->nid, "'plugin' => 'execute', 'job' => '{$client->nid}.{$group->nid}.{$subgroup->nid}'");
       }
     }
   }
@@ -121,13 +121,21 @@ function drush_conduit_group($title = '', $owner = NULL, $properties = '', $pare
 /**
  * Create a conduit job.
  */
-function drush_conduit_job($title = '', $parent = NULL, $properties = '') {
+function drush_conduit_job($subgroup_nid, $job_index, $title = '', $parent = NULL, $properties = '') {
   $job = new stdClass();
   $job->type = 'conduit_job';
   $job->language = LANGUAGE_NONE;
   $job->title = $title;
   $job->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;
   $job->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
+
+  $job->conduit_done[LANGUAGE_NONE][0]['value'] = $subgroup_nid % 2;
+  $job->conduit_pass[LANGUAGE_NONE][0]['value'] = $job_index % 2;
+  $job->conduit_chunk_count[LANGUAGE_NONE][0]['value'] = $chunk_count = $subgroup_nid % ++$job_index;
+  for ($delta = 0; $delta < $chunk_count; $delta++) {
+    $job->conduit_chunk_pass[LANGUAGE_NONE][$delta]['value'] = ($subgroup_nid % ($delta + 1)) % 2;
+  }
+
   node_save($job);
   echo "Created job #{$job->nid}.\n";
   return $job;
