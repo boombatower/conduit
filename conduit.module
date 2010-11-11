@@ -223,6 +223,9 @@ function conduit_node_insert($node) {
  */
 function conduit_node_update($node) {
   if (strpos($node->type, 'conduit_job') === 0) {
+    // When a new revision is being added the conduit node attribute will be
+    // out-of-date since it was generated during hook_node_load() so reload.
+    conduit_node_load(array($node), array($node->type));
     conduit_include('queue');
     conduit_queue_create($node);
   }
