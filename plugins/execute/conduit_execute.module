@@ -1,0 +1,30 @@
+<?php
+/**
+ * @file
+ * Provide basic command execution.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Implements hook_node_info().
+ */
+function conduit_execute_node_info() {
+  return conduit_node_info_job('execute');
+}
+
+/**
+ * Implements hook_conduit_default_properties().
+ */
+function conduit_execute_conduit_default_properties() {
+  return array(
+    'command' => 'echo "hello world"',
+  );
+}
+
+/**
+ * Implements hook_conduit_queue_build().
+ */
+function conduit_execute_conduit_queue_build(array $properties) {
+  return array(array());
+}

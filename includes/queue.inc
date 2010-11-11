@@ -16,17 +16,15 @@ function conduit_queue_create($job) {
   $queue = DrupalQueue::get('conduit_job');
 
   // Plugin builds the item(s) to be queued in association with job.
-  if ($plugin = conduit_plugins_get($job->conduit['properties']['plugin'])) {
-    $items = $plugin['queue build']($job->conduit['properties']);
-    foreach ($items as $delta => $overrides) {
-      $item = array(
-        'nid' => $job->nid,
-        'vid' => $job->vid,
-        'delta' => $delta,
-        'overrides' => $overrides,
-      );
-      $queue->createItem($item);
-    }
+  $items = module_invoke($job->conduit['properties']['plugin'], 'conduit_queue_build', $job->conduit['properties']);
+  foreach ($items as $delta => $overrides) {
+    $item = array(
+      'nid' => $job->nid,
+      'vid' => $job->vid,
+      'delta' => $delta,
+      'overrides' => $overrides,
+    );
+    $queue->createItem($item);
   }
 }
 

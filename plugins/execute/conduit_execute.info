@@ -1,0 +1,7 @@
+name = Execute
+description = Provide basic command execution.
+package = Conduit
+core = 7.x
+files[] = conduit_execute.install
+files[] = conduit_execute.module
+dependencies[] = conduit

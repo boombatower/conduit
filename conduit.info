@@ -7,13 +7,11 @@ files[] = conduit.module
 files[] = conduit.install
 files[] = conduit.test
 
-files[] = includes/plugins.inc
 files[] = includes/queue.inc
 
 files[] = plugins/server/execute.inc
 
 dependencies[] = boolean
-dependencies[] = ctools
 dependencies[] = list
 dependencies[] = number
 dependencies[] = node_reference

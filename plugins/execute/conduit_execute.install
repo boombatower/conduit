@@ -1,0 +1,75 @@
+<?php
+/**
+ * @file
+ * Provides installation functions.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Implements hook_install().
+ */
+function conduit_execute_install() {
+  // Create all the fields.
+  foreach (conduit_execute_install_fields() as $field) {
+    field_create_field($field);
+  }
+
+  // Create all the instances for our fields.
+  foreach (conduit_execute_install_instances() as $instance) {
+    $instance['entity_type'] = 'node';
+    field_create_instance($instance);
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function conduit_execute_uninstall() {
+  module_load_install('conduit');
+  conduit_uninstall_node_type('conduit_job_execute');
+
+  // Delete fields.
+  foreach (array_keys(conduit_execute_install_fields()) as $field) {
+    field_delete_field($field);
+  }
+}
+
+/**
+ * Field definitions to be installed.
+ *
+ * @return
+ *   List of field definitions.
+ */
+function conduit_execute_install_fields() {
+  $t = get_t();
+  return array(
+    'conduit_result_execute' => array(
+      'field_name' => 'conduit_result_execute',
+      'type' => 'text_long',
+      'cardinality' => -1,
+    ),
+  );
+}
+
+/**
+ * Field instances to be created.
+ *
+ * @return
+ *   List of field instances.
+ */
+function conduit_execute_install_instances() {
+  module_load_install('conduit');
+  $t = get_t();
+  return conduit_install_instances_job('conduit_job_execute') + array(
+    'job_conduit_result_execute' => array(
+      'bundle' => 'conduit_job_execute',
+      'field_name' => 'conduit_result_execute',
+      'label' => $t('Execute result'),
+      'description' => $t('The output resulting from executing the command.'),
+      'widget' => array(
+        'type' => 'text_textarea',
+      ),
+    ),
+  );
+}

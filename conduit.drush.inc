@@ -63,7 +63,7 @@ function conduit_drush_command() {
 function drush_conduit_basic() {
   $client = drush_conduit_client('Client 1');
   $group = drush_conduit_group('Group 1', $client->nid, "'foo' => 'bar'");
-  $job = drush_conduit_job('Job 1', $group->nid, "'plugin' => 'execute', 'bar' => 'baz'");
+  $job = drush_conduit_job('Job 1', $group->nid, "'plugin' => 'conduit_execute', 'bar' => 'baz'");
   return array($client, $group, $job);
 }
 
@@ -80,7 +80,7 @@ function drush_conduit_complex() {
       $subgroup = drush_conduit_group('Sub-Group ' . $j, $client->nid, "'sub-group' => '{$client->nid}.{$group->nid}'", $group->nid);
       for ($k = 0; $k < 5; $k++) {
         echo "\t\t\t";
-        $job = drush_conduit_job($subgroup->nid, $k, 'Job ' . $k, $subgroup->nid, "'plugin' => 'execute', 'job' => '{$client->nid}.{$group->nid}.{$subgroup->nid}'");
+        $job = drush_conduit_job($subgroup->nid, $k, 'Job ' . $k, $subgroup->nid, "'plugin' => 'conduit_execute', 'job' => '{$client->nid}.{$group->nid}.{$subgroup->nid}'");
       }
     }
   }
@@ -123,7 +123,7 @@ function drush_conduit_group($title = '', $owner = NULL, $properties = '', $pare
  */
 function drush_conduit_job($subgroup_nid, $job_index, $title = '', $parent = NULL, $properties = '') {
   $job = new stdClass();
-  $job->type = 'conduit_job';
+  $job->type = 'conduit_job_execute';
   $job->language = LANGUAGE_NONE;
   $job->title = $title;
   $job->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;

@@ -19,24 +19,8 @@
  * Use client hash which should include client key + time + salt.
  */
 
-conduit_include('plugins');
-
 /**
  * Implements hook_node_info().
- *
- * Client:
- *  - key
- * Worker:
- *  - key
- *  - plugins
- *
- * Group:
- *  - owner
- *  - parent
- *  - properties
- * Job:
- *  - group
- *  - properties
  */
 function conduit_node_info() {
   $info = array();
@@ -46,24 +30,37 @@ function conduit_node_info() {
     'base' => 'conduit',
     'description' => t('Controls the conduit.'),
   );
+  $info['conduit_group'] = array(
+    'name' => t('Conduit group'),
+    'base' => 'conduit',
+    'description' => t('Groups jobs together and can be used to create a hierarchy.'),
+  );
   $info['conduit_worker'] = array(
     'name' => t('Conduit worker'),
     'base' => 'conduit',
     'description' => t('Performs queued jobs.'),
   );
 
-  $info['conduit_group'] = array(
-    'name' => t('Conduit group'),
-    'base' => 'conduit',
-    'description' => t('Groups jobs together and can be used to create a hierarchy.'),
-  );
-  $info['conduit_job'] = array(
-    'name' => t('Conduit job'),
-    'base' => 'conduit',
-    'description' => t('Job to be performed.'),
-  );
-
   return $info;
+}
+
+/**
+ * Generate job node type definition for a plugin.
+ *
+ * @param $plugin
+ *   Plugin name.
+ * @return
+ *   Node type definition to be used with hook_node_info().
+ * @see hook_node_info()
+ */
+function conduit_node_info_job($plugin) {
+  return array(
+    'conduit_job_execute' => array(
+      'name' => t('Conduit job - @plugin', array('@plugin' => $plugin)),
+      'base' => 'conduit',
+      'description' => t('Job, of type @plugin, to be performed.', array('@plugin' => $plugin)),
+    ),
+  );
 }
 
 /**
@@ -78,40 +75,49 @@ function conduit_form($node, &$form_state) {
  */
 function conduit_form_alter(&$form, &$form_state, $form_id) {
   // Check for conduit node form.
-  foreach (array_keys(conduit_node_info()) as $type) {
-    if ($form_id == $type . '_node_form') {
-      $found = TRUE;
-      break;
-    }
-  }
-
-  // If not found then return.
-  if (empty($found)) {
+  if (strpos($form_id, 'conduit') !== 0) {
     return;
   }
 
   // Set title description using type.
-  $type = str_replace('conduit_', '', $type);
-  $form['title']['#description'] = t('Displayed when referencing @type.', array('@type' => $type));
+  $form['title']['#description'] = t('Displayed when being referencing.');
 
   // If key is present, but not set the create a random key.
   if (isset($form['conduit_key']) && empty($form['conduit_key'][LANGUAGE_NONE][0]['value']['#default_value'])) {
     $form['conduit_key'][LANGUAGE_NONE][0]['value']['#default_value'] = md5(mt_rand(1000, 1000000000));
   }
 
-  // If conduit_log field is present then hide it.
-  if (isset($form['conduit_log'])) {
-    $form['conduit_log']['#access'] = FALSE;
+  // Move all conduit fields into a fieldset.
+  $job = strpos($form_id, 'conduit_job') === 0;
+  $fieldsets = $job ? array('meta', 'status', 'result') : array('meta');
+  foreach ($fieldsets as $fieldset) {
+    $form['conduit_' . $fieldset] = array(
+      '#type' => 'fieldset',
+      '#title' => ucfirst($fieldset),
+      '#collapsible' => TRUE,
+      '#collapsed' => $fieldset != 'meta',
+    );
   }
 
-  // Move all conduit fields into a fieldset.
-  $form[$type] = array(
-    '#type' => 'fieldset',
-    '#title' => ucfirst(t('@type', array('@type' => $type))),
-  );
+  $status = array('conduit_done', 'conduit_chunk_count');
+  $result = array('conduit_pass', 'conduit_chunk_pass', 'conduit_log');
   foreach (element_children($form) as $key) {
+    if (isset($form[$key]['#type']) && $form[$key]['#type'] == 'fieldset') {
+      continue;
+    }
+
     if ($key == 'title' || strpos($key, 'conduit_') === 0) {
-      $form[$type][$key] = $form[$key];
+      $fieldset = 'meta';
+      if ($job) {
+        if (in_array($key, $status)) {
+          $fieldset = 'status';
+        }
+        elseif (in_array($key, $result) || strpos($key, 'conduit_result') === 0) {
+          $fieldset = 'result';
+        }
+      }
+
+      $form['conduit_' . $fieldset][$key] = $form[$key];
       unset($form[$key]);
     }
   }
@@ -129,13 +135,12 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
 function conduit_node_load($nodes, $types) {
   // Look for any conduit types among the list of node types.
   $found = FALSE;
-  foreach (array_keys(conduit_node_info()) as $type) {
-    if (in_array($type, $types)) {
+  foreach ($types as $type) {
+    if (strpos($type, 'conduit') === 0) {
       $found = TRUE;
       break;
     }
   }
-
   // Only process nodes if a conduit type is present.
   if (!$found) {
     return;
@@ -143,27 +148,37 @@ function conduit_node_load($nodes, $types) {
 
   foreach ($nodes as $node) {
     // Ensure the current node is a conduit node.
-    if (strpos($node->type, 'conduit_') !== 0) {
+    if (strpos($node->type, 'conduit') !== 0) {
       continue;
     }
     $node->conduit = array();
+    $fields = array('key', 'owner', 'parent', 'properties', 'done', 'chunk_count', 'pass');
+    foreach ($fields as $field) {
+      $key = 'conduit_' . $field;
+      if (!empty($node->$key)) {
+        $value = $node->$key;
+        $node->conduit[$field] = $value[LANGUAGE_NONE][0][$field == 'owner' || $field == 'parent' ? 'nid' : 'value'];
+      }
+    }
 
-    // If group or job then initialize properties array.
-    if ($node->type == 'conduit_client' || $node->type == 'conduit_group' || $node->type == 'conduit_job') {
+    // If the properties field has a value then parse the value, otherwise
+    // initialize the properties attribute if applicable.
+    if (isset($node->conduit['properties'])) {
+      $node->conduit['properties'] = conduit_properties($node->conduit['properties']);
+    }
+    elseif ($node->type != 'conduit_worker') {
       $node->conduit['properties'] = array();
     }
 
-    if (isset($node->conduit_properties[LANGUAGE_NONE][0]['value'])) {
-      $node->conduit['properties'] = conduit_properties($node->conduit_properties[LANGUAGE_NONE][0]['value']);
-    }
-    if (isset($node->conduit_owner[LANGUAGE_NONE][0]['nid'])) {
-      $node->conduit['owner'] = $node->conduit_owner[LANGUAGE_NONE][0]['nid'];
-    }
-    if (isset($node->conduit_parent[LANGUAGE_NONE][0]['nid'])) {
-      $node->conduit['parent'] = $node->conduit_parent[LANGUAGE_NONE][0]['nid'];
-    }
-    if (isset($node->conduit_group[LANGUAGE_NONE][0]['nid'])) {
-      $node->conduit['group'] = $node->conduit_group[LANGUAGE_NONE][0]['nid'];
+    // If chunk_pass field is defined then entire the attribute is initialized
+    // and if it has values then simplify them and place in attribute.
+    if (isset($node->conduit_chunk_pass)) {
+      $node->conduit['chunk_pass'] = array();
+      if (!empty($node->conduit_chunk_pass)) {
+        foreach ($node->conduit_chunk_pass[LANGUAGE_NONE] as $key => $chunk) {
+          $node->conduit['chunk_pass'][$key] = $chunk['value'];
+        }
+      }
     }
   }
 }
@@ -219,7 +234,7 @@ function conduit_node_update($node) {
 function conduit_view($node, $view_mode) {
   if ($view_mode == 'full' && node_is_page($node)) {
     // Add a breakcrumb on group or job nodes.
-    if ($node->type == 'conduit_group' || $node->type == 'conduit_job') {
+    if ($node->type == 'conduit_group' || strpos($node->type, 'conduit_job') === 0) {
       // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
       // display them left-to-right so we need to reverse order and remove the
       // current node from the list.
@@ -359,8 +374,8 @@ function conduit_properties_merge($entity) {
   // then merge the default properties specified by the plugin with the rest of
   // the properties.
   if (!empty($properties['plugin'])) {
-    $plugin = conduit_plugins_get($properties['plugin']);
-    $properties = array_replace_recursive($plugin['default properties'], $properties);
+    $default_properties = module_invoke($properties['plugin'], 'conduit_default_properties');
+    $properties = array_replace_recursive($default_properties, $properties);
   }
   return $properties;
 }
@@ -392,7 +407,6 @@ function conduit_views_api() {
     'path' => drupal_get_path('module', 'conduit') . '/views',
   );
 }
-
 
 /**
  * Implements hook_xmlrpc().

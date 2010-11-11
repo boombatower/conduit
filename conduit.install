@@ -46,37 +46,16 @@ function conduit_install() {
  * Implements hook_uninstall().
  */
 function conduit_uninstall() {
-  // Delete all nodes of conduit content types.
+  // Delete information related to node types.
   $types = array_keys(conduit_node_info());
-  $nids = db_select('node')
-    ->fields('node', array('nid'))
-    ->condition('type', $types, 'IN')
-    ->execute()
-    ->fetchCol();
-  if ($nids) {
-    node_delete_multiple($nids);
-  }
-
-  // Remove field instances.
   foreach ($types as $type) {
-    $instances = field_info_instances('node', $type);
-    foreach ($instances as $instance_name => $instance) {
-      field_delete_instance($instance);
-    }
+    conduit_uninstall_node_type($type);
   }
 
   // Delete fields.
   foreach (array_keys(conduit_install_fields()) as $field) {
     field_delete_field($field);
   }
-
-  // Delete content types.
-  foreach ($types as $type) {
-    node_type_delete($type);
-  }
-
-  // Purge all field information.
-  field_purge_batch(1000);
 
   // Remove content type settings variables.
   foreach (array_keys(conduit_node_info()) as $type) {
@@ -95,6 +74,36 @@ function conduit_uninstall() {
   foreach ($variables as $variable) {
     variable_del($variable);
   }
+}
+
+/**
+ * Remove all data, fields, and field instances associated with node type.
+ *
+ * @param $type
+ *   Node type to remove related information for.
+ */
+function conduit_uninstall_node_type($type) {
+  // Delete all nodes of specified type.
+  $nids = db_select('node')
+    ->fields('node', array('nid'))
+    ->condition('type', $type)
+    ->execute()
+    ->fetchCol();
+  if ($nids) {
+    node_delete_multiple($nids);
+  }
+
+  // Remove field instances from node type.
+  $instances = field_info_instances('node', $type);
+  foreach ($instances as $instance_name => $instance) {
+    field_delete_instance($instance);
+  }
+
+  // Delete node type.
+  node_type_delete($type);
+
+  // Purge all field information.
+  field_purge_batch(1000);
 }
 
 /**
@@ -266,10 +275,21 @@ function conduit_install_instances() {
         ),
       ),
     ),
+  );
+}
 
-    // Conduit job instances.
+/**
+ * Base job field instances.
+ *
+ * @param $bundle
+ *   Bundle to assign instances to.
+ * @return
+ *   List of field instances.
+ */
+function conduit_install_instances_job($bundle) {
+  $t = get_t();
+  $instances = array(
     'job_conduit_parent' => array(
-      'bundle' => 'conduit_job',
       'field_name' => 'conduit_parent',
       'label' => $t('Parent'),
       'description' => $t('Reference to parent client or group.'),
@@ -282,7 +302,6 @@ function conduit_install_instances() {
       ),
     ),
     'job_conduit_properties' => array(
-      'bundle' => 'conduit_job',
       'field_name' => 'conduit_properties',
       'label' => $t('Properties'),
       'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
@@ -296,7 +315,6 @@ function conduit_install_instances() {
       ),
     ),
     'job_conduit_done' => array(
-      'bundle' => 'conduit_job',
       'field_name' => 'conduit_done',
       'label' => $t('Done'),
       'description' => $t('Indicates whether job has completed. Set to FALSE until all job chunks have reported.'),
@@ -306,7 +324,6 @@ function conduit_install_instances() {
       ),
     ),
     'job_conduit_pass' => array(
-      'bundle' => 'conduit_job',
       'field_name' => 'conduit_pass',
       'label' => $t('Pass'),
       'description' => $t('Indicates whether all job chunks completed with no errors.'),
@@ -316,7 +333,6 @@ function conduit_install_instances() {
       ),
     ),
     'job_conduit_chunk_count' => array(
-      'bundle' => 'conduit_job',
       'field_name' => 'conduit_chunk_count',
       'label' => $t('Chunk count'),
       'description' => $t('Number of chunks in the job.'),
@@ -325,7 +341,6 @@ function conduit_install_instances() {
       ),
     ),
     'job_conduit_chunk_pass' => array(
-      'bundle' => 'conduit_job',
       'field_name' => 'conduit_chunk_pass',
       'label' => $t('Chunk pass'),
       'description' => $t('Indicates whether a particular job chunk completed with no errors.'),
@@ -335,7 +350,6 @@ function conduit_install_instances() {
       ),
     ),
     'job_conduit_log' => array(
-      'bundle' => 'conduit_job',
       'field_name' => 'conduit_log',
       'label' => $t('Log'),
       'description' => $t('Log created during completion of job by worker.'),
@@ -344,6 +358,12 @@ function conduit_install_instances() {
       ),
     ),
   );
+
+  // Assign bundle to each instance.
+  foreach ($instances as &$instance) {
+    $instance['bundle'] = $bundle;
+  }
+  return $instances;
 }
 
 /**
