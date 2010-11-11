@@ -26,5 +26,15 @@ function conduit_execute_conduit_default_properties() {
  * Implements hook_conduit_queue_build().
  */
 function conduit_execute_conduit_queue_build(array $properties) {
+  // If multiple commands specified then split them up into separate chunks.
+  if (is_array($properties['command'])) {
+    $items = array();
+    foreach ($properties['command'] as $command) {
+      $items[] = array(
+        'command' => $command,
+      );
+    }
+    return $items;
+  }
   return array(array());
 }
