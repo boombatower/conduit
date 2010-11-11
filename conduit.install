@@ -115,19 +115,6 @@ function conduit_install_fields() {
       ),
     ),
 
-    // Conduit worker fields.
-    'conduit_plugins' => array(
-      'field_name' => 'conduit_plugins',
-      'type' => 'list',
-      'cardinality' => -1,
-      'settings' => array(
-        'max_length' => 64,
-        'allowed_values' =>
-          "foo|bar\n" .
-          "foo2|bar2\n", // @TODO: Get a list of plugins and update when new modules installed.
-      ),
-    ),
-
     // Conduit client, group, and job fields.
     'conduit_properties' => array(
       'field_name' => 'conduit_properties',
@@ -235,16 +222,6 @@ function conduit_install_instances() {
         'default' => array(
           'type' => 'hidden',
         ),
-      ),
-    ),
-    'worker_conduit_plugins' => array(
-      'bundle' => 'conduit_worker',
-      'field_name' => 'conduit_plugins',
-      'label' => $t('Plugins'),
-      'description' => $t('Plugins supported by the worker.'),
-      'required' => TRUE,
-      'widget' => array(
-        'type' => 'options_buttons',
       ),
     ),
 
