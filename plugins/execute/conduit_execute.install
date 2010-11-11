@@ -20,6 +20,9 @@ function conduit_execute_install() {
     $instance['entity_type'] = 'node';
     field_create_instance($instance);
   }
+
+  // Set job node to defaultly create a new revision.
+  variable_set('node_options_conduit_job_execute', array('status', 'revision'));
 }
 
 /**
