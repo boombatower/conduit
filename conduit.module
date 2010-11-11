@@ -209,7 +209,7 @@ function conduit_validate($node, $form = array(), &$form_state) {
  * Implements hook_node_insert().
  */
 function conduit_node_insert($node) {
-  if ($node->type == 'conduit_job') {
+  if (strpos($node->type, 'conduit_job') === 0) {
     // Since the node is brand new it will note have the ->conduit property
     // which is used throughout the API, so force a load.
     conduit_node_load(array($node), array($node->type));
@@ -222,7 +222,7 @@ function conduit_node_insert($node) {
  * Implements hook_update().
  */
 function conduit_node_update($node) {
-  if ($node->type == 'conduit_job') {
+  if (strpos($node->type, 'conduit_job') === 0) {
     conduit_include('queue');
     conduit_queue_create($node);
   }
@@ -366,7 +366,7 @@ function conduit_properties_merge($entity) {
   // recurse through the group tree and merge the properties with those of the
   // entity. If the entity is a client then it is the root element and thus
   // does not belong to a group.
-  if ($entity->type == 'conduit_group' || $entity->type == 'conduit_job') {
+  if ($entity->type == 'conduit_group' || strpos($entity->type, 'conduit_job') === 0) {
     $properties = conduit_properties_recurse_groups(node_load($entity->conduit['parent']), $properties);
   }
 
