@@ -38,3 +38,19 @@ function conduit_execute_conduit_queue_build(array $properties) {
   }
   return array(array());
 }
+
+/**
+ * Implements hook_conduit_queue_init().
+ */
+function conduit_execute_conduit_init($node, $chunk_count) {
+  for ($delta = 0; $delta < $chunk_count; $delta++) {
+    $node->conduit_result_execute[LANGUAGE_NONE][$delta]['value'] = '[placeholder]';
+  }
+}
+
+/**
+ * Implements hook_conduit_result().
+ */
+function conduit_execute_conduit_result($node, $delta, $result) {
+  $node->conduit_result_execute[LANGUAGE_NONE][$delta]['value'] = $result;
+}

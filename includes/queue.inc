@@ -11,6 +11,8 @@
  *
  * @param $job
  *   Job node.
+ * @return
+ *   The number of queue items created.
  */
 function conduit_queue_create($job) {
   $queue = DrupalQueue::get('conduit_job');
@@ -27,6 +29,7 @@ function conduit_queue_create($job) {
     );
     $queue->createItem($item);
   }
+  return count($items);
 }
 
 /**
