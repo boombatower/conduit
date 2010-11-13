@@ -20,6 +20,22 @@
  */
 
 /**
+ * Implements hook_permission().
+ */
+function conduit_permission() {
+  $permissions = array();
+
+  foreach (array('meta', 'status', 'result') as $fieldset) {
+    $permissions['edit conduit job ' . $fieldset] = array(
+      'title' => t('Edit conduit job @fieldset information.', array('@fieldset' => $fieldset)),
+      'description' => t('Edit the fields conntained within the @fieldset fieldset.', array('@fieldset' => $fieldset)),
+    );
+  }
+
+  return $permissions;
+}
+
+/**
  * Implements hook_node_info().
  */
 function conduit_node_info() {
@@ -96,6 +112,7 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
       '#title' => ucfirst($fieldset),
       '#collapsible' => TRUE,
       '#collapsed' => $fieldset != 'meta',
+      '#access' => user_access('edit conduit job ' . $fieldset),
     );
   }
 
