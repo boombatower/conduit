@@ -45,13 +45,18 @@ function conduit_queue_claim() {
     // Load the job node related to the item, add the item to the job
     // properties, apply the property overrides, and merge the job properties
     // with the groups and defaults.
-    $job = node_load($item->data['nid'], $item->data['vid']);
-    $job->conduit['properties']['item'] = $item;
-    $job->conduit['properties'] = array_replace_recursive($job->conduit['properties'], $item->data['overrides']);
-    unset($job->conduit['properties']['item']->data['overrides']);
+    if ($job = node_load($item->data['nid'], $item->data['vid'])) {
+      $job->conduit['properties']['item'] = $item;
+      $job->conduit['properties'] = array_replace_recursive($job->conduit['properties'], $item->data['overrides']);
+      unset($job->conduit['properties']['item']->data['overrides']);
 
-    // Load group properties recursively and merge in default properties.
-    return conduit_properties_merge($job);
+      // Load group properties recursively and merge in default properties.
+      return conduit_properties_merge($job);
+    }
+
+    // Remove stale queue item and try again.
+    conduit_queue_delete($item);
+    return conduit_queue_claim();
   }
   return FALSE;
 }
