@@ -208,7 +208,7 @@ function conduit_validate($node, $form = array(), &$form_state) {
   if (isset($node->conduit_key)) {
     $key = $node->conduit_key[LANGUAGE_NONE][0]['value'];
     if (drupal_strlen($key) < 32 || drupal_strlen($key) > 64) {
-      form_set_error('conduit_key', t('Key must be at least 32 and no more then 64 characters in length.'));
+      form_set_error('conduit_key', t('The key field must be at least 32 and no more then 64 characters in length.'));
     }
   }
 
@@ -234,11 +234,11 @@ function conduit_validate($node, $form = array(), &$form_state) {
     if ($valid) {
       $properties = conduit_properties($properties);
       if (!is_array($properties)) {
-        form_set_error('conduit_properties', t('Properties must be valid PHP syntax.'));
+        form_set_error('conduit_properties', t('The properties field must contain valid PHP syntax.'));
       }
     }
     else {
-      form_set_error('conduit_properties', t('Properties may only contain arrays, strings, numbers, or whitespace.'));
+      form_set_error('conduit_properties', t('The properties field may only contain arrays, numbers, strings, or whitespace.'));
     }
   }
 }
