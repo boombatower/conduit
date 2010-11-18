@@ -69,6 +69,7 @@ function conduit_execute_conduit_init($node, $chunk_count) {
  * Implements hook_conduit_result().
  */
 function conduit_execute_conduit_result($node, $delta, $result) {
+  // Store plugin specific result.
   $node->conduit_result_execute[LANGUAGE_NONE][$delta]['value'] = $result;
 
   // Generate summary message.
