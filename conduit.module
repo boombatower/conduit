@@ -215,9 +215,30 @@ function conduit_validate($node, $form = array(), &$form_state) {
   // Ensure properties are in valid php syntax.
   if (isset($node->conduit_properties)) {
     $properties = $node->conduit_properties[LANGUAGE_NONE][0]['value'];
-    $properties = conduit_properties($properties);
-    if (!is_array($properties)) {
-      form_set_error('conduit_properties', t('Properties must be valid PHP syntax.'));
+
+    // Ensure the properties string contains only allowed tokens, ignoring the
+    // first token which will be the <?php token.
+    $tokens = token_get_all('<?php ' . $properties);
+    array_shift($tokens);
+    $allowed = array(T_ARRAY, T_CONSTANT_ENCAPSED_STRING, T_DNUMBER, T_DOUBLE_ARROW, T_LNUMBER, T_STRING, T_WHITESPACE);
+    $valid = TRUE;
+    foreach ($tokens as $token) {
+      if (is_array($token) && !in_array($token[0], $allowed)) {
+        $valid = FALSE;
+        break;
+      }
+    }
+
+    // If the properties string contains only valid tokens then attempt to
+    // evaluate it as a a PHP array, otherwise display an error.
+    if ($valid) {
+      $properties = conduit_properties($properties);
+      if (!is_array($properties)) {
+        form_set_error('conduit_properties', t('Properties must be valid PHP syntax.'));
+      }
+    }
+    else {
+      form_set_error('conduit_properties', t('Properties may only contain arrays, strings, numbers, or whitespace.'));
     }
   }
 }
