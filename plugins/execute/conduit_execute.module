@@ -14,6 +14,23 @@ function conduit_execute_node_info() {
 }
 
 /**
+ * Implements hook_conduit_validate().
+ */
+function conduit_execute_conduit_validate(array $properties) {
+  $errors = array();
+  foreach ($properties as $key => $value) {
+    switch ($key) {
+      case 'command':
+        if (!is_string($value) && !is_array($value)) {
+          $errors[] = t('The <em>command</em> property must either be a single command or an array of commands.');
+        }
+        break;
+    }
+  }
+  return $errors;
+}
+
+/**
  * Implements hook_conduit_default_properties().
  */
 function conduit_execute_conduit_default_properties() {

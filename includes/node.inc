@@ -163,11 +163,155 @@ function conduit_validate($node, $form = array(), &$form_state) {
       if (!is_array($properties)) {
         form_set_error('conduit_properties', t('The properties field must contain valid PHP syntax.'));
       }
+      else {
+        // Allow plugins to validate the properties of which they are responsible.
+        if ($errors = module_invoke_all('conduit_validate', $properties)) {
+          form_set_error('conduit_properties', t('The properties field contains the following problems.') . theme('item_list', array('items' => $errors)));
+        }
+      }
     }
     else {
       form_set_error('conduit_properties', t('The properties field may only contain arrays, numbers, strings, or whitespace.'));
     }
   }
+}
+
+/**
+ * Implements hook_conduit_validate().
+ *
+ * Validate all standard properties that any job may contain.
+ */
+function conduit_conduit_validate(array $properties) {
+  $errors = array();
+  foreach ($properties as $key => $value) {
+    switch ($key) {
+      case 'context':
+        if (!is_numeric($value) || intval($value) != $value) {
+          $errors[] = t('The <em>context</em> property must be an integer.');
+        }
+        break;
+      case 'mask':
+      case 'nomask':
+        if (($message = conduit_validate_regex($value)) !== TRUE) {
+          $errors[] = t('The <em>@key</em> property must be a valid Perl regular expression as accepted by the PHP function <a href="http://php.net/preg_match">preg_match()</a>. The following error was found: @error.',
+            array('@key' => $key, '@error' => $message));
+        }
+        break;
+      case 'newline':
+        if (!in_array($value, array('any', 'unix'))) {
+          $errors[] = t('The <em>newline</em> property must be either "any" or "unix".');
+        }
+        break;
+      case 'patch':
+        if (!is_array($value)) {
+          $errors[] = t('The <em>patch</em> property must be an array containing URLs.');
+        }
+        else {
+          foreach ($value as $number => $url) {
+            if (!parse_url($url)) {
+              $errors[] = t('The <em>patch</em> property contains an invalid URL in entry number %number.', array('%number' => $number + 1));
+            }
+          }
+        }
+        break;
+      case 'path':
+        if (!conduit_validate_path($value)) {
+          $errors[] = t('The <em>path</em> property must be a relative path that does not begin or end with "/", does contain parts of "." or "..", or any backslashes ("\").');
+        }
+        break;
+      case 'plugin':
+        if ($value == 'conduit' || !module_exists($value) || !in_array($value, module_implements('conduit_default_properties'))) {
+          $errors[] = t('The <em>plugin</em> property is not a valid plugin.');
+        }
+        break;
+      case 'setup':
+        if (!is_array($value)) {
+          $errors[] = t('The <em>setup</em> property must be an array of commands.');
+        }
+        break;
+      case 'ssh':
+        if (!is_array($value)) {
+          $errors[] = t('The <em>ssh</em> property must be an array of ssh information.');
+        }
+        else {
+          foreach ($value as $number => $ssh) {
+            $invalid = FALSE;
+            foreach ($ssh as $key => $value) {
+              if (!in_array($key, array('key', 'host', 'user', 'port'))) {
+                $errors[] = t('The <em>ssh</em> property value number %number has an invalid key.', array('%number' => $number + 1));
+                $invalid = TRUE;
+              }
+              elseif ($key == 'port' && (!is_numeric($value) || intval($value) != $value)) {
+                $errors[] = t('The <em>ssh</em> property value number %number contains an invalid port number.', array('%number' => $number + 1));
+              }
+            }
+            if (!$invalid && count($ssh) < 4) {
+              $errors[] = t('The <em>ssh</em> property value number %number does not contain the four required keys.', array('%number' => $number + 1));
+            }
+          }
+        }
+        break;
+      case 'vcs':
+         if (!is_array($value)) {
+          $errors[] = t('The <em>vcs</em> property must be an array of version control information.');
+        }
+        else {
+          foreach ($value as $path => $url) {
+            if ($path != '' && !conduit_validate_path($path)) {
+              $errors[] = t('The <em>vcs</em> property contains the invalid path "@path".', array('@path' => $path));
+            }
+            if (!in_array(substr($url, 0, 3), array('bzr', 'cvs', 'git', 'svn'))) { // @TODO Strong validation.
+              $errors[] = t('The <em>vcs</em> property contains a URL that references in unsupported version control system at path "@path".', array('@path' => $path));
+            }
+          }
+        }
+        break;
+      case 'verbose':
+        if (!is_bool($value)) {
+          $errors[] = t('The <em>verbose</em> property must be a boolean, either TRUE or FALSE.');
+        }
+        break;
+    }
+  }
+  return $errors;
+}
+
+/**
+ * Validate a regular expression.
+ *
+ * @param $pattern
+ *   Regular expression pattern.
+ * @return
+ *   TRUE if valid, otherwise an error message.
+ * @see preg_match()
+ */
+function conduit_validate_regex($pattern) {
+  restore_error_handler();
+  $return = @preg_match($pattern, '');
+  set_error_handler('_drupal_error_handler');
+  if ($return === FALSE) {
+    $error = error_get_last();
+    return $error['message'];
+  }
+  return TRUE;
+}
+
+/**
+ * Validate a relative directory or file path.
+ *
+ * @param $path
+ *   A directory or file path.
+ * @return
+ *   TRUE if valid path, otherwise FALSE.
+ */
+function conduit_validate_path($path) {
+  $parts = explode('/', $path);
+  foreach ($parts as $part) {
+    if (in_array($part, array('', '.', '..')) || strpos($part, '\\') !== FALSE) {
+      return FALSE;
+    }
+  }
+  return TRUE;
 }
 
 /**
