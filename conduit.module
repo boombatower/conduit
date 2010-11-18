@@ -117,7 +117,7 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
   }
 
   $status = array('conduit_done', 'conduit_chunk_count');
-  $result = array('conduit_pass', 'conduit_chunk_pass', 'conduit_log');
+  $result = array('conduit_pass', 'conduit_summary', 'conduit_chunk_pass', 'conduit_log');
   foreach (element_children($form) as $key) {
     if (isset($form[$key]['#type']) && $form[$key]['#type'] == 'fieldset') {
       continue;

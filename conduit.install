@@ -154,14 +154,18 @@ function conduit_install_fields() {
       'type' => 'number_boolean',
       'instance_settings' => array('prefix' => 'Job finished', 'suffix' => ''),
     ),
+    'conduit_chunk_count' => array(
+      'field_name' => 'conduit_chunk_count',
+      'type' => 'number_integer',
+    ),
     'conduit_pass' => array(
       'field_name' => 'conduit_pass',
       'type' => 'number_boolean',
       'instance_settings' => array('prefix' => 'Job finished with no errors', 'suffix' => ''),
     ),
-    'conduit_chunk_count' => array(
-      'field_name' => 'conduit_chunk_count',
-      'type' => 'number_integer',
+    'conduit_summary' => array(
+      'field_name' => 'conduit_summary',
+      'type' => 'text_long',
     ),
     'conduit_chunk_pass' => array(
       'field_name' => 'conduit_chunk_pass',
@@ -323,6 +327,14 @@ function conduit_install_instances_job($bundle) {
         'type' => 'boolean_checkbox',
       ),
     ),
+    'job_conduit_chunk_count' => array(
+      'field_name' => 'conduit_chunk_count',
+      'label' => $t('Chunk count'),
+      'description' => $t('Number of chunks in the job.'),
+      'widget' => array(
+        'type' => 'number',
+      ),
+    ),
     'job_conduit_pass' => array(
       'field_name' => 'conduit_pass',
       'label' => $t('Pass'),
@@ -332,12 +344,12 @@ function conduit_install_instances_job($bundle) {
         'type' => 'boolean_checkbox',
       ),
     ),
-    'job_conduit_chunk_count' => array(
-      'field_name' => 'conduit_chunk_count',
-      'label' => $t('Chunk count'),
-      'description' => $t('Number of chunks in the job.'),
+    'job_conduit_summary' => array(
+      'field_name' => 'conduit_summary',
+      'label' => $t('Summary'),
+      'description' => $t('Summary of the job result.'),
       'widget' => array(
-        'type' => 'number',
+        'type' => 'text_textarea',
       ),
     ),
     'job_conduit_chunk_pass' => array(

@@ -27,9 +27,6 @@ function conduit_api_result($item, $pass, $result, $log) {
     $job->conduit_chunk_pass[LANGUAGE_NONE][$item->data['delta']]['value'] = (int) $pass;
     $job->conduit_log[LANGUAGE_NONE][$item->data['delta']]['value'] = $log;
 
-    // Allow the plugin to place the result on the proper field(s).
-    module_invoke($job->conduit['properties']['plugin'], 'conduit_result', $job, $item->data['delta'], $result);
-
     // Determine if the job has been completed and the overall pass/fail state.
     $done = $pass = TRUE;
     foreach ($job->conduit_chunk_pass[LANGUAGE_NONE] as $chunk) {
@@ -44,6 +41,9 @@ function conduit_api_result($item, $pass, $result, $log) {
     }
     $job->conduit_done[LANGUAGE_NONE][0]['value'] = (int) $done;
     $job->conduit_pass[LANGUAGE_NONE][0]['value'] = (int) $pass;
+
+    // Allow the plugin to place the result on the proper field(s).
+    module_invoke($job->conduit['properties']['plugin'], 'conduit_result', $job, $item->data['delta'], $result);
 
     // Save the changes made to the job.
     node_save($job);
