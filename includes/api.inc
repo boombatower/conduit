@@ -21,6 +21,9 @@
  *   TRUE if successfull, otherwise FALSE.
  */
 function conduit_api_result($item, $pass, $result, $log) {
+  // Acquire a lock to modify the node.
+  $lock = conduit_api_lock_acquire($item->data['nid']);
+
   // Attempt to load the job node related to the queue item.
   if ($job = node_load($item->data['nid'], $item->data['vid'])) {
     // Store the chunk pass value and log.
@@ -50,7 +53,25 @@ function conduit_api_result($item, $pass, $result, $log) {
 
     // Remove the complete queue item.
     conduit_queue_delete($item);
-    return TRUE;
   }
-  return FALSE;
+  lock_release($lock);
+  return (bool) $job;
+}
+
+/**
+ * Acquire a Conduit API lock for a specific node.
+ *
+ * @param $nid
+ *    Node ID.
+ * @return
+ *   The lock name to use when releasing lock.
+ * @see lock_acquire()
+ * @see lock_release()
+ */
+function conduit_api_lock_acquire($nid) {
+  $lock = 'conduit_api_' . $nid;
+  while (!lock_acquire($lock)) {
+    sleep(1);
+  }
+  return $lock;
 }
