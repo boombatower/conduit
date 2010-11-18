@@ -165,7 +165,20 @@ function conduit_validate($node, $form = array(), &$form_state) {
       }
       else {
         // Allow plugins to validate the properties of which they are responsible.
-        if ($errors = module_invoke_all('conduit_validate', $properties)) {
+        $errors = module_invoke_all('conduit_validate', $properties);
+
+        // If the node is a job then ensure that a plugin key exists.
+        if (strpos($node->type, 'conduit_job') === 0) {
+          conduit_node_load(array($node), array($node->type));
+          $properties_merged = conduit_properties_merge($node);
+          if (!isset($properties_merged['plugin'])) {
+            array_unshift($errors, t('The properties array does not contain a <em>plugin</em> key and does not exist in the merged properties array.'));
+          }
+        }
+
+        // If any errors were set by the plugins or due to a missing plugin key
+        // then display all the error grouped together.
+        if ($errors) {
           form_set_error('conduit_properties', t('The properties field contains the following problems.') . theme('item_list', array('items' => $errors)));
         }
       }
