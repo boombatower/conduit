@@ -75,9 +75,7 @@ $handler->display->display_options['arguments']['conduit_parent_nid']['not'] = 0
 $handler->display->display_options['filters']['type']['id'] = 'type';
 $handler->display->display_options['filters']['type']['table'] = 'node';
 $handler->display->display_options['filters']['type']['field'] = 'type';
-$handler->display->display_options['filters']['type']['value'] = array(
-  'conduit_job' => 'conduit_job',
-);
+$handler->display->display_options['filters']['type']['value'] = drupal_map_assoc(array_filter(array_keys(node_type_get_types()), 'conduit_node_type_job'));
 /* Filter: Node: Title */
 $handler->display->display_options['filters']['title']['id'] = 'title';
 $handler->display->display_options['filters']['title']['table'] = 'node';
