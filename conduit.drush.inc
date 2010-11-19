@@ -123,7 +123,7 @@ function drush_conduit_group($title = '', $owner = NULL, $properties = '', $pare
  */
 function drush_conduit_job($title = '', $parent = NULL, $properties = '') {
   $job = new stdClass();
-  $job->type = 'conduit_job_execute';
+  $job->type = 'conduit_job_conduit_execute';
   $job->language = LANGUAGE_NONE;
   $job->title = $title;
   $job->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;

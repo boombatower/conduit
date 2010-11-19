@@ -80,11 +80,12 @@ function conduit_node_info() {
  * @see hook_node_info()
  */
 function conduit_node_info_job($plugin) {
+  $title = ucfirst(str_replace('_', ' ', $plugin));
   return array(
-    'conduit_job_execute' => array(
-      'name' => t('Conduit job - @plugin', array('@plugin' => $plugin)),
+    'conduit_job_' . $plugin => array(
+      'name' => t('Conduit job - @plugin', array('@plugin' => $title)),
       'base' => 'conduit',
-      'description' => t('Job, of type @plugin, to be performed.', array('@plugin' => $plugin)),
+      'description' => t('Job, of type @plugin, to be performed.', array('@plugin' => $title)),
     ),
   );
 }

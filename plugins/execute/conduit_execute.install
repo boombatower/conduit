@@ -22,7 +22,7 @@ function conduit_execute_install() {
   }
 
   // Set job node to defaultly create a new revision.
-  variable_set('node_options_conduit_job_execute', array('status', 'revision'));
+  variable_set('node_options_conduit_job_conduit_execute', array('status', 'revision'));
 }
 
 /**
@@ -30,12 +30,14 @@ function conduit_execute_install() {
  */
 function conduit_execute_uninstall() {
   module_load_install('conduit');
-  conduit_uninstall_node_type('conduit_job_execute');
+  conduit_uninstall_node_type('conduit_job_conduit_execute');
 
   // Delete fields.
   foreach (array_keys(conduit_execute_install_fields()) as $field) {
     field_delete_field($field);
   }
+
+  variable_del('node_options_conduit_job_conduit_execute');
 }
 
 /**
@@ -47,8 +49,8 @@ function conduit_execute_uninstall() {
 function conduit_execute_install_fields() {
   $t = get_t();
   return array(
-    'conduit_result_execute' => array(
-      'field_name' => 'conduit_result_execute',
+    'conduit_result_conduit_execute' => array(
+      'field_name' => 'conduit_result_conduit_execute',
       'type' => 'text_long',
       'cardinality' => -1,
     ),
@@ -64,10 +66,10 @@ function conduit_execute_install_fields() {
 function conduit_execute_install_instances() {
   module_load_install('conduit');
   $t = get_t();
-  return conduit_install_instances_job('conduit_job_execute') + array(
-    'job_conduit_result_execute' => array(
-      'bundle' => 'conduit_job_execute',
-      'field_name' => 'conduit_result_execute',
+  return conduit_install_instances_job('conduit_job_conduit_execute') + array(
+    'job_conduit_result_conduit_execute' => array(
+      'bundle' => 'conduit_job_conduit_execute',
+      'field_name' => 'conduit_result_conduit_execute',
       'label' => $t('Execute result'),
       'description' => $t('The output resulting from executing the command.'),
       'widget' => array(
