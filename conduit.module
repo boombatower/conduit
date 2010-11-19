@@ -20,6 +20,15 @@
  */
 
 /**
+ * Implements hook_hook_info().
+ *
+ * Load node.inc so node hooks are cached.
+ */
+function conduit_hook_info() {
+  conduit_include('node');
+}
+
+/**
  * Implements hook_permission().
  */
 function conduit_permission() {
