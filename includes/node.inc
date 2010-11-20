@@ -31,8 +31,8 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
   }
 
   // Move all conduit fields into a fieldset.
-  $job = conduit_node_type_job($form_id);
-  $fieldsets = $job ? array('meta', 'status', 'result') : array('meta');
+  $is_job = (bool) conduit_job_info($form_id);
+  $fieldsets = $is_job ? array('meta', 'status', 'result') : array('meta');
   foreach ($fieldsets as $fieldset) {
     $form['conduit_' . $fieldset] = array(
       '#type' => 'fieldset',
@@ -52,7 +52,7 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
 
     if ($key == 'title' || strpos($key, 'conduit_') === 0) {
       $fieldset = 'meta';
-      if ($job) {
+      if ($is_job) {
         if (in_array($key, $status)) {
           $fieldset = 'status';
         }
@@ -319,7 +319,7 @@ function conduit_validate_path($path) {
  * Implements hook_insert().
  */
 function conduit_insert($node) {
-  if (conduit_node_type_job($node->type)) {
+  if (conduit_job_info($node->type)) {
     // Since the node is brand new it will not have the ->conduit property
     // which is used throughout the API, so force a load.
     conduit_node_load(array($node), array($node->type));
@@ -360,7 +360,7 @@ function conduit_update($node) {
 function conduit_view($node, $view_mode) {
   if ($view_mode == 'full' && node_is_page($node)) {
     // Add a breakcrumb on group or job nodes.
-    if ($node->type == 'conduit_group' || conduit_node_type_job($node->type)) {
+    if ($node->type == 'conduit_group' || conduit_job_info($node->type)) {
       // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
       // display them left-to-right so we need to reverse order and remove the
       // current node from the list.
@@ -458,16 +458,4 @@ function conduit_node_view_alter(&$build) {
       );
     }
   }
-}
-
-/**
- * Determine if the node type is a job type.
- *
- * @param $type
- *   Node type.
- * @return
- *   TRUE if the node type is a conduit job type, otherwise FALSE.
- */
-function conduit_node_type_job($type) {
-  return strpos($type, 'conduit_job') === 0;
 }

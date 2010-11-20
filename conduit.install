@@ -39,9 +39,6 @@ function conduit_install() {
     }
   }
   variable_set('node_options_conduit_job', array('status', 'revision'));
-
-  // Create the job queue.
-  DrupalQueue::get('conduit_job')->createQueue();
 }
 
 /**
@@ -66,11 +63,15 @@ function conduit_uninstall() {
     variable_del('pathauto_node_' . $type . '_pattern');
   }
 
-  // Remove job queue.
-  DrupalQueue::get('conduit_job')->deleteQueue();
+  // Remove each category job queue that was ever used.
+  $categories = variable_get('conduit_categories', array());
+  foreach ($categories as $category) {
+    DrupalQueue::get('conduit_job_' . $category)->deleteQueue();
+  }
 
   // Remove variables.
   $variables = array(
+    'conduit_categories',
     'conduit_lease_time',
   );
   foreach ($variables as $variable) {

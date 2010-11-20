@@ -128,10 +128,11 @@ function conduit_properties_merge($entity) {
 
   // If the merged list of properties contains a plugin key (all jobs must)
   // then merge the default properties specified by the plugin with the rest of
-  // the properties.
-  if (!empty($properties['plugin'])) {
-    $default_properties = module_invoke($properties['plugin'], 'conduit_default_properties');
+  // the properties. Add the plugin property based on job node type.
+  if ($info = conduit_job_info($entity->type)) {
+    $default_properties = module_invoke($info['module'], 'conduit_default_properties');
     $properties = array_replace_recursive($default_properties, $properties);
+    $properties['plugin'] = $info['plugin'];
   }
   return $properties;
 }
@@ -155,20 +156,40 @@ function conduit_properties_recurse_groups($group, array $properties = array()) 
 }
 
 /**
- * Implements hook_modules_enabled().
+ * Determine job information based on the node type.
+ *
+ * @param $type
+ *   Node type.
+ * @return
+ *   An associative array with the keys: module, category, and plugin,
+ *   otherwise FALSE if the node type does not represent a job.
+ */
+function conduit_job_info($type) {
+  if (strpos($type, 'conduit_job') === 0) {
+    // All job node types should be in the form conduit_job_CATEGORY_PLUGIN.
+    list(, , $category, $plugin) = explode('_', $type);
+    return array(
+      'module' => $category . '_' . $plugin,
+      'category' => $category,
+      'plugin' => $plugin,
+    );
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_flush_caches().
  *
  * When any modules are enabled rebuild the list of allowed_values for
  * conduit_category to ensure it is up-to-date.
  */
-function conduit_modules_enabled() {
+function conduit_flush_caches() {
   // Determine the categories available given the job node types.
-  conduit_include('node');
   $types = array_keys(node_type_get_types());
   $categories = array();
   foreach ($types as $type) {
-    if (conduit_node_type_job($type)) {
-      list(, , $category) = explode('_', $type);
-      $categories[$category] = ucfirst($category);
+    if ($info = conduit_job_info($type)) {
+      $categories[$info['category']] = ucfirst($info['category']);
     }
   }
 
@@ -179,20 +200,23 @@ function conduit_modules_enabled() {
   }
   $allowed_values = trim($allowed_values);
 
-  // Grab the field definitions and update the conduit_category field.
-  module_load_include('install', 'conduit');
-  $fields = conduit_install_fields();
-  if ($fields['conduit_category']['settings']['allowed_values'] != $allowed_values) {
-    $fields['conduit_category']['settings']['allowed_values'] = $allowed_values;
-    field_update_field($fields['conduit_category']);
-  }
-}
+  // Grab the field definition, check for changes to the allowed_values, and
+  // if changed then update the conduit_category field.
+  $field = current(field_read_fields(array('field_name' => 'conduit_category')));
+  if ($field['settings']['allowed_values'] != $allowed_values) {
+    $field['settings']['allowed_values'] = $allowed_values;
+    field_update_field($field);
 
-/**
- * Implements hook_modules_disabled().
- */
-function conduit_modules_disabled() {
-  conduit_modules_enabled();
+    // Ensure queues for each category exist.
+    foreach ($categories as $category) {
+      DrupalQueue::get('conduit_job_' . $category)->createQueue();
+    }
+
+    // Keep a list of all categories ever used for cleanup during uninstall.
+    $all_categories = variable_get('conduit_categories', array());
+    $categories = drupal_map_assoc($categories);
+    variable_set('conduit_categories', array_merge($all_categories, $categories));
+  }
 }
 
 /**

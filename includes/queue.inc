@@ -15,13 +15,15 @@
  *   The number of queue items created.
  */
 function conduit_queue_create($job) {
-  $queue = DrupalQueue::get('conduit_job');
+  $info = conduit_job_info($job->type);
+  $queue = DrupalQueue::get('conduit_job_' . $info['category']);
 
   // Plugin builds the item(s) to be queued in association with job.
   $properties = conduit_properties_merge($job);
   $items = module_invoke($job->conduit['properties']['plugin'], 'conduit_queue_build', $properties);
   foreach ($items as $delta => $overrides) {
     $item = array(
+      'category' => $info['category'],
       'nid' => $job->nid,
       'vid' => $job->vid,
       'delta' => $delta,
@@ -35,12 +37,14 @@ function conduit_queue_create($job) {
 /**
  * Claim an item from the queue.
  *
+ * @param $category
+ *   The job category from which to claim an item from.
  * @return
  *   An array of merged properties for the job and the queue item or FALSE.
  */
-function conduit_queue_claim() {
+function conduit_queue_claim($category) {
   // Attempt to claim an item from the queue.
-  $queue = DrupalQueue::get('conduit_job');
+  $queue = DrupalQueue::get('conduit_job_' . $category);
   if ($item = $queue->claimItem(variable_get('conduit_lease_time', 3600))) {
     // Load the job node related to the item, add the item to the job
     // properties, apply the property overrides, and merge the job properties
@@ -68,7 +72,7 @@ function conduit_queue_claim() {
  *   Queue item object.
  */
 function conduit_queue_release($item) {
-  return DrupalQueue::get('conduit_job')->releaseItem($item);
+  return DrupalQueue::get('conduit_job_' . $item->data['category'])->releaseItem($item);
 }
 
 /**
@@ -78,5 +82,5 @@ function conduit_queue_release($item) {
  *   Queue item object.
  */
 function conduit_queue_delete($item) {
-  return DrupalQueue::get('conduit_job')->deleteItem($item);
+  return DrupalQueue::get('conduit_job_' . $item->data['category'])->deleteItem($item);
 }
