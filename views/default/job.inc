@@ -56,7 +56,59 @@ $handler->display->display_options['fields']['title']['alter']['html'] = 0;
 $handler->display->display_options['fields']['title']['hide_empty'] = 0;
 $handler->display->display_options['fields']['title']['empty_zero'] = 0;
 $handler->display->display_options['fields']['title']['link_to_node'] = 1;
-/* Argument: Fields: conduit_parent (conduit_parent) */
+/* Field: Fields: conduit_done */
+$handler->display->display_options['fields']['entity_id']['id'] = 'entity_id';
+$handler->display->display_options['fields']['entity_id']['table'] = 'field_data_conduit_done';
+$handler->display->display_options['fields']['entity_id']['field'] = 'entity_id';
+$handler->display->display_options['fields']['entity_id']['label'] = 'Done';
+$handler->display->display_options['fields']['entity_id']['alter']['alter_text'] = 0;
+$handler->display->display_options['fields']['entity_id']['alter']['make_link'] = 0;
+$handler->display->display_options['fields']['entity_id']['alter']['absolute'] = 0;
+$handler->display->display_options['fields']['entity_id']['alter']['trim'] = 0;
+$handler->display->display_options['fields']['entity_id']['alter']['word_boundary'] = 0;
+$handler->display->display_options['fields']['entity_id']['alter']['ellipsis'] = 0;
+$handler->display->display_options['fields']['entity_id']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['entity_id']['alter']['html'] = 0;
+$handler->display->display_options['fields']['entity_id']['hide_empty'] = 0;
+$handler->display->display_options['fields']['entity_id']['empty_zero'] = 0;
+$handler->display->display_options['fields']['entity_id']['settings'] = array(
+  'prefix_suffix' => 1,
+);
+/* Field: Fields: conduit_pass */
+$handler->display->display_options['fields']['entity_id_1']['id'] = 'entity_id_1';
+$handler->display->display_options['fields']['entity_id_1']['table'] = 'field_data_conduit_pass';
+$handler->display->display_options['fields']['entity_id_1']['field'] = 'entity_id';
+$handler->display->display_options['fields']['entity_id_1']['label'] = 'Pass';
+$handler->display->display_options['fields']['entity_id_1']['alter']['alter_text'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['alter']['make_link'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['alter']['absolute'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['alter']['trim'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['alter']['word_boundary'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['alter']['ellipsis'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['alter']['html'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['hide_empty'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['empty_zero'] = 0;
+$handler->display->display_options['fields']['entity_id_1']['settings'] = array(
+  'prefix_suffix' => 1,
+);
+/* Field: Fields: conduit_summary */
+$handler->display->display_options['fields']['entity_id_2']['id'] = 'entity_id_2';
+$handler->display->display_options['fields']['entity_id_2']['table'] = 'field_data_conduit_summary';
+$handler->display->display_options['fields']['entity_id_2']['field'] = 'entity_id';
+$handler->display->display_options['fields']['entity_id_2']['label'] = 'Summary';
+$handler->display->display_options['fields']['entity_id_2']['alter']['alter_text'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['alter']['make_link'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['alter']['absolute'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['alter']['trim'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['alter']['max_length'] = '128';
+$handler->display->display_options['fields']['entity_id_2']['alter']['word_boundary'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['alter']['ellipsis'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['alter']['html'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['hide_empty'] = 0;
+$handler->display->display_options['fields']['entity_id_2']['empty_zero'] = 0;
+/* Argument: Fields: conduit_parent (conduit_parent) - nid */
 $handler->display->display_options['arguments']['conduit_parent_nid']['id'] = 'conduit_parent_nid';
 $handler->display->display_options['arguments']['conduit_parent_nid']['table'] = 'field_data_conduit_parent';
 $handler->display->display_options['arguments']['conduit_parent_nid']['field'] = 'conduit_parent_nid';
