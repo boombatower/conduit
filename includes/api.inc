@@ -7,6 +7,19 @@
  */
 
 /**
+ * Claim an item from a category queue.
+ *
+ * @param $worker
+ *   The worker attempting to claim an item.
+ * @return
+ *   An array of merged properties for the job and the queue item or FALSE.
+ */
+function conduit_api_claim($worker) {
+  conduit_include('queue');
+  return conduit_queue_claim($worker->conduit_category[LANGUAGE_NONE][0]['value']);
+}
+
+/**
  * Store a chunk result.
  *
  * @param $item
