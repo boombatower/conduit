@@ -126,6 +126,15 @@ function conduit_install_fields() {
       ),
     ),
 
+    // Conduit worker fields.
+    'conduit_category' => array(
+      'field_name' => 'conduit_category',
+      'type' => 'list_text',
+      'settings' => array(
+        'allowed_values' => '',
+      ),
+    ),
+
     // Conduit client, group, and job fields.
     'conduit_properties' => array(
       'field_name' => 'conduit_properties',
@@ -237,6 +246,16 @@ function conduit_install_instances() {
         'default' => array(
           'type' => 'hidden',
         ),
+      ),
+    ),
+    'worker_conduit_category' => array(
+      'bundle' => 'conduit_worker',
+      'field_name' => 'conduit_category',
+      'label' => $t('Category'),
+      'description' => $t('Category of plugins the worker is setup to handle.'),
+      'required' => TRUE,
+      'widget' => array(
+        'type' => 'options_select',
       ),
     ),
 

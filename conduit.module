@@ -155,6 +155,47 @@ function conduit_properties_recurse_groups($group, array $properties = array()) 
 }
 
 /**
+ * Implements hook_modules_enabled().
+ *
+ * When any modules are enabled rebuild the list of allowed_values for
+ * conduit_category to ensure it is up-to-date.
+ */
+function conduit_modules_enabled() {
+  // Determine the categories available given the job node types.
+  conduit_include('node');
+  $types = array_keys(node_type_get_types());
+  $categories = array();
+  foreach ($types as $type) {
+    if (conduit_node_type_job($type)) {
+      list(, , $category) = explode('_', $type);
+      $categories[$category] = ucfirst($category);
+    }
+  }
+
+  // Build list of allowed values.
+  $allowed_values = '';
+  foreach ($categories as $category => $title) {
+    $allowed_values .= "$category|$title\n";
+  }
+  $allowed_values = trim($allowed_values);
+
+  // Grab the field definitions and update the conduit_category field.
+  module_load_include('install', 'conduit');
+  $fields = conduit_install_fields();
+  if ($fields['conduit_category']['settings']['allowed_values'] != $allowed_values) {
+    $fields['conduit_category']['settings']['allowed_values'] = $allowed_values;
+    field_update_field($fields['conduit_category']);
+  }
+}
+
+/**
+ * Implements hook_modules_disabled().
+ */
+function conduit_modules_disabled() {
+  conduit_modules_enabled();
+}
+
+/**
  * Implements hook_views_api().
  */
 function conduit_views_api() {
