@@ -99,19 +99,19 @@ function conduit_node_info_job($plugin) {
  * A tree of groups will be treated in same manor with the root group having
  * the least precedence.
  *
- * @param $entity
+ * @param $node
  *   Either a group or job node.
  * @return
  *   Associative array of properties.
  */
-function conduit_properties_merge($entity) {
+function conduit_properties_merge($node) {
   // Start with the properties of the entity.
-  $properties = !empty($entity->conduit_properties) ? $entity->conduit_properties[LANGUAGE_NONE][0]['value'] : array();
+  $properties = !empty($node->conduit_properties) ? $node->conduit_properties[LANGUAGE_NONE][0]['value'] : array();
 
   // If the entity is a job then merge the default properties specified by the
   // plugin with the rest of the properties. Add the plugin property based on
   // job type.
-  if ($info = conduit_job_info($entity->type)) {
+  if ($info = conduit_job_info($node->type)) {
     $default_properties = module_invoke($info['module'], 'conduit_default_properties');
     $properties = array_replace_recursive($default_properties, $properties);
     $properties['plugin'] = $info['plugin'];
@@ -119,8 +119,8 @@ function conduit_properties_merge($entity) {
 
   // Find the relevant parent group or client the entity belongs to and merge
   // its merged properties array with the current entity.
-  if (!empty($entity->conduit_parent)) {
-    $parent = node_load($entity->conduit_parent[LANGUAGE_NONE][0]['nid']);
+  if (!empty($node->conduit_parent)) {
+    $parent = node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']);
     $properties = array_replace_recursive($parent->conduit_properties_merged, $properties);
   }
 
