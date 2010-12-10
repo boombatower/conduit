@@ -126,6 +126,11 @@ function conduit_validate($node, $form = array(), &$form_state) {
 function conduit_conduit_validate(array $properties) {
   $errors = array();
   foreach ($properties as $key => $value) {
+    if (is_numeric($key)) {
+      $errors[] = t('Root level properties must have a key.');
+      continue;
+    }
+
     switch ($key) {
       case 'context':
         if (!is_numeric($value) || intval($value) != $value) {
