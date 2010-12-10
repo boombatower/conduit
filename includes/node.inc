@@ -7,6 +7,51 @@
  */
 
 /**
+ * Implements hook_node_info().
+ */
+function conduit_node_info() {
+  $info = array();
+
+  $info['conduit_client'] = array(
+    'name' => t('Conduit client'),
+    'base' => 'conduit',
+    'description' => t('Controls the conduit.'),
+  );
+  $info['conduit_group'] = array(
+    'name' => t('Conduit group'),
+    'base' => 'conduit',
+    'description' => t('Groups jobs together and can be used to create a hierarchy.'),
+  );
+  $info['conduit_worker'] = array(
+    'name' => t('Conduit worker'),
+    'base' => 'conduit',
+    'description' => t('Performs queued jobs.'),
+  );
+
+  return $info;
+}
+
+/**
+ * Generate job node type definition for a plugin.
+ *
+ * @param $plugin
+ *   Plugin name.
+ * @return
+ *   Node type definition to be used with hook_node_info().
+ * @see hook_node_info()
+ */
+function conduit_node_info_job($plugin) {
+  $title = ucfirst(str_replace('_', ' ', $plugin));
+  return array(
+    'conduit_job_' . $plugin => array(
+      'name' => t('Conduit job - @plugin', array('@plugin' => $title)),
+      'base' => 'conduit',
+      'description' => t('Job, of type @plugin, to be performed.', array('@plugin' => $title)),
+    ),
+  );
+}
+
+/**
  * Implements hook_form().
  */
 function conduit_form($node, &$form_state) {
