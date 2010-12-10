@@ -33,10 +33,8 @@ function conduit_install() {
     // Disable comments.
     variable_set('comment_' . $type, COMMENT_NODE_CLOSED);
 
-    if (module_exists('pathauto')) {
-      // Set pathauto patterns.
-      variable_set('pathauto_node_' . $type . '_pattern', str_replace('_', '/', $type) . '/[node:title]');
-    }
+    // Set pathauto patterns.
+    variable_set('pathauto_node_' . $type . '_pattern', str_replace('_', '/', $type) . '/[node:title]');
   }
   variable_set('node_options_conduit_job', array('status', 'revision'));
 }
