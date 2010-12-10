@@ -182,6 +182,11 @@ function conduit_conduit_validate(array $properties) {
           $errors[] = t('The <em>context</em> property must be an integer.');
         }
         break;
+      case 'database':
+        if (!in_array($value, array('mysql', 'pgsql', 'sqlite'))) {
+          $errors[] = t('The <em>database</em> key must be set to "mysql", "pgsql", or "sqlite".');
+        }
+        break;
       case 'mask':
       case 'nomask':
         if (($message = conduit_validate_regex($value)) !== TRUE) {
