@@ -139,7 +139,7 @@ function conduit_install_fields() {
     // Conduit client, group, and job fields.
     'conduit_properties' => array(
       'field_name' => 'conduit_properties',
-      'type' => 'text_long',
+      'type' => 'serial_long',
     ),
 
     // Conduit group fields.
@@ -224,12 +224,7 @@ function conduit_install_instances() {
       'label' => $t('Properties'),
       'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
       'widget' => array(
-        'type' => 'text_textarea',
-      ),
-      'display' => array(
-        'default' => array(
-          'type' => 'conduit_properties',
-        ),
+        'type' => 'serial_textarea',
       ),
     ),
 
@@ -293,12 +288,7 @@ function conduit_install_instances() {
       'label' => $t('Properties'),
       'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
       'widget' => array(
-        'type' => 'text_textarea',
-      ),
-      'display' => array(
-        'default' => array(
-          'type' => 'conduit_properties',
-        ),
+        'type' => 'serial_textarea',
       ),
     ),
   );
@@ -332,12 +322,7 @@ function conduit_install_instances_job($bundle) {
       'label' => $t('Properties'),
       'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
       'widget' => array(
-        'type' => 'text_textarea',
-      ),
-      'display' => array(
-        'default' => array(
-          'type' => 'conduit_properties',
-        ),
+        'type' => 'serial_textarea',
       ),
     ),
     'job_conduit_done' => array(

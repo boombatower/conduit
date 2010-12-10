@@ -59,7 +59,8 @@ function conduit_api_result($item, $pass, $result, $log) {
     $job->conduit_pass[LANGUAGE_NONE][0]['value'] = (int) $pass;
 
     // Allow the plugin to place the result on the proper field(s).
-    module_invoke($job->conduit['properties']['plugin'], 'conduit_result', $job, $item->data['delta'], $result);
+    $info = conduit_job_info($job->type);
+    module_invoke($info['module'], 'conduit_result', $job, $item->data['delta'], $result);
 
     // Save the changes made to the job.
     node_save($job);

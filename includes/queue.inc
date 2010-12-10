@@ -19,8 +19,7 @@ function conduit_queue_create($job) {
   $queue = DrupalQueue::get('conduit_job_' . $info['category']);
 
   // Plugin builds the item(s) to be queued in association with job.
-  $properties = conduit_properties_merge($job);
-  $items = module_invoke($job->conduit['properties']['plugin'], 'conduit_queue_build', $properties);
+  $items = module_invoke($info['module'], 'conduit_queue_build', $job->conduit_properties_merged);
   foreach ($items as $delta => $overrides) {
     $item = array(
       'category' => $info['category'],
@@ -47,15 +46,13 @@ function conduit_queue_claim($category) {
   $queue = DrupalQueue::get('conduit_job_' . $category);
   if ($item = $queue->claimItem(variable_get('conduit_lease_time', 3600))) {
     // Load the job node related to the item, add the item to the job
-    // properties, apply the property overrides, and merge the job properties
-    // with the groups and defaults.
+    // properties, and apply the property overrides.
     if ($job = node_load($item->data['nid'], $item->data['vid'])) {
-      $job->conduit['properties']['item'] = $item;
-      $job->conduit['properties'] = array_replace_recursive($job->conduit['properties'], $item->data['overrides']);
-      unset($job->conduit['properties']['item']->data['overrides']);
-
-      // Load group properties recursively and merge in default properties.
-      return conduit_properties_merge($job);
+      $properties = $job->conduit_properties_merged;
+      $properties['item'] = $item;
+      $properties = array_replace_recursive($properties, $item->data['overrides']);
+      unset($properties['item']->data['overrides']);
+      return $properties;
     }
 
     // Remove stale queue item and try again.

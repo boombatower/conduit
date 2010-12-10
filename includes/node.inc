@@ -70,61 +70,28 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
 /**
  * Implements hook_node_load().
  *
- * All the conduit specific data should already be loaded, but some of it
- * requires processing and all the conduit data will be placed in an easy to
- * access format instead of the abstract field api format for reading. This has
- * to be done in hook_node_load() instead of hook_load() since fields are not
- * present in hook_load().
+ * All the conduit specific data should already be loaded, but the merged
+ * properties array needs to be generated. This has to be done in
+ * hook_node_load() instead of hook_load() since the fields are not present.
  */
 function conduit_node_load($nodes, $types) {
-  // Look for any conduit types among the list of node types.
-  $found = FALSE;
-  foreach ($types as $type) {
-    if (strpos($type, 'conduit') === 0) {
-      $found = TRUE;
-      break;
+  if (array_filter($types, 'conduit_node_type')) {
+    foreach ($nodes as $node) {
+      $node->conduit_properties_merged = !empty($node->conduit_properties) ? conduit_properties_merge($node) : array();
     }
   }
-  // Only process nodes if a conduit type is present.
-  if (!$found) {
-    return;
-  }
+}
 
-  foreach ($nodes as $node) {
-    // Ensure the current node is a conduit node.
-    if (strpos($node->type, 'conduit') !== 0) {
-      continue;
-    }
-    $node->conduit = array();
-    $fields = array('key', 'owner', 'parent', 'properties', 'done', 'chunk_count', 'pass');
-    foreach ($fields as $field) {
-      $key = 'conduit_' . $field;
-      if (!empty($node->$key)) {
-        $value = $node->$key;
-        $node->conduit[$field] = $value[LANGUAGE_NONE][0][$field == 'owner' || $field == 'parent' ? 'nid' : 'value'];
-      }
-    }
-
-    // If the properties field has a value then parse the value, otherwise
-    // initialize the properties attribute if applicable.
-    if (isset($node->conduit['properties'])) {
-      $node->conduit['properties'] = conduit_properties($node->conduit['properties']);
-    }
-    elseif ($node->type != 'conduit_worker') {
-      $node->conduit['properties'] = array();
-    }
-
-    // If chunk_pass field is defined then entire the attribute is initialized
-    // and if it has values then simplify them and place in attribute.
-    if (isset($node->conduit_chunk_pass)) {
-      $node->conduit['chunk_pass'] = array();
-      if (!empty($node->conduit_chunk_pass)) {
-        foreach ($node->conduit_chunk_pass[LANGUAGE_NONE] as $key => $chunk) {
-          $node->conduit['chunk_pass'][$key] = $chunk['value'];
-        }
-      }
-    }
-  }
+/**
+ * Determine if a node type is a conduit type.
+ *
+ * @param $type
+ *   Node type.
+ * @return
+ *   TRUE if the type is a conduit type, otherwise FALSE.
+ */
+function conduit_node_type($type) {
+  return strpos($type, 'conduit') === 0;
 }
 
 /**
@@ -139,40 +106,14 @@ function conduit_validate($node, $form = array(), &$form_state) {
     }
   }
 
-  // Ensure properties are in valid php syntax.
-  if (isset($node->conduit_properties)) {
-    $properties = $node->conduit_properties[LANGUAGE_NONE][0]['value'];
-
-    // Ensure the properties string contains only allowed tokens, ignoring the
-    // first token which will be the <?php token.
-    $tokens = token_get_all('<?php ' . $properties);
-    array_shift($tokens);
-    $allowed = array(T_ARRAY, T_CONSTANT_ENCAPSED_STRING, T_DNUMBER, T_DOUBLE_ARROW, T_LNUMBER, T_STRING, T_WHITESPACE);
-    $valid = TRUE;
-    foreach ($tokens as $token) {
-      if (is_array($token) && !in_array($token[0], $allowed)) {
-        $valid = FALSE;
-        break;
-      }
-    }
-
-    // If the properties string contains only valid tokens then attempt to
-    // evaluate it as a a PHP array, otherwise display an error.
-    if ($valid) {
-      $properties = conduit_properties($properties);
-      if (!is_array($properties)) {
-        form_set_error('conduit_properties', t('The properties field must contain valid PHP syntax.'));
-      }
-      else {
-        // Allow plugins to validate the properties of which they are
-        // responsible and provide error messages.
-        if ($errors = module_invoke_all('conduit_validate', $properties)) {
-          form_set_error('conduit_properties', t('The properties field contains the following problems.') . theme('item_list', array('items' => $errors)));
-        }
-      }
-    }
-    else {
-      form_set_error('conduit_properties', t('The properties field may only contain arrays, numbers, strings, or whitespace.'));
+  // If properties can be loaded then allow the plugins to validate them,
+  // otherwise any errors with the properties defintion will be delt with by
+  // the serial field validation.
+  if (isset($node->conduit_properties) && ($properties = serial_eval($node->conduit_properties[LANGUAGE_NONE][0]['value']))) {
+    // Allow plugins to validate the properties of which they are
+    // responsible and provide error messages.
+    if ($errors = module_invoke_all('conduit_validate', $properties)) {
+      form_set_error('conduit_properties', t('The properties field contains the following problems.') . theme('item_list', array('items' => $errors)));
     }
   }
 }
@@ -218,11 +159,6 @@ function conduit_conduit_validate(array $properties) {
       case 'path':
         if (!conduit_validate_path($value)) {
           $errors[] = t('The <em>path</em> property must be a relative path that does not begin or end with "/", does contain parts of "." or "..", or any backslashes ("\").');
-        }
-        break;
-      case 'plugin':
-        if ($value == 'conduit' || !module_exists($value) || !in_array($value, module_implements('conduit_default_properties'))) {
-          $errors[] = t('The <em>plugin</em> property is not a valid plugin.');
         }
         break;
       case 'setup':
@@ -319,13 +255,12 @@ function conduit_validate_path($path) {
  * Implements hook_insert().
  */
 function conduit_insert($node) {
-  if (conduit_job_info($node->type)) {
-    // Since the node is brand new it will not have the ->conduit property
-    // which is used throughout the API, so force a load.
+  if ($info = conduit_job_info($node->type)) {
+    // Since the node is new it will not have the merged properties array.
     conduit_node_load(array($node), array($node->type));
-    conduit_include('queue');
 
     // Create the queue items for the job and thus the number of chunks.
+    conduit_include('queue');
     $chunk_count = conduit_queue_create($node);
 
     // Initialize job fields and insert placeholder values into all multivalued
@@ -340,7 +275,7 @@ function conduit_insert($node) {
     }
 
     // Since the plugin stores its results it must initialize its field(s).
-    module_invoke($node->conduit['properties']['plugin'], 'conduit_init', $node, $chunk_count);
+    module_invoke($info['module'], 'conduit_init', $node, $chunk_count);
   }
 }
 
@@ -404,56 +339,23 @@ function conduit_view_breadcrumb($node, $breadcrumb = array()) {
   $breadcrumb[] = l($node->title, 'node/' . $node->nid);
 
   // If the node has a parent the recurse.
-  if (!empty($node->conduit['parent'])) {
-    $breadcrumb = conduit_view_breadcrumb(node_load($node->conduit['parent']), $breadcrumb);
+  if (!empty($node->conduit_parent)) {
+    $breadcrumb = conduit_view_breadcrumb(node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']), $breadcrumb);
   }
   return $breadcrumb;
 }
 
 /**
- * Implements hook_field_formatter_info().
- */
-function conduit_field_formatter_info() {
-  return array(
-    'conduit_properties' => array(
-      'label' => t('Conduit properties'),
-      'description' => t('Represent properties in an easy to read manner.'),
-      'field types' => array('text_long'),
-    ),
-  );
-}
-
-/**
- * Implements hook_field_formatter_view().
- */
-function conduit_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
-  $element = array();
-
-  switch ($display['type']) {
-    case 'conduit_properties':
-      foreach ($items as $delta => $item) {
-        $properties = conduit_properties($item['value']);
-        $element[$delta]['#type'] = 'markup';
-        $element[$delta]['#markup'] = highlight_string('<?php ' . var_export($properties, TRUE), TRUE);
-      }
-      break;
-  }
-
-  return $element;
-}
-
-/**
  * Implements hook_node_view_alter().
- *
- * Add the inherited, or merged, display of properties to the node view.
  */
 function conduit_node_view_alter(&$build) {
   if ($build['#view_mode'] == 'full' && isset($build['conduit_properties'])) {
-    $properties_inherit = conduit_properties_merge($build['#node']);
-    if ($build['#node']->conduit['properties'] != $properties_inherit) {
+    // If the merged properties differ from the properties of the node then add
+    // the merged set of properties to the node view.
+    if ($build['#node']->conduit_properties[LANGUAGE_NONE][0]['value'] != $build['#node']->conduit_properties_merged) {
       $build['conduit_properties_inherit'] = array(
         '#type' => 'markup',
-        '#markup' => highlight_string('<?php ' . var_export($properties_inherit, TRUE), TRUE),
+        '#markup' => highlight_string('<?php ' . var_export($build['#node']->conduit_properties_merged, TRUE), TRUE),
         '#weight' => $build['conduit_properties']['#weight'] + 0.1,
       );
     }
