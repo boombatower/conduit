@@ -142,7 +142,7 @@ function conduit_node_type($type) {
 /**
  * Implements hook_validate().
  */
-function conduit_validate($node, $form = array(), &$form_state) {
+function conduit_validate($node, $form, &$form_state) {
   // Check conduit key length.
   if (isset($node->conduit_key)) {
     $key = $node->conduit_key[LANGUAGE_NONE][0]['value'];
@@ -338,6 +338,8 @@ function conduit_insert($node) {
  * Implements hook_update().
  */
 function conduit_update($node) {
+sdp(__FUNCTION__);
+sdp($node, '$node');
   // If a new revision is being generated then process the new job.
   if (isset($node->old_vid)) {
     conduit_insert($node);
@@ -364,14 +366,14 @@ function conduit_view($node, $view_mode) {
       $view = views_get_view('conduit_group');
       $view->override_path = $_GET['q'];
       $node->content['conduit_group'] = array(
-        '#markup' => $view->preview('defualt', array($node->nid)),
+        '#markup' => $view->preview('default', array($node->nid)),
         '#weight' => 10,
       );
 
       $view = views_get_view('conduit_job');
       $view->override_path = $_GET['q'];
       $node->content['conduit_job'] = array(
-        '#markup' => $view->preview('defualt', array($node->nid)),
+        '#markup' => $view->preview('default', array($node->nid)),
         '#weight' => 11,
       );
     }
