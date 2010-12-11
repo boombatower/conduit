@@ -24,7 +24,7 @@ function conduit_permission() {
 
   foreach (array('meta', 'status', 'result') as $fieldset) {
     $permissions['edit conduit job ' . $fieldset] = array(
-      'title' => t('Edit conduit job @fieldset information.', array('@fieldset' => $fieldset)),
+      'title' => t('Edit job @fieldset information.', array('@fieldset' => $fieldset)),
       'description' => t('Edit the fields conntained within the @fieldset fieldset.', array('@fieldset' => $fieldset)),
     );
   }
