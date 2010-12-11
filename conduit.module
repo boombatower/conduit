@@ -153,66 +153,13 @@ function conduit_views_api() {
 }
 
 /**
- * Implements hook_services_resources().
+ * Implements hook_views_api().
  */
-function conduit_services_resources() {
-  return array(
-    'conduit.item' => array(
-      'actions' => array(
-        'claim' => array(
-          'help' => 'Claim an item from a category queue.',
-          'callback' => 'conduit_api_claim',
-          'file' => array('type' => 'inc', 'module' => 'conduit', 'name' => 'includes/api'),
-          'access arguments' => array('claim conduit item'),
-          'args' => array(
-            array(
-              'name' => 'category',
-              'type' => 'string',
-              'description' => 'The job category from which to claim an item from.',
-              'source' => 'data',
-              'optional' => FALSE,
-            ),
-          ),
-        ),
-        'result' => array(
-          'help' => 'Store a chunk result.',
-          'callback' => 'conduit_api_result',
-          'file' => array('type' => 'inc', 'module' => 'conduit', 'name' => 'includes/api'),
-          'access arguments' => array('result conduit item'),
-          'args' => array(
-            array(
-              'name' => 'item',
-              'type' => 'struct',
-              'description' => 'Queue item the results are related to.',
-              'source' => 'data',
-              'optional' => FALSE,
-            ),
-            array(
-              'name' => 'pass',
-              'type' => 'int',
-              'description' => 'TRUE (1) if the chunk passed, otherewise FALSE (0).',
-              'source' => 'data',
-              'optional' => FALSE,
-            ),
-            array(
-              'name' => 'result',
-              'type' => 'array',
-              'description' => 'The result of processing the chunk.',
-              'source' => 'data',
-              'optional' => FALSE,
-            ),
-            array(
-              'name' => 'log',
-              'type' => 'string',
-              'description' => 'The log generated while processing the chunk.',
-              'source' => 'data',
-              'optional' => FALSE,
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
+function conduit_ctools_plugin_api($owner, $api) {
+  if ($owner == 'services' && $api == 'services') {
+    conduit_include('services');
+    return array('version' => 3);
+  }
 }
 
 /**
