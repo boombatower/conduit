@@ -29,6 +29,15 @@ function conduit_permission() {
     );
   }
 
+  $permissions['claim conduit item'] = array(
+    'title' => t('Claim an item'),
+    'description' => t('Claim an item from a category queue. <em>Required by all workers.</em>'),
+  );
+  $permissions['result conduit item'] = array(
+    'title' => t('Store a result for an item'),
+    'description' => t('Store a chunk result. <em>Required by all workers.</em>'),
+  );
+
   return $permissions;
 }
 
@@ -144,65 +153,66 @@ function conduit_views_api() {
 }
 
 /**
- * Implements hook_xmlrpc().
- *
- * All methods require authentication hash as the first parameter and will
- * return the standard conduit return value.
- *
- * <code>
- *   return array(
- *     'status' => ['authentication', 'accepted', 'denied']
- *     'messages' => array( [messages explaining status and/or what was done.] ),
- *     'result' => array( [structured data array containing the result of the
- *                         requested opperation.] )
- *   );
- * </code>
- *
- * Methods:
- * - job.create(array job)
- * - job.queue(int job_id)
- * - job.status(array job_ids)
- * - job.summary(int job_id)
- * - job.detail(int job_id)
- * - job.delete(int job_id)
- * - group.create(array group)
- * - group.delete(int group_id)
- * - server.status()
+ * Implements hook_services_resources().
  */
-function conduit_xmlrpc() {
-  conduit_include('xmlrpc');
-
-  // List of provided methods.
-  $methods = array(
-    'job.create' => t('Create a job.'),
-    'job.queue' => t('Place an existing job in the queue.'),
-    'job.status' => t('Query the status of a job or list of jobs.'),
-    'job.summary' => t('Retrieve the summary of the result of a job.'),
-    'job.detail' => t('Retrieve the detailed result of a job.'),
-    'job.delete' => t('Delete a job.'),
-    'group.create' => t('Create a job group.'),
-    'group.delete' => t('Delete a job group.'),
-    'server.status' => t('Query the server status.'),
+function conduit_services_resources() {
+  return array(
+    'conduit.item' => array(
+      'actions' => array(
+        'claim' => array(
+          'help' => 'Claim an item from a category queue.',
+          'callback' => 'conduit_api_claim',
+          'file' => array('type' => 'inc', 'module' => 'conduit', 'name' => 'includes/api'),
+          'access arguments' => array('claim conduit item'),
+          'args' => array(
+            array(
+              'name' => 'category',
+              'type' => 'string',
+              'description' => 'The job category from which to claim an item from.',
+              'source' => 'data',
+              'optional' => FALSE,
+            ),
+          ),
+        ),
+        'result' => array(
+          'help' => 'Store a chunk result.',
+          'callback' => 'conduit_api_result',
+          'file' => array('type' => 'inc', 'module' => 'conduit', 'name' => 'includes/api'),
+          'access arguments' => array('result conduit item'),
+          'args' => array(
+            array(
+              'name' => 'item',
+              'type' => 'struct',
+              'description' => 'Queue item the results are related to.',
+              'source' => 'data',
+              'optional' => FALSE,
+            ),
+            array(
+              'name' => 'pass',
+              'type' => 'int',
+              'description' => 'TRUE (1) if the chunk passed, otherewise FALSE (0).',
+              'source' => 'data',
+              'optional' => FALSE,
+            ),
+            array(
+              'name' => 'result',
+              'type' => 'array',
+              'description' => 'The result of processing the chunk.',
+              'source' => 'data',
+              'optional' => FALSE,
+            ),
+            array(
+              'name' => 'log',
+              'type' => 'string',
+              'description' => 'The log generated while processing the chunk.',
+              'source' => 'data',
+              'optional' => FALSE,
+            ),
+          ),
+        ),
+      ),
+    ),
   );
-
-  // Generate hook_xmlrpc() XML-RPC definitions.
-  $xmlrpc = array();
-  foreach ($methods as $method => $description) {
-    $xmlrpc[$method] = array(
-      'conduit.' . $method,
-      'conduit_xmlrpc_' . str_replace('.', '_', $method),
-      array('struct', 'string', 'int'),
-      $description,
-    );
-  }
-
-  // Remove the third parameter or change data-type based on API definitions.
-  $xmlrpc['job.create'][2][2] = 'struct';
-  $xmlrpc['job.status'][2][2] = 'array';
-  $xmlrpc['group.create'][2][2] = 'struct';
-  unset($xmlrpc['server.status'][2][2]);
-
-  return array_values($xmlrpc);
 }
 
 /**
