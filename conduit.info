@@ -17,4 +17,5 @@ dependencies[] = list
 dependencies[] = number
 dependencies[] = node_reference
 dependencies[] = serial
+dependencies[] = services
 dependencies[] = views
