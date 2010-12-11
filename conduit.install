@@ -37,6 +37,16 @@ function conduit_install() {
     variable_set('pathauto_node_' . $type . '_pattern', str_replace('_', '/', $type) . '/[node:title]');
   }
   variable_set('node_options_conduit_job', array('status', 'revision'));
+
+  // Setup conduit roles.
+  $roles = array();
+  foreach (array('client', 'worker') as $name) {
+    user_role_save($role = (object) array('name' => 'conduit ' . $name));
+    $roles[$name] = user_role_load_by_name($role->name);
+  }
+
+  user_role_grant_permissions($roles['client']->rid, conduit_client_permissions());
+  user_role_grant_permissions($roles['worker']->rid, array('claim conduit item', 'result conduit item'));
 }
 
 /**
@@ -74,6 +84,13 @@ function conduit_uninstall() {
   );
   foreach ($variables as $variable) {
     variable_del($variable);
+  }
+
+  // Remove conduit roles if they exist.
+  foreach (array('client', 'worker') as $role) {
+    if (user_role_load_by_name('conduit ' . $role)) {
+      user_role_delete('conduit ' . $role);
+    }
   }
 }
 
