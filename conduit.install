@@ -179,7 +179,6 @@ function conduit_install_fields() {
     'conduit_done' => array(
       'field_name' => 'conduit_done',
       'type' => 'number_boolean',
-      'instance_settings' => array('prefix' => 'Job finished', 'suffix' => ''),
     ),
     'conduit_chunk_count' => array(
       'field_name' => 'conduit_chunk_count',
@@ -188,7 +187,6 @@ function conduit_install_fields() {
     'conduit_pass' => array(
       'field_name' => 'conduit_pass',
       'type' => 'number_boolean',
-      'instance_settings' => array('prefix' => 'Job finished with no errors', 'suffix' => ''),
     ),
     'conduit_summary' => array(
       'field_name' => 'conduit_summary',
@@ -198,7 +196,6 @@ function conduit_install_fields() {
       'field_name' => 'conduit_chunk_pass',
       'type' => 'number_boolean',
       'cardinality' => -1,
-      'instance_settings' => array('prefix' => 'Job chunk', 'suffix' => 'finished with no errors'),
     ),
     'conduit_log' => array(
       'field_name' => 'conduit_log',
@@ -353,6 +350,7 @@ function conduit_install_instances_job($bundle) {
       'field_name' => 'conduit_chunk_count',
       'label' => $t('Chunk count'),
       'description' => $t('Number of chunks in the job.'),
+      'settings' => array('min' => '1'),
       'widget' => array(
         'type' => 'number',
       ),
