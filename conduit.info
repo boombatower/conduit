@@ -17,6 +17,7 @@ dependencies[] = field_helper
 dependencies[] = list
 dependencies[] = number
 dependencies[] = node_reference
+dependencies[] = rest_server
 dependencies[] = serial
 dependencies[] = services
 dependencies[] = views
