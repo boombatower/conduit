@@ -42,6 +42,20 @@ function conduit_permission() {
 }
 
 /**
+ * Implements hook_user_view().
+ */
+function conduit_user_view($account, $view_mode, $langcode) {
+  if ($view_mode == 'full') {
+    $view = views_get_view('conduit_group_user');
+    $view->override_path = $_GET['q'];
+    $account->content['conduit_group'] = array(
+      '#markup' => $view->preview('default', array($account->uid)),
+      '#weight' => 10,
+    );
+  }
+}
+
+/**
  * Merge group and default properties together with entity's properties.
  *
  * The properties are merged in such a way that the lower the item is on the

@@ -314,8 +314,6 @@ function conduit_insert($node) {
  * Implements hook_update().
  */
 function conduit_update($node) {
-sdp(__FUNCTION__);
-sdp($node, '$node');
   // If a new revision is being generated then process the new job.
   if (isset($node->old_vid)) {
     conduit_insert($node);
@@ -372,7 +370,10 @@ function conduit_view_breadcrumb($node, $breadcrumb = array()) {
   $breadcrumb[] = l($node->title, 'node/' . $node->nid);
 
   // If the node has a parent the recurse.
-  if (!empty($node->conduit_parent)) {
+  if (empty($node->conduit_parent)) {
+    $breadcrumb[] = theme('username', array('account' => user_load($node->uid)));
+  }
+  else {
     $breadcrumb = conduit_view_breadcrumb(node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']), $breadcrumb);
   }
   return $breadcrumb;
