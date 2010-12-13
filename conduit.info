@@ -13,6 +13,7 @@ files[] = includes/node.inc
 files[] = includes/queue.inc
 
 dependencies[] = boolean
+dependencies[] = field_helper
 dependencies[] = list
 dependencies[] = number
 dependencies[] = node_reference

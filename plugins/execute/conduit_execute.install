@@ -10,41 +10,20 @@
  * Implements hook_install().
  */
 function conduit_execute_install() {
-  // Create all the fields.
-  foreach (conduit_execute_install_fields() as $field) {
-    field_create_field($field);
-  }
-
-  // Create all the instances for our fields.
-  foreach (conduit_execute_install_instances() as $instance) {
-    $instance['entity_type'] = 'node';
-    field_create_instance($instance);
-  }
-
-  // Set job node to defaultly create a new revision.
-  variable_set('node_options_conduit_job_conduit_execute', array('status', 'revision'));
+  conduit_install_node_type('conduit_job_conduit_execute');
+  field_helper_install_all('conduit_execute');
 }
 
 /**
  * Implements hook_uninstall().
  */
 function conduit_execute_uninstall() {
-  module_load_install('conduit');
   conduit_uninstall_node_type('conduit_job_conduit_execute');
-
-  // Delete fields.
-  foreach (array_keys(conduit_execute_install_fields()) as $field) {
-    field_delete_field($field);
-  }
-
-  variable_del('node_options_conduit_job_conduit_execute');
+  field_helper_uninstall_all('conduit_execute');
 }
 
 /**
- * Field definitions to be installed.
- *
- * @return
- *   List of field definitions.
+ * Implements hook_install_fields().
  */
 function conduit_execute_install_fields() {
   $t = get_t();
@@ -58,16 +37,14 @@ function conduit_execute_install_fields() {
 }
 
 /**
- * Field instances to be created.
- *
- * @return
- *   List of field instances.
+ * Implements hook_install_instances().
  */
 function conduit_execute_install_instances() {
   module_load_install('conduit');
   $t = get_t();
   return conduit_install_instances_job('conduit_job_conduit_execute') + array(
     'job_conduit_result_conduit_execute' => array(
+      'entity_type' => 'node',
       'bundle' => 'conduit_job_conduit_execute',
       'field_name' => 'conduit_result_conduit_execute',
       'label' => $t('Execute result'),
