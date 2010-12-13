@@ -54,7 +54,6 @@ $handler->display->display_options['arguments']['conduit_parent_nid']['style_plu
 $handler->display->display_options['arguments']['conduit_parent_nid']['default_argument_type'] = 'fixed';
 $handler->display->display_options['arguments']['conduit_parent_nid']['validate_type'] = 'node';
 $handler->display->display_options['arguments']['conduit_parent_nid']['validate_options']['types'] = array(
-  'conduit_client' => 'conduit_client',
   'conduit_group' => 'conduit_group',
 );
 $handler->display->display_options['arguments']['conduit_parent_nid']['validate_options']['access'] = '1';

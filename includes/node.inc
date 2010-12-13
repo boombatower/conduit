@@ -12,20 +12,10 @@
 function conduit_node_info() {
   $info = array();
 
-  $info['conduit_client'] = array(
-    'name' => t('Conduit client'),
-    'base' => 'conduit',
-    'description' => t('Controls the conduit.'),
-  );
   $info['conduit_group'] = array(
     'name' => t('Conduit group'),
     'base' => 'conduit',
     'description' => t('Groups jobs together and can be used to create a hierarchy.'),
-  );
-  $info['conduit_worker'] = array(
-    'name' => t('Conduit worker'),
-    'base' => 'conduit',
-    'description' => t('Performs queued jobs.'),
   );
 
   return $info;
@@ -62,18 +52,12 @@ function conduit_form($node, &$form_state) {
  * Implements hook_form_alter().
  */
 function conduit_form_alter(&$form, &$form_state, $form_id) {
-  // Check for conduit node form.
-  if (strpos($form_id, 'conduit') !== 0) {
+  if (!conduit_node_type($form_id)) {
     return;
   }
 
   // Set title description using type.
   $form['title']['#description'] = t('Displayed when being referencing.');
-
-  // If key is present, but not set the create a random key.
-  if (isset($form['conduit_key']) && empty($form['conduit_key'][LANGUAGE_NONE][0]['value']['#default_value'])) {
-    $form['conduit_key'][LANGUAGE_NONE][0]['value']['#default_value'] = md5(mt_rand(1000, 1000000000));
-  }
 
   // Move all conduit fields into a fieldset.
   $is_job = (bool) conduit_job_info($form_id);
@@ -143,20 +127,12 @@ function conduit_node_type($type) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form, &$form_state) {
-  // Check conduit key length.
-  if (isset($node->conduit_key)) {
-    $key = $node->conduit_key[LANGUAGE_NONE][0]['value'];
-    if (drupal_strlen($key) < 32 || drupal_strlen($key) > 64) {
-      form_set_error('conduit_key', t('The key field must be at least 32 and no more then 64 characters in length.'));
-    }
-  }
-
   // If properties can be loaded then allow the plugins to validate them,
   // otherwise any errors with the properties defintion will be delt with by
   // the serial field validation.
   if (isset($node->conduit_properties) && ($properties = serial_eval($node->conduit_properties[LANGUAGE_NONE][0]['value']))) {
-    // Allow plugins to validate the properties of which they are
-    // responsible and provide error messages.
+    // Allow plugins to validate the properties of which they are responsible
+    // and provide error messages.
     if ($errors = module_invoke_all('conduit_validate', $properties)) {
       form_set_error('conduit_properties', t('The properties field contains the following problems.') . theme('item_list', array('items' => $errors)));
     }
@@ -361,8 +337,8 @@ function conduit_view($node, $view_mode) {
       drupal_set_breadcrumb($breadcrumb);
     }
 
-    // Add a list of group on client or group nodes.
-    if ($node->type == 'conduit_client' || $node->type == 'conduit_group') {
+    // Add a list of groups and jobs on group nodes.
+    if ($node->type == 'conduit_group') {
       $view = views_get_view('conduit_group');
       $view->override_path = $_GET['q'];
       $node->content['conduit_group'] = array(

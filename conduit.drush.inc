@@ -13,19 +13,6 @@ function conduit_drush_command() {
   $items['conduit-complex'] = array(
     'description' => dt('Generate a complex setup.'),
   );
-  $items['conduit-client'] = array(
-    'description' => dt('Create a conduit client.'),
-    'arguments' => array(
-      'title' => dt('Title of client.'),
-      'properties' => dt('Valid PHP syntax for array excluding the array( ... ) wrapper.'),
-      'key' => dt('API key to be used by client.'),
-    ),
-    'examples' => array(
-      'ccc "Client 1"' => 'Create a client with the title "Client 1".',
-      'ccc "Client 1" "3a7230c144e0615403eb75f71d44c21f"' => 'Create a client with the title "Client 1" and key "3a7230c144e0615403eb75f71d44c21f".',
-    ),
-    'aliases' => array('ccc'),
-  );
   $items['conduit-group'] = array(
     'description' => dt('Create a conduit group.'),
     'arguments' => array(
@@ -62,58 +49,41 @@ function conduit_drush_command() {
  * Generate a basic setup.
  */
 function drush_conduit_basic() {
-  $client = drush_conduit_client('Client 1',  "'client' => 'root'");
-  $group = drush_conduit_group('Group 1', $client->nid, "'foo' => 'bar'", $client->nid);
+  $group = drush_conduit_group('Group 1', "'foo' => 'bar'");
   $job = drush_conduit_job('conduit_execute', 'Job 1', $group->nid, "'bar' => 'baz'");
-  return array($client, $group, $job);
+  return array($group, $job);
 }
 
 /**
  * Generate a complex setup.
  */
 function drush_conduit_complex() {
-  $client = drush_conduit_client('Client 1', "'client' => 'root'");
   for ($i = 0; $i < 20; $i++) {
-    echo "\t";
-    $group = drush_conduit_group('Group ' . $i, $client->nid, "'group' => '{$client->nid}'", $client->nid);
+    $group = drush_conduit_group('Group ' . $i, "'group' => '$i'");
     for ($j = 0; $j < 5; $j++) {
-      echo "\t\t";
-      $subgroup = drush_conduit_group('Sub-Group ' . $j, $client->nid, "'sub-group' => '{$client->nid}.{$group->nid}'", $group->nid);
+      echo "\t";
+      $subgroup = drush_conduit_group('Sub-Group ' . $j, "'sub-group' => '$i.$j'", $group->nid);
       for ($k = 0; $k < 5; $k++) {
-        echo "\t\t\t";
-        $job = drush_conduit_job('conduit_execute', 'Job ' . $k, $subgroup->nid, "'job' => '{$client->nid}.{$group->nid}.{$subgroup->nid}'");
+        echo "\t\t";
+        $job = drush_conduit_job('conduit_execute', 'Job ' . $k, $subgroup->nid, "'job' => '$i.$j.$k'");
       }
     }
   }
-  return array($client, $group, $job);
-}
-
-/**
- * Create a conduit client.
- */
-function drush_conduit_client($title = '', $properties = '', $key = NULL) {
-  $client = new stdClass();
-  $client->type = 'conduit_client';
-  $client->language = LANGUAGE_NONE;
-  $client->title = $title;
-  $client->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
-  $client->conduit_key[LANGUAGE_NONE][0]['value'] = $key ? $key : md5(mt_rand(1000, 1000000000));
-  node_save($client);
-  echo "Created client #{$client->nid}.\n";
-  return $client;
 }
 
 /**
  * Create a conduit group.
  */
-function drush_conduit_group($title = '', $owner = NULL, $properties = '', $parent = NULL) {
+function drush_conduit_group($title = '', $properties = '', $parent = NULL) {
   $group = new stdClass();
+  $group->uid = 1;
   $group->type = 'conduit_group';
   $group->language = LANGUAGE_NONE;
   $group->title = $title;
-  $group->conduit_owner[LANGUAGE_NONE][0]['nid'] = $owner;
+  if ($parent) {
+    $group->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;
+  }
   $group->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
-  $group->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;
   node_save($group);
   echo "Created group #{$group->nid}.\n";
   return $group;
@@ -124,6 +94,7 @@ function drush_conduit_group($title = '', $owner = NULL, $properties = '', $pare
  */
 function drush_conduit_job($module = 'conduit_execute', $title = '', $parent = NULL, $properties = '') {
   $job = new stdClass();
+  $job->uid = 1;
   $job->type = 'conduit_job_' . $module;
   $job->language = LANGUAGE_NONE;
   $job->title = $title;

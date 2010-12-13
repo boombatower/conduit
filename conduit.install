@@ -36,7 +36,6 @@ function conduit_install() {
     // Set pathauto patterns.
     variable_set('pathauto_node_' . $type . '_pattern', str_replace('_', '/', $type) . '/[node:title]');
   }
-  variable_set('node_options_conduit_job', array('status', 'revision'));
 
   // Setup conduit roles.
   $roles = array();
@@ -133,46 +132,17 @@ function conduit_uninstall_node_type($type) {
 function conduit_install_fields() {
   $t = get_t();
   return array(
-    // Conduit client and worker fields.
-    'conduit_key' => array(
-      'field_name' => 'conduit_key',
-      'type' => 'text',
-      'settings' => array(
-        'max_length' => 64,
-      ),
-    ),
-
-    // Conduit worker fields.
-    'conduit_category' => array(
-      'field_name' => 'conduit_category',
-      'type' => 'list_text',
-      'settings' => array(
-        'allowed_values' => '',
-      ),
-    ),
-
-    // Conduit client, group, and job fields.
-    'conduit_properties' => array(
-      'field_name' => 'conduit_properties',
-      'type' => 'serial_long',
-    ),
-
-    // Conduit group fields.
-    'conduit_owner' => array(
-      'field_name' => 'conduit_owner',
-      'type' => 'node_reference',
-      'settings' => array(
-        'referenceable_types' => array('conduit_client'),
-      ),
-    ),
-
     // Conduit group and job fields.
     'conduit_parent' => array(
       'field_name' => 'conduit_parent',
       'type' => 'node_reference',
       'settings' => array(
-        'referenceable_types' => array('conduit_client', 'conduit_group'),
+        'referenceable_types' => array('conduit_group'),
       ),
+    ),
+    'conduit_properties' => array(
+      'field_name' => 'conduit_properties',
+      'type' => 'serial_long',
     ),
 
     // Conduit job fields.
@@ -214,79 +184,13 @@ function conduit_install_fields() {
 function conduit_install_instances() {
   $t = get_t();
   return array(
-    // Conduit client instances.
-    'client_conduit_key' => array(
-      'bundle' => 'conduit_client',
-      'field_name' => 'conduit_key',
-      'label' => $t('Key'),
-      'description' => $t('Unique key used for identification during inter-server communciation. Must be between 32 and 64 characters in length.'),
-      'required' => TRUE,
-      'widget' => array(
-        'type' => 'text_textfield',
-      ),
-      'display' => array(
-        'default' => array(
-          'type' => 'hidden',
-        ),
-      ),
-    ),
-    'client_conduit_properties' => array(
-      'bundle' => 'conduit_client',
-      'field_name' => 'conduit_properties',
-      'label' => $t('Properties'),
-      'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
-      'widget' => array(
-        'type' => 'serial_textarea',
-      ),
-    ),
-
-    // Conduit worker instances.
-    'worker_conduit_key' => array(
-      'bundle' => 'conduit_worker',
-      'field_name' => 'conduit_key',
-      'label' => $t('Key'),
-      'description' => $t('Unique key used for identification during inter-server communciation. Must be between 32 and 64 characters in length.'),
-      'required' => TRUE,
-      'widget' => array(
-        'type' => 'text_textfield',
-      ),
-      'display' => array(
-        'default' => array(
-          'type' => 'hidden',
-        ),
-      ),
-    ),
-    'worker_conduit_category' => array(
-      'bundle' => 'conduit_worker',
-      'field_name' => 'conduit_category',
-      'label' => $t('Category'),
-      'description' => $t('Category of plugins the worker is setup to handle.'),
-      'required' => TRUE,
-      'widget' => array(
-        'type' => 'options_select',
-      ),
-    ),
-
     // Conduit group instances.
-    'group_conduit_owner' => array(
-      'bundle' => 'conduit_group',
-      'field_name' => 'conduit_owner',
-      'label' => $t('Owner'),
-      'description' => $t('Client that owns the group and thus controls the jobs within it.'),
-      'required' => TRUE,
-      'widget' => array(
-        'type' => 'node_reference_autocomplete',
-        'settings' => array(
-          'autocomplete_match' => 'starts_with',
-        ),
-      ),
-    ),
     'group_conduit_parent' => array(
       'bundle' => 'conduit_group',
       'field_name' => 'conduit_parent',
       'label' => $t('Parent'),
-      'description' => $t('Reference to parent client or group.'),
-      'required' => TRUE,
+      'description' => $t('Reference to parent group.'),
+      'required' => FALSE,
       'widget' => array(
         'type' => 'node_reference_autocomplete',
         'settings' => array(
@@ -320,7 +224,7 @@ function conduit_install_instances_job($bundle) {
     'job_conduit_parent' => array(
       'field_name' => 'conduit_parent',
       'label' => $t('Parent'),
-      'description' => $t('Reference to parent client or group.'),
+      'description' => $t('Reference to parent group.'),
       'required' => TRUE,
       'widget' => array(
         'type' => 'node_reference_autocomplete',
