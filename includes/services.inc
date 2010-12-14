@@ -29,14 +29,14 @@ function conduit_services_resources() {
           ),
         ),
         'result' => array(
-          'help' => 'Store a chunk result.',
+          'help' => 'Store a result for an item.',
           'callback' => 'conduit_api_result',
           'file' => array('type' => 'inc', 'module' => 'conduit', 'name' => 'includes/api'),
           'access arguments' => array('result conduit item'),
           'args' => array(
             array(
               'name' => 'item',
-              'type' => 'struct',
+              'type' => 'array',
               'description' => 'Queue item the results are related to.',
               'source' => 'data',
               'optional' => FALSE,

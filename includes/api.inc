@@ -21,7 +21,7 @@ function conduit_api_claim($category) {
 }
 
 /**
- * Store a chunk result.
+ * Store a result for an item.
  *
  * @param $item
  *   Queue item the results are related to.
@@ -35,6 +35,8 @@ function conduit_api_claim($category) {
  *   TRUE if successfull, otherwise FALSE.
  */
 function conduit_api_result($item, $pass, $result, $log) {
+  $item = (object) $item;
+
   // Acquire a lock to modify the node.
   $lock = conduit_api_lock_acquire($item->data['nid']);
 
