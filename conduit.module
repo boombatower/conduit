@@ -77,8 +77,9 @@ function conduit_properties_merge($node) {
   // plugin with the rest of the properties. Add the plugin property based on
   // job type.
   if ($info = conduit_job_info($node->type)) {
-    $default_properties = module_invoke($info['module'], 'conduit_default_properties');
-    $properties = array_replace_recursive($default_properties, $properties);
+    $base_defaults = module_invoke('conduit', 'conduit_default_properties');
+    $plugin_defaults = module_invoke($info['module'], 'conduit_default_properties');
+    $properties = array_replace_recursive($base_defaults, $plugin_defaults, $properties);
     $properties['plugin'] = $info['plugin'];
   }
 
@@ -90,6 +91,25 @@ function conduit_properties_merge($node) {
   }
 
   return $properties;
+}
+
+/**
+ * Implements hook_conduit_default_properties().
+ */
+function conduit_conduit_default_properties() {
+  return array(
+    'context' => 3,
+    'database' => 'mysql',
+    'mask' => '/.*/',
+    'newline' => 'unix',
+    'nomask' => '/(\.\.?|CVS)$/',
+    'patch' => array(),
+    'path' => array(''),
+    'setup' => array(),
+    'ssh' => array(),
+    'vcs' => array(),
+    'verbose' => FALSE,
+  );
 }
 
 /**
