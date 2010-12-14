@@ -65,7 +65,7 @@ function conduit_uninstall() {
  */
 function conduit_install_node_type($type, $path = 'job') {
   // Publish all content types, but nothing more.
-  variable_set('node_options_' . $type, array('status'));
+  variable_set('node_options_' . $type, $path == 'job' ? array('status', 'revision') : array('status'));
 
   // Disable comments.
   module_load_include('module', 'comment');
