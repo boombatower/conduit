@@ -216,7 +216,11 @@ function conduit_install_instances_job($type) {
       'field_name' => 'conduit_done',
       'label' => $t('Done'),
       'description' => $t('Indicates whether job has completed. Set to FALSE until all job chunks have reported.'),
-      'settings' => array('prefix' => 'Job finished', 'suffix' => ''),
+      'settings' => array(
+        'none' => array('prefix' => 'Job is not set', 'suffix' => ''),
+        'false' => array('prefix' => 'Job is not finished', 'suffix' => ''),
+        'true' => array('prefix' => 'Job finished', 'suffix' => ''),
+      ),
       'widget' => array(
         'type' => 'boolean_checkbox',
       ),
@@ -234,7 +238,11 @@ function conduit_install_instances_job($type) {
       'field_name' => 'conduit_pass',
       'label' => $t('Pass'),
       'description' => $t('Indicates whether all job chunks completed with no errors.'),
-      'settings' => array('prefix' => 'Job finished with no errors', 'suffix' => ''),
+      'settings' => array(
+        'none' => array('prefix' => 'Job is not set', 'suffix' => ''),
+        'false' => array('prefix' => 'Job finished with errors', 'suffix' => ''),
+        'true' => array('prefix' => 'Job finished without errors', 'suffix' => ''),
+      ),
       'widget' => array(
         'type' => 'boolean_checkbox',
       ),
@@ -251,7 +259,11 @@ function conduit_install_instances_job($type) {
       'field_name' => 'conduit_chunk_pass',
       'label' => $t('Chunk pass'),
       'description' => $t('Indicates whether a particular job chunk completed with no errors.'),
-      'settings' => array('prefix' => 'Job chunk', 'suffix' => 'finished with no errors'),
+      'settings' => array(
+        'none' => array('prefix' => 'Job chunk', 'suffix' => 'is not set'),
+        'false' => array('prefix' => 'Job chunk', 'suffix' => 'finished with errors'),
+        'true' => array('prefix' => 'Job chunk', 'suffix' => 'finished without errors'),
+      ),
       'widget' => array(
         'type' => 'boolean_checkbox',
       ),
