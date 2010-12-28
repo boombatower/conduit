@@ -190,7 +190,7 @@ function conduit_views_api() {
 }
 
 /**
- * Implements hook_views_api().
+ * Implements hook_ctools_plugin_api().
  */
 function conduit_ctools_plugin_api($owner, $api) {
   if ($owner == 'services' && $api == 'services') {

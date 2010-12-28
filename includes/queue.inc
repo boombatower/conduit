@@ -57,7 +57,7 @@ function conduit_queue_claim($category) {
 
     // Remove stale queue item and try again.
     conduit_queue_delete($item);
-    return conduit_queue_claim();
+    return conduit_queue_claim(); // @todo Should this pass $category?
   }
   return FALSE;
 }

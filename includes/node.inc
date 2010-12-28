@@ -57,7 +57,7 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
   }
 
   // Set title description using type.
-  $form['title']['#description'] = t('Displayed when being referencing.');
+  $form['title']['#description'] = t('Displayed when being referenced.');
 
   // Move all conduit fields into a fieldset.
   $is_job = (bool) conduit_job_info($form_id);
@@ -127,8 +127,8 @@ function conduit_node_type($type) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form, &$form_state) {
-  // If properties can be loaded then allow the plugins to validate them,
-  // otherwise any errors with the properties defintion will be delt with by
+  // If properties can be loaded then allow the plugins to validate them;
+  // otherwise any errors with the properties definition will be dealt with by
   // the serial field validation.
   if (isset($node->conduit_properties) && ($properties = serial_eval($node->conduit_properties[LANGUAGE_NONE][0]['value']))) {
     // Allow plugins to validate the properties of which they are responsible
