@@ -60,10 +60,6 @@ function conduit_execute_conduit_queue_build(array $properties) {
  * Implements hook_conduit_init().
  */
 function conduit_execute_conduit_init($node, $chunk_count) {
-  if ($node->type != 'conduit_job_conduit_execute') {
-    return;
-  }
-
   // Add result placeholder.
   for ($delta = 0; $delta < $chunk_count; $delta++) {
     $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = '[placeholder]';
@@ -74,10 +70,6 @@ function conduit_execute_conduit_init($node, $chunk_count) {
  * Implements hook_conduit_result().
  */
 function conduit_execute_conduit_result($node, $delta, $result) {
-  if ($node->type != 'conduit_job_conduit_execute') {
-    return;
-  }
-
   if ($result) {
     // Store plugin specific result.
     $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = $result;
