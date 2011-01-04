@@ -18,7 +18,7 @@ projects[field_helper] = 1
 
 projects[inputstream][type] = module
 projects[inputstream][download][type] = git
-projects[inputstream][download][revision] = 7.x-1.0
+projects[inputstream][download][revision] = 7.x-1.x
 projects[inputstream][download][url] = git://github.com/hugowetterberg/inputstream.git
 
 projects[serial][type] = module
