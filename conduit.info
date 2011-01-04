@@ -1,6 +1,7 @@
 name = Conduit
 description = Job distribution system.
 package = Conduit
+version = 1.0
 core = 7.x
 files[] = conduit.drush.inc
 files[] = conduit.module
@@ -13,12 +14,12 @@ files[] = includes/queue.inc
 files[] = includes/services.inc
 
 dependencies[] = boolean
-dependencies[] = field_helper
+dependencies[] = field_helper (1.x)
 dependencies[] = list
 dependencies[] = number
-dependencies[] = node_reference
+dependencies[] = node_reference (2.x)
 dependencies[] = rest_server
 dependencies[] = serial
 dependencies[] = services
 dependencies[] = services_sessauth
-dependencies[] = views
+dependencies[] = views (3.x)
