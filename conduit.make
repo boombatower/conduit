@@ -12,14 +12,14 @@ projects[boolean][type] = module
 projects[boolean][download][type] = git
 projects[boolean][download][url] = git://github.com/solotandem/boolean.git
 
-projects[cck] = 2
-
 projects[field_helper] = 1
 
 projects[inputstream][type] = module
 projects[inputstream][download][type] = git
 projects[inputstream][download][revision] = 7.x-1.x
 projects[inputstream][download][url] = git://github.com/hugowetterberg/inputstream.git
+
+projects[references] = 2
 
 projects[serial][type] = module
 projects[serial][download][type] = git
