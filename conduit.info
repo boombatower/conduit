@@ -14,12 +14,12 @@ files[] = includes/queue.inc
 files[] = includes/services.inc
 
 dependencies[] = boolean
-dependencies[] = field_helper (<1.x)
+dependencies[] = field_helper (1.x)
 dependencies[] = list
 dependencies[] = number
-dependencies[] = node_reference (<2.x)
+dependencies[] = node_reference
 dependencies[] = rest_server
 dependencies[] = serial
 dependencies[] = services
 dependencies[] = services_sessauth
-dependencies[] = views (<3.x)
+dependencies[] = views (3.x)
