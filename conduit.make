@@ -13,7 +13,6 @@ projects[boolean][download][type] = git
 projects[boolean][download][url] = git://github.com/solotandem/boolean.git
 
 projects[field_helper] = 1
-projects[inputstream] = 1
 projects[references] = 2
 
 projects[serial][type] = module
