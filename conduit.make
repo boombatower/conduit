@@ -6,7 +6,7 @@ api = 2
 core = 7.x
 projects[drupal] = 7
 
-; Dependencies.
+; Dependencies
 
 projects[boolean][type] = module
 projects[boolean][download][type] = git
