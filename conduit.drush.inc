@@ -1,4 +1,10 @@
 <?php
+/**
+ * @file
+ * Provide drush commands.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
 
 /**
  * Implements hook_drush_command().
