@@ -81,3 +81,13 @@ function conduit_queue_release($item) {
 function conduit_queue_delete($item) {
   return DrupalQueue::get('conduit_job_' . $item->data['category'])->deleteItem($item);
 }
+
+/**
+ * Delete a item from the queue.
+ *
+ * @param $item
+ *   Queue item object.
+ */
+function conduit_queue_count($category) {
+  return DrupalQueue::get('conduit_job_' . $category)->numberOfItems();
+}
