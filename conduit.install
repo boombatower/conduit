@@ -32,17 +32,8 @@ function conduit_uninstall() {
   conduit_uninstall_node_type('conduit_group');
   field_helper_uninstall_all('conduit');
 
-  // Remove each category job queue that was ever used.
-  $categories = variable_get('conduit_categories', array());
-  foreach ($categories as $category) {
-    DrupalQueue::get('conduit_job_' . $category)->deleteQueue();
-  }
-
   // Remove variables.
-  $variables = array(
-    'conduit_categories',
-    'conduit_lease_time',
-  );
+  $variables = array('conduit_lease_time');
   foreach ($variables as $variable) {
     variable_del($variable);
   }
@@ -73,6 +64,12 @@ function conduit_install_node_type($type, $path = 'job') {
 
   // Set pathauto patterns.
   variable_set('pathauto_node_' . $type . '_pattern', 'conduit/' . $path . '/[node:title]');
+
+  // If this node type represents a category that does not exist then create
+  // the queue for the category.
+  if ($category = conduit_install_category_update($type)) {
+    DrupalQueue::get('conduit_job_' . $category)->createQueue();
+  }
 }
 
 /**
@@ -96,6 +93,32 @@ function conduit_uninstall_node_type($type) {
   variable_del('node_options_' . $type);
   variable_del('comment_' . $type);
   variable_del('pathauto_node_' . $type . '_pattern');
+
+  // If this node type represents a category that no longer exists then delete
+  // the queue for the category.
+  if ($category = conduit_install_category_update($type)) {
+    DrupalQueue::get('conduit_job_' . $category)->deleteQueue();
+  }
+}
+
+/**
+ * Determine if the category has been "updated".
+ *
+ * If the node type is a job and the category it represents is not found in the
+ * registered conduit categories then the category either needs to be created
+ * or deleted.
+ *
+ * @return
+ *   The category that has been "updated" or FALSE.
+ * @see conduit_categories()
+ */
+function conduit_install_category_update($type) {
+  drupal_static_reset('conduit_categories');
+  $categories = conduit_categories();
+  if ($info = conduit_job_info($type)) {
+    return isset($categories[$info['category']]) ? FALSE : $info['category'];
+  }
+  return FALSE;
 }
 
 /**

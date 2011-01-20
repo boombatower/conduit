@@ -137,28 +137,41 @@ function conduit_job_info($type) {
 /**
  * Implements hook_flush_caches().
  *
- * Rebuild the list of categories to ensure a queue has been created for each
- * and rebuild the client role permissions.
+ * Rebuild the client role permissions.
  */
 function conduit_flush_caches() {
-  // Determine the categories available given the job node types.
-  $types = array_keys(node_type_get_names());
-  $categories = array();
-  foreach ($types as $type) {
-    if ($info = conduit_job_info($type)) {
-      $categories[$info['category']] = ucfirst($info['category']);
-    }
-  }
-
-  // Ensure queues for each category exist.
-  foreach ($categories as $category) {
-    DrupalQueue::get('conduit_job_' . $category)->createQueue();
-  }
-
   // Regenerate client role permissions.
   if ($role = user_role_load_by_name('conduit client')) {
     user_role_grant_permissions($role->rid, conduit_client_permissions());
   }
+}
+
+/**
+ * Determine the conduit categories available given the job node types.
+ *
+ * @return
+ *   Associative array of categories.
+ */
+function conduit_categories() {
+  $categories = &drupal_static(__FUNCTION__);
+
+  if (!$categories) {
+    if ($cache = cache_get('conduit_categories')) {
+      $categories = $cache->data;
+    }
+    else {
+      $types = array_keys(node_type_get_names());
+      $categories = array();
+      foreach ($types as $type) {
+        if ($info = conduit_job_info($type)) {
+          $categories[$info['category']] = $info['category'];
+        }
+      }
+      cache_set('conduit_categories', $categories);
+    }
+  }
+
+  return $categories;
 }
 
 /**

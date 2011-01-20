@@ -18,6 +18,7 @@ function conduit_execute_install() {
  * Implements hook_uninstall().
  */
 function conduit_execute_uninstall() {
+  module_load_install('conduit');
   conduit_uninstall_node_type('conduit_job_conduit_execute');
   field_helper_uninstall_all('conduit_execute');
 }
