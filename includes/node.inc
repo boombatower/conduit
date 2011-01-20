@@ -382,7 +382,7 @@ function conduit_update($node) {
 function conduit_view($node, $view_mode) {
   if ($view_mode == 'full' && node_is_page($node)) {
     // Add a breakcrumb on group or job nodes.
-    if ($node->type == 'conduit_group' || conduit_job_info($node->type)) {
+    if (conduit_node_type($node->type)) {
       // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
       // display them left-to-right so we need to reverse order and remove the
       // current node from the list.
