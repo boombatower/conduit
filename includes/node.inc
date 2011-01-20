@@ -307,6 +307,9 @@ function conduit_insert($node) {
 
     // Since the plugin stores its results it must initialize its field(s).
     module_invoke($info['module'], 'conduit_init', $node, $chunk_count);
+
+    // Allow all modules to react to a job being queued.
+    module_invoke_all('conduit_queued', $node, $chunk_count);
   }
 }
 

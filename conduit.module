@@ -122,16 +122,27 @@ function conduit_conduit_default_properties() {
  *   otherwise FALSE if the node type does not represent a job.
  */
 function conduit_job_info($type) {
-  if (strpos($type, 'conduit_job') === 0) {
-    // All job node types should be in the form conduit_job_CATEGORY_PLUGIN.
-    list(, , $category, $plugin) = explode('_', $type);
-    return array(
-      'module' => $category . '_' . $plugin,
-      'category' => $category,
-      'plugin' => $plugin,
-    );
+  if (!($info = &drupal_static(__FUNCTION__))) {
+    $info = ($cache = cache_get(__FUNCTION__)) ? $cache->data : array();
   }
-  return FALSE;
+
+  if (!isset($info[$type])) {
+    if (strpos($type, 'conduit_job') === 0) {
+      // All job node types should be in the form conduit_job_CATEGORY_PLUGIN.
+      list(, , $category, $plugin) = explode('_', $type);
+      $info[$type] = array(
+        'module' => $category . '_' . $plugin,
+        'category' => $category,
+        'plugin' => $plugin,
+      );
+      cache_set(__FUNCTION__, $info);
+    }
+    else {
+      $info[$type] = FALSE;
+    }
+  }
+
+  return $info[$type];
 }
 
 /**
@@ -151,22 +162,19 @@ function conduit_flush_caches() {
  *   Associative array of categories.
  */
 function conduit_categories() {
-  $categories = &drupal_static(__FUNCTION__);
+  if (!($categories = &drupal_static(__FUNCTION__))) {
+    $categories = ($cache = cache_get(__FUNCTION__)) ? $cache->data : FALSE;
+  }
 
   if (!$categories) {
-    if ($cache = cache_get('conduit_categories')) {
-      $categories = $cache->data;
-    }
-    else {
-      $types = array_keys(node_type_get_names());
-      $categories = array();
-      foreach ($types as $type) {
-        if ($info = conduit_job_info($type)) {
-          $categories[$info['category']] = $info['category'];
-        }
+    $types = array_keys(node_type_get_names());
+    $categories = array();
+    foreach ($types as $type) {
+      if ($info = conduit_job_info($type)) {
+        $categories[$info['category']] = $info['category'];
       }
-      cache_set('conduit_categories', $categories);
     }
+    cache_set(__FUNCTION__, $categories);
   }
 
   return $categories;
