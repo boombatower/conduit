@@ -136,11 +136,9 @@ function conduit_job_info($type) {
 
 /**
  * Implements hook_flush_caches().
- *
- * Rebuild the client role permissions.
  */
 function conduit_flush_caches() {
-  // Regenerate client role permissions.
+  // Rebuild client role permissions.
   if ($role = user_role_load_by_name('conduit client')) {
     user_role_grant_permissions($role->rid, conduit_client_permissions());
   }
