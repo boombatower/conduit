@@ -64,30 +64,37 @@ function conduit_user_view($account, $view_mode, $langcode) {
  * A tree of groups will be treated in same manor with the root group having
  * the least precedence.
  *
+ * Order[group]: base_defaults, (optional) parents(s), self.
+ * Order[job]: base_defaults, plugin_defaults, parents(s), self.
+ *
  * @param $node
  *   Either a group or job node.
  * @return
  *   Associative array of properties.
  */
 function conduit_properties_merge($node) {
-  // Start with the properties of the entity.
-  $properties = !empty($node->conduit_properties) ? $node->conduit_properties[LANGUAGE_NONE][0]['value'] : array();
+  // Always start with the base defaults.
+  $properties = module_invoke('conduit', 'conduit_default_properties');
 
-  // If the entity is a job then merge the default properties specified by the
-  // plugin with the rest of the properties. Add the plugin property based on
-  // job type.
+  // If the node is a job then merge the plugin defaults.
   if ($info = conduit_job_info($node->type)) {
-    $base_defaults = module_invoke('conduit', 'conduit_default_properties');
     $plugin_defaults = module_invoke($info['module'], 'conduit_default_properties');
-    $properties = array_replace_recursive($base_defaults, $plugin_defaults, $properties);
-    $properties['plugin'] = $info['plugin'];
+    $properties = array_replace_recursive($properties, $plugin_defaults);
   }
 
-  // Find the relevant parent group or client the entity belongs to and merge
-  // its merged properties array with the current entity.
+  // If the node has a parent then merge its merged properties array.
   if (!empty($node->conduit_parent)) {
     $parent = node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']);
-    $properties = array_replace_recursive($parent->conduit_properties_merged, $properties);
+    $properties = array_replace_recursive($properties, $parent->conduit_properties_merged);
+  }
+
+  // Merge the entity's properties.
+  $self = !empty($node->conduit_properties) ? $node->conduit_properties[LANGUAGE_NONE][0]['value'] : array();
+  $properties = array_replace_recursive($properties, $self);
+
+  // If the node is a job then assign the plugin value.
+  if ($info) {
+    $properties['plugin'] = $info['plugin'];
   }
 
   return $properties;

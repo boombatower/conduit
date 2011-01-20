@@ -16,8 +16,7 @@ function conduit_execute_node_info() {
 /**
  * Implements hook_conduit_validate().
  */
-function conduit_execute_conduit_validate(array $properties) {
-  $errors = array();
+function conduit_execute_conduit_validate(array $properties, array $errors) {
   foreach ($properties as $key => $value) {
     switch ($key) {
       case 'command':

@@ -127,15 +127,37 @@ function conduit_node_type($type) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form, &$form_state) {
-  // If properties can be loaded then allow the plugins to validate them;
-  // otherwise any errors with the properties definition will be dealt with by
-  // the serial field validation.
-  if (isset($node->conduit_properties) && ($properties = serial_eval($node->conduit_properties[LANGUAGE_NONE][0]['value']))) {
-    // Allow plugins to validate the properties of which they are responsible
-    // and provide error messages.
-    if ($errors = module_invoke_all('conduit_validate', $properties)) {
-      form_set_error('conduit_properties', t('The properties field contains the following problems.') . theme('item_list', array('items' => $errors)));
+  // @TODO Serial should behave like node_reference so this is unecessary.
+  $node->conduit_properties[LANGUAGE_NONE][0]['value'] = serial_eval($node->conduit_properties[LANGUAGE_NONE][0]['value']);
+
+  if (!is_array($properties = $node->conduit_properties[LANGUAGE_NONE][0]['value'])) {
+    // Any errors with the properties definition will be dealt with by the
+    // serial field validation.
+    return;
+  }
+
+  if ($node->type == 'conduit_group') {
+    if ($properties) {
+      // Allow all plugins to validate properties generically since the job
+      // type is not yet known.
+      $errors = module_invoke_all('conduit_validate', $properties, array(), FALSE);
     }
+  }
+  else {
+    // Since the node is a job the properties must be merged to allow the final
+    // property set to be validated by the plugin.
+    $properties = conduit_properties_merge($node);
+
+    // Allow conduit to validate base properties and the module responsible
+    // for the job type to validate the properties and alter base errors.
+    $info = conduit_job_info($node->type);
+    $errors = module_invoke('conduit', 'conduit_validate', $properties, array(), TRUE);
+    $errors = module_invoke($info['module'], 'conduit_validate', $properties, $errors, TRUE);
+  }
+
+  // If errors where generated then print them and set on properties field.
+  if ($errors) {
+    form_set_error('conduit_properties', t('The properties field contains the following problems.') . theme('item_list', array('items' => $errors)));
   }
 }
 
@@ -144,8 +166,7 @@ function conduit_validate($node, $form, &$form_state) {
  *
  * Validate all standard properties that any job may contain.
  */
-function conduit_conduit_validate(array $properties) {
-  $errors = array();
+function conduit_conduit_validate(array $properties, array $errors) {
   foreach ($properties as $key => $value) {
     if (is_numeric($key)) {
       $errors[] = t('Root level properties must have a key.');
@@ -160,7 +181,7 @@ function conduit_conduit_validate(array $properties) {
         break;
       case 'database':
         if (!in_array($value, array('mysql', 'pgsql', 'sqlite'))) {
-          $errors[] = t('The <em>database</em> key must be set to "mysql", "pgsql", or "sqlite".');
+          $errors[] = t('The <em>database</em> property must be set to "mysql", "pgsql", or "sqlite".');
         }
         break;
       case 'mask':
@@ -188,8 +209,16 @@ function conduit_conduit_validate(array $properties) {
         }
         break;
       case 'path':
-        if (!conduit_validate_path($value)) {
-          $errors[] = t('The <em>path</em> property must be a relative path that does not begin or end with "/", does contain parts of "." or "..", or any backslashes ("\").');
+        if (is_array($value)) {
+          foreach ($value as $number => $path) {
+            if (!conduit_validate_path($path)) {
+              $errors[] = t('The <em>path</em> property value number %number must be a relative path that does not begin or end with "/", does contain parts of "." or "..", or any backslashes ("\").',
+                array('%number' => $number + 1));
+            }
+          }
+        }
+        else {
+          $errors[] = t('The <em>path</em> property must be an array.');
         }
         break;
       case 'setup':
@@ -270,16 +299,40 @@ function conduit_validate_regex($pattern) {
  * @param $path
  *   A directory or file path.
  * @return
- *   TRUE if valid path, otherwise FALSE.
+ *   TRUE if valid path (includes empty path), otherwise FALSE.
  */
 function conduit_validate_path($path) {
-  $parts = explode('/', $path);
-  foreach ($parts as $part) {
-    if (in_array($part, array('', '.', '..')) || strpos($part, '\\') !== FALSE) {
-      return FALSE;
+  if ($path) {
+    $parts = explode('/', $path);
+    foreach ($parts as $part) {
+      if (in_array($part, array('', '.', '..')) || strpos($part, '\\') !== FALSE) {
+        return FALSE;
+      }
     }
   }
   return TRUE;
+}
+
+/**
+ * Remove any errors for a specific property key.
+ *
+ * @param $errors
+ *   Reference to errors array from which errors will be removed.
+ * @param $name
+ *   Property name to remove errors for.
+ * @return
+ *   TRUE if any errors found for the property name, otherwise FALSE.
+ */
+function conduit_validate_error_remove(&$errors, $name) {
+  $found = FALSE;
+  $search = "<em>$name</em>";
+  foreach ($errors as $key => $error) {
+    if (strpos($error, $search) !== FALSE) {
+      unset($errors[$key]);
+      $found = TRUE;
+    }
+  }
+  return $found;
 }
 
 /**
