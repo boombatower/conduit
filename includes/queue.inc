@@ -85,8 +85,8 @@ function conduit_queue_delete($item) {
 /**
  * Delete a item from the queue.
  *
- * @param $item
- *   Queue item object.
+ * @param $category
+ *   The job category from which to count the items.
  */
 function conduit_queue_count($category) {
   return DrupalQueue::get('conduit_job_' . $category)->numberOfItems();
