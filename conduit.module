@@ -45,7 +45,7 @@ function conduit_permission() {
  * Implements hook_user_view().
  */
 function conduit_user_view($account, $view_mode, $langcode) {
-  if ($view_mode == 'full') {
+  if ($view_mode == 'full' && in_array('conduit client', $account->roles)) {
     $view = views_get_view('conduit_group_user');
     $view->override_path = $_GET['q'];
     $account->content['conduit_group'] = array(
