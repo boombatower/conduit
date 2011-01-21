@@ -56,7 +56,6 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
     return;
   }
 
-  // Set title description using type.
   $form['title']['#description'] = t('Displayed when being referenced.');
 
   // Move all conduit fields into a fieldset.
@@ -93,6 +92,11 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
       $form['conduit_' . $fieldset][$key] = $form[$key];
       unset($form[$key]);
     }
+  }
+
+  // Jobs may not be updated so do not allow create revision to be unchecked.
+  if ($is_job) {
+    $form['revision_information']['revision']['#disabled'] = TRUE;
   }
 }
 
