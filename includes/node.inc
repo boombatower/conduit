@@ -56,6 +56,11 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
     return;
   }
 
+  // If parent value exists then asign it to the default value.
+  if (isset($_GET['parent'])) {
+    $form['conduit_parent'][LANGUAGE_NONE][0]['nid']['#default_value'] = $_GET['parent'];
+  }
+
   $form['title']['#description'] = t('Displayed when being referenced.');
 
   // Move all conduit fields into a fieldset.

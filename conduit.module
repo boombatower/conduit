@@ -56,6 +56,47 @@ function conduit_user_view($account, $view_mode, $langcode) {
 }
 
 /**
+ * Implements hook_block_info().
+ */
+function conduit_block_info() {
+  return array(
+    'conduit' => array(
+      'info' => t('conduit'),
+      'cache' => DRUPAL_CACHE_PER_PAGE,
+      'status' => 1,
+      'region' => 'sidebar_first',
+    ),
+  );
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function conduit_block_view($delta = '') {
+  $block = array();
+
+  $router_item = menu_get_item($_GET['q']);
+  if ($router_item['path'] == 'node/%' && ($node = menu_get_object()) && conduit_node_type($node->type)) {
+    if ($node->type == 'conduit_group') {
+      $parent = $node->nid;
+      $block['subject'] = t('Add child');
+    }
+    else {
+      $parent = $node->conduit_parent[LANGUAGE_NONE][0]['nid'];
+      $block['subject'] = t('Add sibling');
+    }
+
+    $links = array();
+    foreach (conduit_types() as $type => $name) {
+      $links[] = l(t($name), 'node/add/' . str_replace('_', '-', $type), array('query' => array('parent' => $parent)));
+    }
+    $block['content'] = theme('item_list', array('items' => $links));
+  }
+
+  return $block;
+}
+
+/**
  * Implements hook_flush_caches().
  */
 function conduit_flush_caches() {
@@ -169,12 +210,11 @@ function conduit_job_info($type) {
  */
 function conduit_categories() {
   if (!($categories = &drupal_static(__FUNCTION__))) {
-    $categories = ($cache = cache_get(__FUNCTION__)) ? $cache->data : FALSE;
+    $categories = ($cache = cache_get(__FUNCTION__)) ? $cache->data : array();
   }
 
   if (!$categories) {
     $types = array_keys(node_type_get_names());
-    $categories = array();
     foreach ($types as $type) {
       if ($info = conduit_job_info($type)) {
         $categories[$info['category']] = $info['category'];
@@ -184,6 +224,24 @@ function conduit_categories() {
   }
 
   return $categories;
+}
+
+/**
+ * Determine the conduit node types available.
+ *
+ * @see conduit_node_type()
+ */
+function conduit_types() {
+  if (!($types = &drupal_static(__FUNCTION__))) {
+    $types = ($cache = cache_get(__FUNCTION__)) ? $cache->data : array();
+  }
+
+  if (!$types) {
+    $types = array_flip(array_filter(array_flip(node_type_get_names()), 'conduit_node_type'));
+    cache_set(__FUNCTION__, $types);
+  }
+
+  return $types;
 }
 
 /**
