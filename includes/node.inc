@@ -136,28 +136,21 @@ function conduit_validate($node, $form, &$form_state) {
     return;
   }
 
-  if ($node->type == 'conduit_group') {
-    if ($properties) {
-      // Allow all plugins to validate properties generically since the job
-      // type is not yet known.
-      $errors = module_invoke_all('conduit_validate', $properties, array(), FALSE);
-    }
-  }
-  else {
-    // Since the node is a job the properties must be merged to allow the final
-    // property set to be validated by the plugin.
-    $properties = conduit_properties_merge($node);
+  // Merge properties so each key is assigned a value.
+  $properties = conduit_properties_merge($node);
 
-    // Allow conduit to validate base properties and the module responsible
-    // for the job type to validate the properties and alter base errors.
+  // Conduit validates base properties.
+  module_invoke('conduit', 'conduit_validate', $properties);
+
+  if ($node->type != 'conduit_group') {
+    // The module responsible for the job type validate its properties.
     $info = conduit_job_info($node->type);
-    $errors = module_invoke('conduit', 'conduit_validate', $properties, array(), TRUE);
-    $errors = module_invoke($info['module'], 'conduit_validate', $properties, $errors, TRUE);
+    module_invoke($info['module'], 'conduit_validate', $properties);
   }
 
   // If errors where generated then print them and set on properties field.
-  if ($errors) {
-    form_set_error('conduit_properties', t('The properties field contains the following problems.') . theme('item_list', array('items' => $errors)));
+  if ($errors = conduit_validate_error()) {
+    form_set_error('conduit_properties', t('The <em>properties</em> field contains the following problems.') . theme('item_list', array('items' => $errors)));
   }
 }
 
@@ -166,111 +159,101 @@ function conduit_validate($node, $form, &$form_state) {
  *
  * Validate all standard properties that any job may contain.
  */
-function conduit_conduit_validate(array $properties, array $errors) {
-  foreach ($properties as $key => $value) {
-    if (is_numeric($key)) {
-      $errors[] = t('Root level properties must have a key.');
-      continue;
-    }
+function conduit_conduit_validate(array $properties) {
+  extract($properties);
 
-    switch ($key) {
-      case 'context':
-        if (!is_numeric($value) || intval($value) != $value) {
-          $errors[] = t('The <em>context</em> property must be an integer.');
-        }
-        break;
-      case 'database':
-        if (!in_array($value, array('mysql', 'pgsql', 'sqlite'))) {
-          $errors[] = t('The <em>database</em> property must be set to "mysql", "pgsql", or "sqlite".');
-        }
-        break;
-      case 'mask':
-      case 'nomask':
-        if (($message = conduit_validate_regex($value)) !== TRUE) {
-          $errors[] = t('The <em>@key</em> property must be a valid Perl regular expression as accepted by the PHP function <a href="http://php.net/preg_match">preg_match()</a>. The following error was found: @error.',
-            array('@key' => $key, '@error' => $message));
-        }
-        break;
-      case 'newline':
-        if (!in_array($value, array('any', 'unix'))) {
-          $errors[] = t('The <em>newline</em> property must be either "any" or "unix".');
-        }
-        break;
-      case 'patch':
-        if (!is_array($value)) {
-          $errors[] = t('The <em>patch</em> property must be an array containing URLs.');
-        }
-        else {
-          foreach ($value as $number => $url) {
-            if (!parse_url($url)) {
-              $errors[] = t('The <em>patch</em> property contains an invalid URL in entry number %number.', array('%number' => $number + 1));
-            }
-          }
-        }
-        break;
-      case 'path':
-        if (is_array($value)) {
-          foreach ($value as $number => $path) {
-            if (!conduit_validate_path($path)) {
-              $errors[] = t('The <em>path</em> property value number %number must be a relative path that does not begin or end with "/", does contain parts of "." or "..", or any backslashes ("\").',
-                array('%number' => $number + 1));
-            }
-          }
-        }
-        else {
-          $errors[] = t('The <em>path</em> property must be an array.');
-        }
-        break;
-      case 'setup':
-        if (!is_array($value)) {
-          $errors[] = t('The <em>setup</em> property must be an array of commands.');
-        }
-        break;
-      case 'ssh':
-        if (!is_array($value)) {
-          $errors[] = t('The <em>ssh</em> property must be an array of ssh information.');
-        }
-        else {
-          foreach ($value as $number => $ssh) {
-            $invalid = FALSE;
-            foreach ($ssh as $key => $value) {
-              if (!in_array($key, array('key', 'host', 'user', 'port'))) {
-                $errors[] = t('The <em>ssh</em> property value number %number has an invalid key.', array('%number' => $number + 1));
-                $invalid = TRUE;
-              }
-              elseif ($key == 'port' && (!is_numeric($value) || intval($value) != $value)) {
-                $errors[] = t('The <em>ssh</em> property value number %number contains an invalid port number.', array('%number' => $number + 1));
-              }
-            }
-            if (!$invalid && count($ssh) < 4) {
-              $errors[] = t('The <em>ssh</em> property value number %number does not contain the four required keys.', array('%number' => $number + 1));
-            }
-          }
-        }
-        break;
-      case 'vcs':
-         if (!is_array($value)) {
-          $errors[] = t('The <em>vcs</em> property must be an array of version control information.');
-        }
-        else {
-          foreach ($value as $path => $url) {
-            if ($path != '' && !conduit_validate_path($path)) {
-              $errors[] = t('The <em>vcs</em> property contains the invalid path "@path".', array('@path' => $path));
-            }
-            if (!in_array(substr($url, 0, 3), array('bzr', 'cvs', 'git', 'svn'))) { // @TODO Strong validation.
-              $errors[] = t('The <em>vcs</em> property contains a URL that references in unsupported version control system at path "@path".', array('@path' => $path));
-            }
-          }
-        }
-        break;
-      case 'verbose':
-        if (!is_bool($value)) {
-          $errors[] = t('The <em>verbose</em> property must be a boolean, either TRUE or FALSE.');
-        }
-        break;
+  if (!is_numeric($context) || intval($context) != $context) {
+    conduit_validate_error('context', t('must be an integer'));
+  }
+
+  foreach (array('mask', 'nomask') as $name) {
+    if (($message = conduit_validate_regex($$name)) !== TRUE) {
+      conduit_validate_error($name, t('must be a valid regular expression (see <a href="http://php.net/preg_match">preg_match()</a>) [@message]',
+        array('@message' => $message)));
     }
   }
-  return $errors;
+
+  if (!in_array($newline, array('any', 'unix'))) {
+    conduit_validate_error('newline', t('must be "any" or "unix"'));
+  }
+
+  if (!is_array($patch)) {
+    conduit_validate_error('patch', t('must be an array'));
+  }
+  else {
+    foreach ($patch as $number => $url) {
+      if (!parse_url($url)) {
+        conduit_validate_error('patch', t('invalid URL'), $number);
+      }
+    }
+  }
+
+  if (!is_array($path)) {
+    conduit_validate_error('path', t('must be an array'));
+  }
+  else {
+    foreach ($path as $number => $value) {
+      if (!conduit_validate_path($value)) {
+        conduit_validate_error('path', t('must be a relative path (does not begin or end with "/", does contain parts of "." or "..", or any backslashes "\")'), $number);
+      }
+    }
+  }
+
+  if (!is_array($setup)) {
+    conduit_validate_error('setup', t('must be an array'));
+  }
+
+  if (!is_array($ssh)) {
+    conduit_validate_error('ssh', t('must be an array'));
+  }
+  else {
+    foreach ($ssh as $number => $set) {
+      if (!is_array($set)) {
+        conduit_validate_error('ssh', t('must be an array'), $number);
+        continue;
+      }
+
+      $invalid = FALSE;
+      foreach ($set as $key => $value) {
+        if (!in_array($key, array('key', 'host', 'user', 'port'))) {
+          conduit_validate_error('ssh', t('invalid key'), array($number, $key));
+          $invalid = TRUE;
+        }
+        elseif ($key == 'port' && (!is_numeric($value) || intval($value) != $value)) {
+          conduit_validate_error('ssh', t('must be an integer'), array($number, 'port'));
+        }
+      }
+      if (!$invalid && count($set) < 4) {
+        conduit_validate_error('ssh', t('must contain the four required keys (key, host, user, port)'), $number);
+      }
+    }
+  }
+
+  if (!is_array($vcs)) {
+    conduit_validate_error('vcs', t('must be an array'));
+  }
+  else {
+    foreach ($vcs as $path => $url) {
+      if (!conduit_validate_path($path)) {
+        conduit_validate_error('vcs', t('invalid path'), $path);
+      }
+      if (!in_array(substr($url, 0, 3), array('bzr', 'cvs', 'git', 'svn'))) { // @TODO Strong validation.
+        conduit_validate_error('vcs', t('unsupported version control system'), $path);
+      }
+    }
+  }
+
+  if (!is_bool($verbose)) {
+    conduit_validate_error('verbose', t('must be a boolean (true or false)'));
+  }
+
+  // Check for any numberic keys.
+  foreach ($properties as $key => $value) {
+    if (is_numeric($key)) {
+      conduit_validate_error($key, t('root level property keys must be strings'));
+      continue;
+    }
+  }
 }
 
 /**
@@ -314,25 +297,26 @@ function conduit_validate_path($path) {
 }
 
 /**
- * Remove any errors for a specific property key.
+ * Files an error against the conduit properties field.
  *
- * @param $errors
- *   Reference to errors array from which errors will be removed.
  * @param $name
- *   Property name to remove errors for.
+ *   (Optional) Name of property.
+ * @param $message
+ *   (Optional) Message related to property.
+ * @param $index
+ *   (Optional) If applicable the index(es) related to the property.
  * @return
- *   TRUE if any errors found for the property name, otherwise FALSE.
+ *   List of errors.
  */
-function conduit_validate_error_remove(&$errors, $name) {
-  $found = FALSE;
-  $search = "<em>$name</em>";
-  foreach ($errors as $key => $error) {
-    if (strpos($error, $search) !== FALSE) {
-      unset($errors[$key]);
-      $found = TRUE;
+function conduit_validate_error($name = NULL, $message = NULL, $index = NULL) {
+  $errors = &drupal_static(__FUNCTION__, array());
+  if ($name && $message) {
+    if (!is_null($index)) {
+      $name .= is_array($index) ? '[' . implode('][', $index) . ']' : "[$index]";
     }
+    $errors[] = t('<strong>@name</strong>: !message', array('@name' => $name, '!message' => $message));
   }
-  return $found;
+  return $errors;
 }
 
 /**

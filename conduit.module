@@ -83,8 +83,7 @@ function conduit_properties_merge($node) {
   }
 
   // If the node has a parent then merge its merged properties array.
-  if (!empty($node->conduit_parent)) {
-    $parent = node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']);
+  if (!empty($node->conduit_parent) && ($parent = node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']))) {
     $properties = array_replace_recursive($properties, $parent->conduit_properties_merged);
   }
 

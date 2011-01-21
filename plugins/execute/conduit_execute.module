@@ -16,17 +16,11 @@ function conduit_execute_node_info() {
 /**
  * Implements hook_conduit_validate().
  */
-function conduit_execute_conduit_validate(array $properties, array $errors) {
-  foreach ($properties as $key => $value) {
-    switch ($key) {
-      case 'command':
-        if (!is_string($value) && !is_array($value)) {
-          $errors[] = t('The <em>command</em> property must either be a single command or an array of commands.');
-        }
-        break;
-    }
+function conduit_execute_conduit_validate(array $properties) {
+  extract($properties);
+  if (!is_string($command) && !is_array($command)) {
+    conduit_validate_error('command', t('must either be a single command or an array of commands'));
   }
-  return $errors;
 }
 
 /**
@@ -58,7 +52,7 @@ function conduit_execute_conduit_queue_build(array $properties) {
 /**
  * Implements hook_conduit_init().
  */
-function conduit_execute_conduit_init(&$node, $chunk_count) {
+function conduit_execute_conduit_init($node, $chunk_count) {
   for ($delta = 0; $delta < $chunk_count; $delta++) {
     $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = '[placeholder]';
   }
@@ -67,7 +61,7 @@ function conduit_execute_conduit_init(&$node, $chunk_count) {
 /**
  * Implements hook_conduit_result().
  */
-function conduit_execute_conduit_result(&$node, $delta, $result) {
+function conduit_execute_conduit_result($node, $delta, $result) {
   if ($result) {
     $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = $result;
   }
