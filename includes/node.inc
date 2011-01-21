@@ -365,6 +365,64 @@ function conduit_update($node) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter(): node_delete_confirm.
+ */
+function conduit_form_node_delete_confirm_alter(&$form, &$form_state) {
+  // If a group then determine if there are any children.
+  if ($node->type == 'conduit_group') {
+    $group = views_get_view('conduit_group');
+    $group->set_arguments(array($form['#node']->nid));
+    $group->execute();
+
+    $job = views_get_view('conduit_job');
+    $job->set_arguments(array($form['#node']->nid));
+    $job->execute();
+
+    // Add a note about the children to be deleted.
+    if ($total = $group->total_rows + $job->total_rows) {
+      $form['description']['#markup'] = format_plural($total,
+        'The group contains a child that will also be deleted.',
+        'The group contains @count children that will also be deleted.'
+      ) . ' ' . $form['description']['#markup'];
+    }
+  }
+}
+
+/**
+ * Implements hook_delete().
+ */
+function conduit_delete($node) {
+  // If a group then delete any child groups or jobs.
+  if ($node->type == 'conduit_group') {
+    conduit_delete_view('conduit_group', $node->nid);
+    conduit_delete_view('conduit_job', $node->nid);
+  }
+}
+
+/**
+ * Delete all nodes in the view.
+ *
+ * @param $name
+ *   View name.
+ * @param $parent
+ *   Parent node ID argument for view.
+ */
+function conduit_delete_view($name, $parent) {
+  $page = 0;
+  do {
+    $view = views_get_view($name);
+    $view->set_arguments(array($parent));
+    $view->set_items_per_page(200);
+    $view->set_current_page($page++);
+    $view->execute();
+    foreach ($view->result as $node) {
+      node_delete($node->nid);
+    }
+  }
+  while ($page * $view->get_items_per_page() < $view->total_rows);
+}
+
+/**
  * Implements hook_view().
  */
 function conduit_view($node, $view_mode) {
