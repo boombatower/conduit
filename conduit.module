@@ -56,6 +56,35 @@ function conduit_user_view($account, $view_mode, $langcode) {
 }
 
 /**
+ * Implements hook_flush_caches().
+ */
+function conduit_flush_caches() {
+  // Rebuild client role permissions.
+  if ($role = user_role_load_by_name('conduit client')) {
+    user_role_grant_permissions($role->rid, conduit_client_permissions());
+  }
+}
+
+/**
+ * Implements hook_conduit_default_properties().
+ */
+function conduit_conduit_default_properties() {
+  return array(
+    'context' => 3,
+    'database' => 'mysql',
+    'mask' => '/.*/',
+    'newline' => 'unix',
+    'nomask' => '/(\.\.?|CVS)$/',
+    'patch' => array(),
+    'path' => array(''),
+    'setup' => array(),
+    'ssh' => array(),
+    'vcs' => array(),
+    'verbose' => FALSE,
+  );
+}
+
+/**
  * Merge group and default properties together with entity's properties.
  *
  * The properties are merged in such a way that the lower the item is on the
@@ -100,25 +129,6 @@ function conduit_properties_merge($node) {
 }
 
 /**
- * Implements hook_conduit_default_properties().
- */
-function conduit_conduit_default_properties() {
-  return array(
-    'context' => 3,
-    'database' => 'mysql',
-    'mask' => '/.*/',
-    'newline' => 'unix',
-    'nomask' => '/(\.\.?|CVS)$/',
-    'patch' => array(),
-    'path' => array(''),
-    'setup' => array(),
-    'ssh' => array(),
-    'vcs' => array(),
-    'verbose' => FALSE,
-  );
-}
-
-/**
  * Determine job information based on the node type.
  *
  * @param $type
@@ -149,16 +159,6 @@ function conduit_job_info($type) {
   }
 
   return $info[$type];
-}
-
-/**
- * Implements hook_flush_caches().
- */
-function conduit_flush_caches() {
-  // Rebuild client role permissions.
-  if ($role = user_role_load_by_name('conduit client')) {
-    user_role_grant_permissions($role->rid, conduit_client_permissions());
-  }
 }
 
 /**
