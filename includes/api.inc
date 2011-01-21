@@ -42,6 +42,11 @@ function conduit_api_result($item, $pass, $result, $log) {
 
   // Attempt to load the job node related to the queue item.
   if ($job = node_load($item->data['nid'], $item->data['vid'])) {
+    // Ensure that the chunk has not already been saved.
+    if ($job->conduit_chunk_pass[LANGUAGE_NONE][$item->data['delta']]['value'] != -1) {
+      return FALSE;
+    }
+
     // Store the chunk pass value and log.
     $job->conduit_chunk_pass[LANGUAGE_NONE][$item->data['delta']]['value'] = (int) $pass;
     $job->conduit_log[LANGUAGE_NONE][$item->data['delta']]['value'] = $log;
