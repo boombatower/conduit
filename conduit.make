@@ -8,16 +8,14 @@ projects[drupal] = 7
 
 ; Dependencies
 
-projects[boolean][type] = module
-projects[boolean][download][type] = git
-projects[boolean][download][url] = git://github.com/solotandem/boolean.git
+projects[boolean] = 1
 
 projects[field_helper] = 1
 projects[references] = 2
 
 projects[serial][type] = module
 projects[serial][download][type] = git
-projects[serial][download][url] = git://github.com/solotandem/serial.git
+projects[serial][download][url] = git@git.boombatower.com:reviewdriven/modules/serial
 
 projects[services] = 3
 projects[views] = 3
