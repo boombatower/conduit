@@ -154,7 +154,7 @@ function conduit_install_fields() {
     ),
     'conduit_summary' => array(
       'field_name' => 'conduit_summary',
-      'type' => 'text_long',
+      'type' => 'text',
     ),
     'conduit_chunk_pass' => array(
       'field_name' => 'conduit_chunk_pass',
@@ -275,7 +275,7 @@ function conduit_install_instances_job($type) {
       'label' => $t('Summary'),
       'description' => $t('Summary of the job result.'),
       'widget' => array(
-        'type' => 'text_textarea',
+        'type' => 'text_textfield',
       ),
     ),
     'job_conduit_chunk_pass' => array(
