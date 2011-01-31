@@ -112,7 +112,6 @@ function conduit_flush_caches() {
 function conduit_conduit_default_properties() {
   return array(
     'context' => 3,
-    'database' => 'mysql',
     'mask' => '/.*/',
     'newline' => 'unix',
     'nomask' => '/(\.\.?|CVS)$/',
