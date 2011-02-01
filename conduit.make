@@ -9,7 +9,7 @@ projects[drupal] = 7
 ; Dependencies
 
 projects[boolean] = 1
-
+projects[field_group] = 1
 projects[field_helper] = 1
 projects[references] = 2
 
