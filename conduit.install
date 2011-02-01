@@ -139,7 +139,7 @@ function conduit_uninstall_node_type($type) {
  */
 function conduit_uninstall_node_type_group($type) {
   $groups = field_group_read_groups(array(
-    'group_name' => $name = ($info = conduit_job_info($type) ? $info['module'] : $type),
+    'group_name' => $name = (($info = conduit_job_info($type)) ? $info['module'] : $type),
   ));
   if ($groups && ($group = $groups['node'][$type]['form'][$name])) {
     field_group_delete_field_group($group, $group->mode);
