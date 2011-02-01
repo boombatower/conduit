@@ -65,8 +65,10 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
 
   if (conduit_job_info($form_id)) {
     // Hide standard non-meta fields.
-    foreach (array('done', 'chunk_count', 'pass', 'summary', 'chunk_pass', 'log') as $field) {
-      $form['conduit_' . $field]['#access'] = FALSE;
+    foreach (element_children($form) as $key) {
+      if (strpos($key, 'conduit') === 0 && !in_array($key, array('conduit_parent', 'conduit_properties'))) {
+        $form[$key]['#access'] = FALSE;
+      }
     }
 
     // Jobs may not be updated so do not allow create revision to be unchecked.
