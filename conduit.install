@@ -88,7 +88,7 @@ function conduit_install_node_type_group($type) {
     'mode' => 'form',
     'parent_name' => '',
     'label' => 'Meta',
-    'weight' => 1,
+    'weight' => -10,
     'children' => array(
       'conduit_parent',
       'conduit_properties',
