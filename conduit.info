@@ -15,6 +15,7 @@ files[] = includes/services.inc
 
 dependencies[] = boolean
 dependencies[] = field_helper (1.x)
+dependencies[] = field_group
 dependencies[] = list
 dependencies[] = number
 dependencies[] = node_reference

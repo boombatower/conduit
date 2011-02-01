@@ -22,13 +22,6 @@ conduit_include('node');
 function conduit_permission() {
   $permissions = array();
 
-  foreach (array('meta', 'status', 'result') as $fieldset) {
-    $permissions['edit conduit job ' . $fieldset] = array(
-      'title' => t('Edit job @fieldset information.', array('@fieldset' => $fieldset)),
-      'description' => t('Edit the fields conntained within the @fieldset fieldset.', array('@fieldset' => $fieldset)),
-    );
-  }
-
   $permissions['claim conduit item'] = array(
     'title' => t('Claim an item'),
     'description' => t('Claim an item from a category queue. <em>Required by all workers.</em>'),
@@ -252,7 +245,7 @@ function conduit_types() {
 function conduit_client_permissions() {
   $types = array_filter(array_keys(node_type_get_names()), 'conduit_node_type');
   $operations = array('create', 'edit own', 'delete own');
-  $permissions = array('edit conduit job meta');
+  $permissions = array();
   foreach ($types as $type) {
     foreach ($operations as $operation) {
       $permissions[] = "$operation $type content";

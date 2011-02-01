@@ -63,44 +63,13 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
 
   $form['title']['#description'] = t('Displayed when being referenced.');
 
-  // Move all conduit fields into a fieldset.
-  $is_job = (bool) conduit_job_info($form_id);
-  $fieldsets = $is_job ? array('meta', 'status', 'result') : array('meta');
-  foreach ($fieldsets as $fieldset) {
-    $form['conduit_' . $fieldset] = array(
-      '#type' => 'fieldset',
-      '#title' => ucfirst($fieldset),
-      '#collapsible' => TRUE,
-      '#collapsed' => $fieldset != 'meta',
-      '#access' => user_access('edit conduit job ' . $fieldset),
-    );
-  }
-
-  $status = array('conduit_done', 'conduit_chunk_count');
-  $result = array('conduit_pass', 'conduit_summary', 'conduit_chunk_pass', 'conduit_log');
-  foreach (element_children($form) as $key) {
-    if (isset($form[$key]['#type']) && $form[$key]['#type'] == 'fieldset') {
-      continue;
+  if (conduit_job_info($form_id)) {
+    // Hide standard non-meta fields.
+    foreach (array('done', 'chunk_count', 'pass', 'summary', 'chunk_pass', 'log') as $field) {
+      $form['conduit_' . $field]['#access'] = FALSE;
     }
 
-    if ($key == 'title' || strpos($key, 'conduit_') === 0) {
-      $fieldset = 'meta';
-      if ($is_job) {
-        if (in_array($key, $status)) {
-          $fieldset = 'status';
-        }
-        elseif (in_array($key, $result) || strpos($key, 'conduit_result') === 0) {
-          $fieldset = 'result';
-        }
-      }
-
-      $form['conduit_' . $fieldset][$key] = $form[$key];
-      unset($form[$key]);
-    }
-  }
-
-  // Jobs may not be updated so do not allow create revision to be unchecked.
-  if ($is_job) {
+    // Jobs may not be updated so do not allow create revision to be unchecked.
     $form['revision_information']['revision']['#disabled'] = TRUE;
   }
 }
