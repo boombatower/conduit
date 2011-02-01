@@ -3,16 +3,6 @@ description = Job distribution system.
 package = Conduit
 version = 1.0
 core = 7.x
-files[] = conduit.drush.inc
-files[] = conduit.module
-files[] = conduit.install
-files[] = conduit.test
-
-files[] = includes/api.inc
-files[] = includes/node.inc
-files[] = includes/queue.inc
-files[] = includes/services.inc
-
 dependencies[] = boolean
 dependencies[] = field_helper (1.x)
 dependencies[] = field_group
