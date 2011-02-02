@@ -9,7 +9,6 @@ projects[drupal] = 7
 ; Dependencies
 
 projects[boolean] = 1
-projects[field_group] = 1
 
 projects[field_group_views][type] = module
 projects[field_group_views][download][type] = git
