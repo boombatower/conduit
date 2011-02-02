@@ -40,8 +40,14 @@ function conduit_api_result($item, $pass, $result, $log) {
   // Acquire a lock to modify the node.
   $lock = conduit_api_lock_acquire($item->data['nid']);
 
+  // Disable field suppression and force the field values to be reloaded by
+  // clearing the cache which will be empty due to field_suppression.
+  field_suppress_state(FALSE);
+  // @TODO Remove once resetCache() on the entity control does this.
+  cache_clear_all('field:node:' . $item->data['nid'], 'cache_field');
+
   // Attempt to load the job node related to the queue item.
-  if ($job = node_load($item->data['nid'], $item->data['vid'])) {
+  if ($job = node_load($item->data['nid'], $item->data['vid'], TRUE)) {
     // Ensure that the chunk has not already been saved.
     if ($job->conduit_chunk_pass[LANGUAGE_NONE][$item->data['delta']]['value'] != -1) {
       return FALSE;
@@ -76,6 +82,7 @@ function conduit_api_result($item, $pass, $result, $log) {
     // Remove the complete queue item.
     conduit_queue_delete($item);
   }
+  field_suppress_state(TRUE);
   lock_release($lock);
   return (bool) $job;
 }
