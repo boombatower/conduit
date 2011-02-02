@@ -27,4 +27,3 @@ projects[serial][download][type] = git
 projects[serial][download][url] = git@git.boombatower.com:reviewdriven/modules/serial
 
 projects[services] = 3
-projects[views] = 3
