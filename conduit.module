@@ -22,6 +22,12 @@ conduit_include('node');
 function conduit_permission() {
   $permissions = array();
 
+  $permissions['view conduit log'] = array(
+    'title' => t('View log'),
+    'description' => t('View the log for a job.'),
+  );
+
+  // Worker permissions.
   $permissions['claim conduit item'] = array(
     'title' => t('Claim an item'),
     'description' => t('Claim an item from a category queue. <em>Required by all workers.</em>'),
