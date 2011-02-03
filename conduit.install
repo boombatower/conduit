@@ -210,6 +210,10 @@ function conduit_install_fields() {
       'field_name' => 'conduit_log',
       'type' => 'text_long',
       'cardinality' => -1,
+      'settings' => array(
+        'field_suppress' => 'load',
+        'views_base_table' => TRUE,
+      ),
     ),
   );
 }
@@ -234,6 +238,11 @@ function conduit_install_instances() {
           'autocomplete_match' => 'starts_with',
         ),
       ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
     ),
     'group_conduit_properties' => array(
       'entity_type' => 'node',
@@ -243,6 +252,11 @@ function conduit_install_instances() {
       'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
       'widget' => array(
         'type' => 'serial_textarea',
+      ),
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+        ),
       ),
     ),
   );
@@ -271,6 +285,11 @@ function conduit_install_instances_job($type) {
           'autocomplete_match' => 'starts_with',
         ),
       ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
     ),
     'job_conduit_properties' => array(
       'field_name' => 'conduit_properties',
@@ -278,6 +297,11 @@ function conduit_install_instances_job($type) {
       'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
       'widget' => array(
         'type' => 'serial_textarea',
+      ),
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+        ),
       ),
     ),
     'job_conduit_done' => array(
@@ -292,6 +316,11 @@ function conduit_install_instances_job($type) {
       'widget' => array(
         'type' => 'boolean_checkbox',
       ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
     ),
     'job_conduit_chunk_count' => array(
       'field_name' => 'conduit_chunk_count',
@@ -300,6 +329,11 @@ function conduit_install_instances_job($type) {
       'settings' => array('min' => '1'),
       'widget' => array(
         'type' => 'number',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
       ),
     ),
     'job_conduit_pass' => array(
@@ -314,6 +348,11 @@ function conduit_install_instances_job($type) {
       'widget' => array(
         'type' => 'boolean_checkbox',
       ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
     ),
     'job_conduit_summary' => array(
       'field_name' => 'conduit_summary',
@@ -321,6 +360,11 @@ function conduit_install_instances_job($type) {
       'description' => $t('Summary of the job result.'),
       'widget' => array(
         'type' => 'text_textfield',
+      ),
+      'display' => array(
+        'default' => array(
+          'label' => 'inline',
+        ),
       ),
     ),
     'job_conduit_chunk_pass' => array(
@@ -335,6 +379,11 @@ function conduit_install_instances_job($type) {
       'widget' => array(
         'type' => 'boolean_checkbox',
       ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
     ),
     'job_conduit_log' => array(
       'field_name' => 'conduit_log',
@@ -342,6 +391,11 @@ function conduit_install_instances_job($type) {
       'description' => $t('Log created during completion of job by worker.'),
       'widget' => array(
         'type' => 'text_textarea',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
       ),
     ),
   );
