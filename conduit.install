@@ -363,7 +363,7 @@ function conduit_install_instances_job($type) {
       ),
       'display' => array(
         'default' => array(
-          'label' => 'inline',
+          'label' => 'hidden',
         ),
       ),
     ),
