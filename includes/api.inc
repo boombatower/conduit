@@ -79,6 +79,7 @@ function conduit_api_result($item, $pass, $result, $log) {
     node_save($job);
 
     // Remove the complete queue item.
+    conduit_include('queue');
     conduit_queue_delete($item);
   }
   lock_release($lock);
