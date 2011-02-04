@@ -162,10 +162,10 @@ function drush_conduit_delete_data($types = '') {
     $types = explode(' ', $types);
   }
   else {
-    $types = conduit_types();
+    $types = array_keys(conduit_types());
   }
 
-  foreach ($types as $type => $title) {
+  foreach ($types as $type) {
     // Delete all nodes of specified type.
     $nids = db_select('node')
       ->fields('node', array('nid'))
