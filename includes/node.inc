@@ -467,7 +467,7 @@ function conduit_node_view_alter(&$build) {
     if ($build['#node']->conduit_properties[LANGUAGE_NONE][0]['value'] != $build['#node']->conduit_properties_merged) {
       $build['conduit_properties_inherit'] = array(
         '#type' => 'markup',
-        '#markup' => highlight_string('<?php ' . var_export($build['#node']->conduit_properties_merged, TRUE), TRUE),
+        '#markup' => serial_display($build['#node']->conduit_properties_merged),
         '#weight' => $build['conduit_properties']['#weight'] + 0.1,
       );
     }
