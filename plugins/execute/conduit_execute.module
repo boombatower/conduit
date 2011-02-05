@@ -10,7 +10,7 @@
  * Implements hook_node_info().
  */
 function conduit_execute_node_info() {
-  return conduit_node_info_job('conduit_execute');
+  return conduit_node_info_job('conduit_execute', t('Execute a single command or a set of commands.'));
 }
 
 /**

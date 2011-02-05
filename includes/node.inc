@@ -15,7 +15,7 @@ function conduit_node_info() {
   $info['conduit_group'] = array(
     'name' => t('Conduit group'),
     'base' => 'conduit',
-    'description' => t('Groups jobs together and can be used to create a hierarchy.'),
+    'description' => t('A <em>group</em> is requried in order to create jobs which must have a parent group. Groups can also be used to create hierarchies for job organization.'),
   );
 
   return $info;
@@ -26,17 +26,19 @@ function conduit_node_info() {
  *
  * @param $plugin
  *   Plugin name.
+ * @param $description
+ *   (Optional) Description of job type.
  * @return
  *   Node type definition to be used with hook_node_info().
  * @see hook_node_info()
  */
-function conduit_node_info_job($plugin) {
+function conduit_node_info_job($plugin, $description = NULL) {
   $title = ucfirst(str_replace('_', ' ', $plugin));
   return array(
     'conduit_job_' . $plugin => array(
       'name' => t('Conduit job - @plugin', array('@plugin' => $title)),
       'base' => 'conduit',
-      'description' => t('Job, of type @plugin, to be performed.', array('@plugin' => $title)),
+      'description' => $description ? $description : t('Job, of type @plugin, to be performed.', array('@plugin' => $title)),
     ),
   );
 }
