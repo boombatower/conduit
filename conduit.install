@@ -58,6 +58,9 @@ function conduit_install_node_type($type, $path = 'job') {
   // Publish all content types, but nothing more.
   variable_set('node_options_' . $type, $path == 'job' ? array('status', 'revision') : array('status'));
 
+  // Do not show author or date information.
+  variable_set('node_submitted_' . $type, FALSE);
+
   // Disable comments.
   module_load_include('module', 'comment');
   variable_set('comment_' . $type, COMMENT_NODE_CLOSED);
