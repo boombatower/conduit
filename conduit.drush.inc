@@ -150,7 +150,7 @@ function drush_conduit_job_load($file) {
 
 /**
  * Remove all data for conduit node types.
- * 
+ *
  * Adapted from conduit_uninstall_node_type() which could stand a
  * refactoring into: deleting the data and deleting the fields/instances.
  *
