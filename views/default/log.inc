@@ -73,6 +73,7 @@ $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['ellipsis'] = 1;
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['strip_tags'] = 0;
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['html'] = 0;
+$handler->display->display_options['fields']['conduit_log_value_raw']['element_type'] = 'div';
 $handler->display->display_options['fields']['conduit_log_value_raw']['element_label_colon'] = 1;
 $handler->display->display_options['fields']['conduit_log_value_raw']['element_default_classes'] = 1;
 $handler->display->display_options['fields']['conduit_log_value_raw']['hide_empty'] = 0;
@@ -85,6 +86,7 @@ $handler->display->display_options['arguments']['entity_id_raw']['default_action
 $handler->display->display_options['arguments']['entity_id_raw']['style_plugin'] = 'default_summary';
 $handler->display->display_options['arguments']['entity_id_raw']['default_argument_type'] = 'fixed';
 $handler->display->display_options['arguments']['entity_id_raw']['validate_type'] = 'node';
+$handler->display->display_options['arguments']['entity_id_raw']['validate_options']['types'] = drupal_map_assoc(array_filter(array_keys(node_type_get_types()), 'conduit_job_info'));;
 $handler->display->display_options['arguments']['entity_id_raw']['validate_options']['access'] = 0;
 $handler->display->display_options['arguments']['entity_id_raw']['break_phrase'] = 0;
 $handler->display->display_options['arguments']['entity_id_raw']['not'] = 0;
@@ -94,7 +96,7 @@ $handler = $view->new_display('page', 'Log page', 'page_log');
 $handler->display->display_options['path'] = 'node/%/log';
 $handler->display->display_options['menu']['type'] = 'tab';
 $handler->display->display_options['menu']['title'] = 'Log';
-$handler->display->display_options['menu']['weight'] = '0';
+$handler->display->display_options['menu']['weight'] = '1';
 $translatables['conduit_log'] = array(
   t('Defaults'),
   t('more'),
