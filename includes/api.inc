@@ -54,6 +54,9 @@ function conduit_api_result($item, $pass, $result, $log) {
       return FALSE;
     }
 
+    // If the chunk did not pass then set the summary message to the result.
+    if (!$pass) $job->conduit_summary[LANGUAGE_NONE][0]['value'] = $result;
+
     // Store the chunk pass value and log.
     $job->conduit_chunk_pass[LANGUAGE_NONE][$item->data['delta']]['value'] = (int) $pass;
     $job->conduit_log[LANGUAGE_NONE][$item->data['delta']]['value'] = $log;
