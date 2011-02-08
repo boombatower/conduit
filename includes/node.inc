@@ -160,8 +160,11 @@ function conduit_conduit_validate(array $properties) {
     conduit_validate_error('patch', t('must be an array'));
   }
   else {
-    foreach ($patch as $number => $url) {
-      if (!parse_url($url)) {
+    foreach ($patch as $url => $apply) {
+      if (is_numeric($url)) {
+        conduit_validate_error('patch', t('key must be a patch'), $url);
+      }
+      elseif (!parse_url($url)) {
         conduit_validate_error('patch', t('invalid URL'), $number);
       }
     }
