@@ -109,9 +109,6 @@ function conduit_node_type($type) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form, &$form_state) {
-  // @TODO Serial should behave like node_reference so this is unecessary.
-  $node->conduit_properties[LANGUAGE_NONE][0]['value'] = serial_eval($node->conduit_properties[LANGUAGE_NONE][0]['value']);
-
   if (!is_array($properties = $node->conduit_properties[LANGUAGE_NONE][0]['value'])) {
     // Any errors with the properties definition will be dealt with by the
     // serial field validation.
