@@ -91,6 +91,9 @@ function hook_conduit_init($node, $chunk_count) {
 /**
  * Store plugin result and generate a summary message.
  *
+ * The hook will only be invoked if the chunk status is greater then
+ * CONDUIT_STATUS_SETUP.
+ *
  * @param $node
  *   Reference to job node for which the result will be stored.
  * @param $delta

@@ -196,17 +196,17 @@ function conduit_install_fields() {
       'field_name' => 'conduit_chunk_count',
       'type' => 'number_integer',
     ),
-    'conduit_pass' => array(
-      'field_name' => 'conduit_pass',
-      'type' => 'number_boolean',
+    'conduit_status' => array(
+      'field_name' => 'conduit_status',
+      'type' => 'number_integer',
     ),
     'conduit_summary' => array(
       'field_name' => 'conduit_summary',
       'type' => 'text',
     ),
-    'conduit_chunk_pass' => array(
-      'field_name' => 'conduit_chunk_pass',
-      'type' => 'number_boolean',
+    'conduit_chunk_status' => array(
+      'field_name' => 'conduit_chunk_status',
+      'type' => 'number_integer',
       'cardinality' => -1,
     ),
     'conduit_log' => array(
@@ -339,17 +339,13 @@ function conduit_install_instances_job($type) {
         ),
       ),
     ),
-    'job_conduit_pass' => array(
-      'field_name' => 'conduit_pass',
-      'label' => $t('Pass'),
-      'description' => $t('Indicates whether all job chunks completed with no errors.'),
-      'settings' => array(
-        'none' => array('prefix' => 'Job is not set', 'suffix' => ''),
-        'false' => array('prefix' => 'Job finished with errors', 'suffix' => ''),
-        'true' => array('prefix' => 'Job finished without errors', 'suffix' => ''),
-      ),
+    'job_conduit_status' => array(
+      'field_name' => 'conduit_status',
+      'label' => $t('Status'),
+      'description' => $t('Indicates the lowest status acheived by all completed job chunks.'),
+      'settings' => array('min' => '0'),
       'widget' => array(
-        'type' => 'boolean_checkbox',
+        'type' => 'number',
       ),
       'display' => array(
         'default' => array(
@@ -370,17 +366,13 @@ function conduit_install_instances_job($type) {
         ),
       ),
     ),
-    'job_conduit_chunk_pass' => array(
-      'field_name' => 'conduit_chunk_pass',
-      'label' => $t('Chunk pass'),
-      'description' => $t('Indicates whether a particular job chunk completed with no errors.'),
-      'settings' => array(
-        'none' => array('prefix' => 'Job chunk', 'suffix' => 'is not set'),
-        'false' => array('prefix' => 'Job chunk', 'suffix' => 'finished with errors'),
-        'true' => array('prefix' => 'Job chunk', 'suffix' => 'finished without errors'),
-      ),
+    'job_conduit_chunk_status' => array(
+      'field_name' => 'conduit_chunk_status',
+      'label' => $t('Chunk status'),
+      'description' => $t('Indicates a particular job chunk status.'),
+      'settings' => array('min' => '0'),
       'widget' => array(
-        'type' => 'boolean_checkbox',
+        'type' => 'number',
       ),
       'display' => array(
         'default' => array(

@@ -14,6 +14,21 @@
  * @link worker_perform worker_perform() @endlink.
  */
 
+/**
+ * Status of job: failed during setup.
+ */
+define('CONDUIT_STATUS_SETUP', 1);
+
+/**
+ * Status of job: plugin encountered a failure.
+ */
+define('CONDUIT_STATUS_FAIL', 2);
+
+/**
+ * Status of job: pluging passed.
+ */
+define('CONDUIT_STATUS_PASS', 3);
+
 conduit_include('node');
 
 /**

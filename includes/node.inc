@@ -317,10 +317,10 @@ function conduit_insert($node) {
     // chunk fields to ensure the results can be inserted in any order.
     $node->conduit_done[LANGUAGE_NONE][0]['value'] = (int) FALSE;
     $node->conduit_chunk_count[LANGUAGE_NONE][0]['value'] = $chunk_count;
-    $node->conduit_pass[LANGUAGE_NONE][0]['value'] = -1;
+    $node->conduit_status[LANGUAGE_NONE][0]['value'] = 0;
     $node->conduit_summary[LANGUAGE_NONE][0]['value'] = t('The job has not yet been performed.');
     for ($i = 0; $i < $chunk_count; $i++) {
-      $node->conduit_chunk_pass[LANGUAGE_NONE][$i]['value'] = -1;
+      $node->conduit_chunk_status[LANGUAGE_NONE][$i]['value'] = 0;
       $node->conduit_log[LANGUAGE_NONE][$i]['value'] = '[placeholder]';
     }
 

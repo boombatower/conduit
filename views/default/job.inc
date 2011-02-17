@@ -5,6 +5,8 @@ $view->name = 'conduit_job';
 $view->description = '';
 $view->tag = '';
 $view->base_table = 'node';
+$view->human_name = '';
+$view->core = 0;
 $view->api_version = '3.0-alpha1';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
@@ -40,7 +42,6 @@ $handler->display->display_options['empty']['area']['field'] = 'area';
 $handler->display->display_options['empty']['area']['label'] = 'No jobs';
 $handler->display->display_options['empty']['area']['empty'] = FALSE;
 $handler->display->display_options['empty']['area']['content'] = 'No jobs were found.';
-$handler->display->display_options['empty']['area']['format'] = 'plain_text';
 /* Field: Node: Title */
 $handler->display->display_options['fields']['title']['id'] = 'title';
 $handler->display->display_options['fields']['title']['table'] = 'node';
@@ -74,22 +75,25 @@ $handler->display->display_options['fields']['entity_id']['empty_zero'] = 0;
 $handler->display->display_options['fields']['entity_id']['settings'] = array(
   'prefix_suffix' => 1,
 );
-/* Field: Fields: conduit_pass */
-$handler->display->display_options['fields']['entity_id_1']['id'] = 'entity_id_1';
-$handler->display->display_options['fields']['entity_id_1']['table'] = 'field_data_conduit_pass';
-$handler->display->display_options['fields']['entity_id_1']['field'] = 'entity_id';
-$handler->display->display_options['fields']['entity_id_1']['label'] = 'Pass';
-$handler->display->display_options['fields']['entity_id_1']['alter']['alter_text'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['alter']['make_link'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['alter']['trim'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['alter']['word_boundary'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['alter']['ellipsis'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['alter']['strip_tags'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['alter']['html'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['hide_empty'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['empty_zero'] = 0;
-$handler->display->display_options['fields']['entity_id_1']['settings'] = array(
+/* Field: Fields: conduit_status */
+$handler->display->display_options['fields']['entity_id_3']['id'] = 'entity_id_3';
+$handler->display->display_options['fields']['entity_id_3']['table'] = 'field_data_conduit_status';
+$handler->display->display_options['fields']['entity_id_3']['field'] = 'entity_id';
+$handler->display->display_options['fields']['entity_id_3']['label'] = 'Status';
+$handler->display->display_options['fields']['entity_id_3']['alter']['alter_text'] = 0;
+$handler->display->display_options['fields']['entity_id_3']['alter']['make_link'] = 0;
+$handler->display->display_options['fields']['entity_id_3']['alter']['absolute'] = 0;
+$handler->display->display_options['fields']['entity_id_3']['alter']['trim'] = 0;
+$handler->display->display_options['fields']['entity_id_3']['alter']['word_boundary'] = 1;
+$handler->display->display_options['fields']['entity_id_3']['alter']['ellipsis'] = 1;
+$handler->display->display_options['fields']['entity_id_3']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['entity_id_3']['alter']['html'] = 0;
+$handler->display->display_options['fields']['entity_id_3']['element_label_colon'] = 1;
+$handler->display->display_options['fields']['entity_id_3']['element_default_classes'] = 1;
+$handler->display->display_options['fields']['entity_id_3']['hide_empty'] = 0;
+$handler->display->display_options['fields']['entity_id_3']['empty_zero'] = 0;
+$handler->display->display_options['fields']['entity_id_3']['settings'] = array(
+  'thousand_separator' => ' ',
   'prefix_suffix' => 1,
 );
 /* Field: Fields: conduit_summary */
@@ -137,4 +141,23 @@ $handler->display->display_options['filters']['title']['expose']['operator'] = '
 $handler->display->display_options['filters']['title']['expose']['label'] = 'Job Title';
 $handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
 $handler->display->display_options['filters']['title']['expose']['identifier'] = 'title';
-$handler->display->display_options['filters']['title']['case'] = 0;
+$translatables['conduit_job'] = array(
+  t('Defaults'),
+  t('more'),
+  t('Apply'),
+  t('Reset'),
+  t('Sort By'),
+  t('Asc'),
+  t('Desc'),
+  t('Items per page'),
+  t('- All -'),
+  t('Offset'),
+  t('No jobs'),
+  t('No jobs were found.'),
+  t('Title'),
+  t('Done'),
+  t('Status'),
+  t('Summary'),
+  t('All'),
+  t('Job Title'),
+);

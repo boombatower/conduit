@@ -62,13 +62,11 @@ function conduit_execute_conduit_init($node, $chunk_count) {
  * Implements hook_conduit_result().
  */
 function conduit_execute_conduit_result($node, $delta, $result) {
-  if ($result) {
-    $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = $result;
-  }
-
   // Generate summary message.
   $count = $node->conduit_chunk_count[LANGUAGE_NONE][0]['value'];
-  $node->conduit_summary[LANGUAGE_NONE][0]['value'] = $node->conduit_pass[LANGUAGE_NONE][0]['value'] ?
+  $node->conduit_summary[LANGUAGE_NONE][0]['value'] = $node->conduit_status[LANGUAGE_NONE][0]['value'] == CONDUIT_STATUS_PASS ?
     format_plural($count, 'The command was executed successfully.', 'The commands were executed successfully.') :
     format_plural($count, 'The command was not executed successfully.', 'The commands were not executed successfully.');
+
+  $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = $result;
 }

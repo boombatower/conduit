@@ -42,9 +42,9 @@ function conduit_services_resources() {
               'optional' => FALSE,
             ),
             array(
-              'name' => 'pass',
+              'name' => 'status',
               'type' => 'int',
-              'description' => 'TRUE (1) if the chunk passed, otherewise FALSE (0).',
+              'description' => 'Chunk result status.',
               'source' => 'data',
               'optional' => FALSE,
             ),

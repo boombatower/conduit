@@ -25,8 +25,8 @@ function conduit_api_claim($category) {
  *
  * @param $item
  *   Queue item the results are related to.
- * @param $pass
- *   TRUE if the chunk passed, otherewise FALSE.
+ * @param $status
+ *   A particular job chunk status.
  * @param $result
  *   The result of processing the chunk.
  * @param $log
@@ -34,7 +34,7 @@ function conduit_api_claim($category) {
  * @return
  *   TRUE if successfull, otherwise FALSE.
  */
-function conduit_api_result($item, $pass, $result, $log) {
+function conduit_api_result($item, $status, $result, $log) {
   $item = (object) $item;
 
   // Acquire a lock to modify the node.
@@ -50,35 +50,39 @@ function conduit_api_result($item, $pass, $result, $log) {
   // Attempt to load the job node related to the queue item.
   if ($job = node_load($item->data['nid'], $item->data['vid'], TRUE)) {
     // Ensure that the chunk has not already been saved.
-    if ($job->conduit_chunk_pass[LANGUAGE_NONE][$item->data['delta']]['value'] != -1) {
+    if ($job->conduit_chunk_status[LANGUAGE_NONE][$item->data['delta']]['value']) {
       return FALSE;
     }
 
-    // If the chunk did not pass then set the summary message to the result.
-    if (!$pass) $job->conduit_summary[LANGUAGE_NONE][0]['value'] = $result;
+    // If the chunk failed during setup then set the summary to the result.
+    if ($status == CONDUIT_STATUS_SETUP) $job->conduit_summary[LANGUAGE_NONE][0]['value'] = $result;
 
     // Store the chunk pass value and log.
-    $job->conduit_chunk_pass[LANGUAGE_NONE][$item->data['delta']]['value'] = (int) $pass;
+    $job->conduit_chunk_status[LANGUAGE_NONE][$item->data['delta']]['value'] = $status;
     $job->conduit_log[LANGUAGE_NONE][$item->data['delta']]['value'] = $log;
 
-    // Determine if the job has been completed and the overall pass/fail state.
-    $done = $pass = TRUE;
-    foreach ($job->conduit_chunk_pass[LANGUAGE_NONE] as $chunk) {
+    // Determine if the job has been completed and the overall status.
+    $done = TRUE;
+    $status = CONDUIT_STATUS_PASS;
+    foreach ($job->conduit_chunk_status[LANGUAGE_NONE] as $chunk) {
       // Chunk value of -1 represent an incomplete chunk, 0 a failed chunk, and
       // 1 a chunk that passed.
-      if ($chunk['value'] != -1) {
-        $pass = $pass && $chunk['value'] == 1;
+      if ($chunk['value']) {
+        $status = min($status, $chunk['value']);
       }
       else {
         $done = FALSE;
       }
     }
     $job->conduit_done[LANGUAGE_NONE][0]['value'] = (int) $done;
-    $job->conduit_pass[LANGUAGE_NONE][0]['value'] = (int) $pass;
+    $job->conduit_status[LANGUAGE_NONE][0]['value'] = $status;
 
-    // Allow the plugin to place the result on the proper field(s).
-    $info = conduit_job_info($job->type);
-    module_invoke($info['module'], 'conduit_result', $job, $item->data['delta'], $result);
+    // Only invoke hook_conduit_result() if the chunk reached the plugin.
+    if ($status > CONDUIT_STATUS_SETUP) {
+      // Allow the plugin to place the result on the proper field(s).
+      $info = conduit_job_info($job->type);
+      module_invoke($info['module'], 'conduit_result', $job, $item->data['delta'], $result);
+    }
 
     // Save the changes made to the job.
     node_save($job);
