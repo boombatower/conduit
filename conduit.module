@@ -289,6 +289,19 @@ function conduit_types() {
 }
 
 /**
+ * Get a word representation of a job status code.
+ *
+ * @param $status
+ *   Job status code.
+ * @return
+ *   Word representation of a job status code.
+ */
+function conduit_status($status) {
+  static $map = array('accepted', 'setup', 'fail', 'pass');
+  return isset($map[$status]) ? $map[$status] : FALSE;
+}
+
+/**
  * Build a list of the client role permissions.
  *
  * @return

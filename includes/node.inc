@@ -413,6 +413,11 @@ function conduit_view($node, $view_mode) {
       $breadcrumb = array_reverse(conduit_view_breadcrumb($node));
       array_pop($breadcrumb);
       drupal_set_breadcrumb($breadcrumb);
+
+      // Add meta information to job node.
+      if (conduit_job_info($node->type)) {
+        conduit_view_meta($node);
+      }
     }
 
     // Add a list of groups and jobs on group nodes.
@@ -437,6 +442,121 @@ function conduit_view($node, $view_mode) {
     }
   }
   return $node;
+}
+
+/**
+ * Add meta data information to job node.
+ *
+ * @param $node
+ *   Job node.
+ */
+function conduit_view_meta(&$node) {
+  $node->content['meta'] = array(
+    '#prefix' => '<div class="conduit-meta">',
+    '#suffix' => '</div>',
+  );
+
+  $status = conduit_status($node->conduit_status[LANGUAGE_NONE][0]['value']);
+  $node->content['meta']['status'] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'id' => 'conduit-meta-status',
+      'class' => array('conduit-' . $status),
+      'alt' => $status,
+    ),
+  );
+  $node->content['meta']['updated'] = array(
+    '#type' => 'item',
+    '#title' => t('Updated'),
+    '#markup' => t('%time ago', array('%time' => format_interval(REQUEST_TIME - $node->revision_timestamp))),
+  );
+
+  $node->content['meta']['actions'] = array(
+    '#type' => 'container',
+    '#attributes' => array('id' => 'conduit-actions'),
+  );
+  if ($siblings = conduit_view_meta_siblings($node->nid, $node->conduit_parent[LANGUAGE_NONE][0]['nid'])) {
+    $node->content['meta']['actions']['previous'] = array(
+      '#type' => 'link',
+      '#title' => '<div></div>',
+      '#href' => 'node/' . $siblings[0],
+      '#options' => array('html' => TRUE),
+      '#attributes' => array('id' => 'conduit-previous'),
+    );
+    $node->content['meta']['actions']['next'] = array(
+      '#type' => 'link',
+      '#title' => '<div></div>',
+      '#href' => 'node/' . $siblings[1],
+      '#options' => array('html' => TRUE),
+      '#attributes' => array(
+        'id' => 'conduit-next',
+      ),
+    );
+  }
+  $node->content['meta']['actions']['repeat'] = drupal_get_form('conduit_view_repeat_form', $node->nid);
+}
+
+/**
+ * Determine the siblings (previous and next) jobs within the parent group.
+ *
+ * @param $self
+ *   Current job node ID.
+ * @param $parent
+ *   Parent group ID.
+ * @return
+ *   A two element array containing the nids of the two siblings or FALSE if
+ *   the parent group only contains a single job.
+ */
+function conduit_view_meta_siblings($self, $parent) {
+  $view = views_get_view('conduit_job');
+  $view->set_arguments(array($parent));
+  $view->execute();
+  if (($count = count($view->result)) == 1) {
+    return FALSE;
+  }
+  for ($i = 0; $i < $count; $i++) {
+    if ($view->result[$i]->nid == $self) {
+      if ($i == 0) {
+        return array($view->result[$count - 1]->nid, $view->result[$i + 1]->nid);
+      }
+      elseif ($i == $count - 1) {
+        return array($view->result[$i - 1]->nid, $view->result[0]->nid);
+      }
+      else {
+        return array($previous = $view->result[$i - 1]->nid, $view->result[$i + 1]->nid);
+      }
+    }
+  }
+}
+
+/**
+ * Provide a repeat image button form.
+ *
+ * @param $nid
+ *   Job node ID to repeat.
+ */
+function conduit_view_repeat_form($form, &$form_state, $nid) {
+  $form['nid'] = array(
+    '#type' => 'value',
+    '#value' => $nid,
+  );
+  $form['submit'] = array(
+    '#type' => 'image_button',
+    '#src' => drupal_get_path('module', 'conduit') . '/images/repeat.png',
+    '#attributes' => array('alt' => 'Repeat'),
+  );
+  return $form;
+}
+
+/**
+ * Repeat the given job by creating a new revision.
+ */
+function conduit_view_repeat_form_submit($form, &$form_state) {
+  if ($node = node_load($form_state['values']['nid'])) {
+    $node->revision = TRUE;
+    node_save($node);
+    drupal_set_message(t('A new revision has been created.'));
+  }
 }
 
 /**
