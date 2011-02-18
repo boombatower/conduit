@@ -111,7 +111,10 @@ function conduit_block_view($delta = '') {
     $block['content'] = array();
     foreach ($types as $type => $name) {
       if (node_access('create', $type)) {
-        $category = ($info = conduit_job_info($type)) ? $info['category'] : 'general';
+        // Assign links to either their respective conduit category or general.
+        // All conduit category jobs will be listed under general.
+        $category = ($info = conduit_job_info($type)) ? $info['category'] : 'conduit';
+        if ($category == 'conduit') $category = 'general';
         if (!isset($block['content'][$category])) {
           $block['content'][$category] = array(
             '#theme' => 'links',
