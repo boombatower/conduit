@@ -419,15 +419,19 @@ function conduit_view($node, $view_mode) {
     if ($node->type == 'conduit_group') {
       $view = views_get_view('conduit_group');
       $view->override_path = $_GET['q'];
+      $view->execute();
       $node->content['conduit_group'] = array(
         '#markup' => $view->preview('default', array($node->nid)),
+        '#access' => (bool) $view->total_rows,
         '#weight' => 10,
       );
 
       $view = views_get_view('conduit_job');
       $view->override_path = $_GET['q'];
+      $view->execute();
       $node->content['conduit_job'] = array(
         '#markup' => $view->preview('default', array($node->nid)),
+        '#access' => (bool) $view->total_rows,
         '#weight' => 11,
       );
     }

@@ -62,8 +62,10 @@ function conduit_user_view($account, $view_mode, $langcode) {
   if ($view_mode == 'full' && in_array('conduit client', $account->roles)) {
     $view = views_get_view('conduit_group_user');
     $view->override_path = $_GET['q'];
+    $view->execute();
     $account->content['conduit_group'] = array(
       '#markup' => $view->preview('default', array($account->uid)),
+      '#access' => (bool) $view->total_rows,
       '#weight' => 10,
     );
   }
