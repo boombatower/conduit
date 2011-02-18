@@ -412,6 +412,9 @@ function conduit_view($node, $view_mode) {
     array_pop($breadcrumb);
     drupal_set_breadcrumb($breadcrumb);
 
+    // Add conduit css to all conduit node types.
+    drupal_add_css(drupal_get_path('module', 'conduit') . '/conduit.css');
+
     if ($node->type == 'conduit_group') {
       // Add a list of groups and jobs on group nodes.
       $view = views_get_view('conduit_group');

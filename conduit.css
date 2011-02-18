@@ -1,0 +1,93 @@
+/**
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+.conduit-meta {
+  border: 1px solid #cccccc;
+  background-color: #eeeeee;
+  margin-bottom: 20px;
+  padding: 10px;
+  height: 64px;
+}
+
+/* Set all icons to 64x64 */
+#conduit-meta-status, #conduit-previous div, #conduit-next div {
+  width: 64px;
+  height: 64px;
+}
+
+#conduit-meta-status {
+  float: left;
+  margin-right: 10px;
+}
+
+#conduit-meta-status.conduit-accepted {
+  background-image: url('images/status-accepted.png');
+}
+#conduit-meta-status.conduit-setup {
+  background-image: url('images/status-setup.png');
+}
+#conduit-meta-status.conduit-fail {
+  background-image: url('images/status-fail.png');
+}
+#conduit-meta-status.conduit-pass {
+  background-image: url('images/status-pass.png');
+}
+
+.conduit-meta div.form-item {
+  float: left;
+}
+
+#conduit-actions {
+  float: right;
+}
+
+#conduit-previous div {
+  background-image: url('images/previous.png');
+  float: left;
+}
+
+#conduit-next div {
+  background-image: url('images/next.png');
+  float: left;
+}
+
+/* Override default form padding and margin */
+#center .conduit-meta form {
+  float: left;
+  margin-bottom: 0;
+}
+
+/* http://gradients.glrzad.com/ */
+.field-name-conduit-summary {
+  font-size: 120%;
+  font-weight: bold;
+  padding: 15px;
+  background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop(0, rgb(255,255,255)),
+    color-stop(0.71, rgb(238,238,238))
+  );
+  background-image: -moz-linear-gradient(
+    center bottom,
+    rgb(255,255,255) 0%,
+    rgb(238,238,238) 71%
+  );
+}
+
+/* Revert summary styles on job list view */
+.views-table .field-name-conduit-summary {
+  font-size: 100%;
+  font-weight: normal;
+  padding: 0;
+  background-image: none;
+}
+
+/* Log output */
+td.views-field-conduit-log-value-raw div {
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 130%;
+}
