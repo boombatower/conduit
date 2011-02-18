@@ -347,7 +347,7 @@ function conduit_update($node) {
  */
 function conduit_form_node_delete_confirm_alter(&$form, &$form_state) {
   // If a group then determine if there are any children.
-  if ($node->type == 'conduit_group') {
+  if ($form['#node']->type == 'conduit_group') {
     $group = views_get_view('conduit_group');
     $group->set_arguments(array($form['#node']->nid));
     $group->execute();
