@@ -405,23 +405,15 @@ function conduit_delete_view($name, $parent) {
  */
 function conduit_view($node, $view_mode) {
   if ($view_mode == 'full' && node_is_page($node)) {
-    // Add a breakcrumb on group or job nodes.
-    if (conduit_node_type($node->type)) {
-      // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
-      // display them left-to-right so we need to reverse order and remove the
-      // current node from the list.
-      $breadcrumb = array_reverse(conduit_view_breadcrumb($node));
-      array_pop($breadcrumb);
-      drupal_set_breadcrumb($breadcrumb);
+    // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
+    // display them left-to-right so we need to reverse order and remove the
+    // current node from the list.
+    $breadcrumb = array_reverse(conduit_view_breadcrumb($node));
+    array_pop($breadcrumb);
+    drupal_set_breadcrumb($breadcrumb);
 
-      // Add meta information to job node.
-      if (conduit_job_info($node->type)) {
-        conduit_view_meta($node);
-      }
-    }
-
-    // Add a list of groups and jobs on group nodes.
     if ($node->type == 'conduit_group') {
+      // Add a list of groups and jobs on group nodes.
       $view = views_get_view('conduit_group');
       $view->override_path = $_GET['q'];
       $view->execute();
@@ -439,6 +431,10 @@ function conduit_view($node, $view_mode) {
         '#access' => (bool) $view->total_rows,
         '#weight' => 11,
       );
+    }
+    else {
+      // Add meta information to job node.
+      conduit_view_meta($node);
     }
   }
   return $node;
