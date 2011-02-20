@@ -53,6 +53,11 @@ function conduit_execute_install_instances() {
       'widget' => array(
         'type' => 'text_textarea',
       ),
+      'display' => array(
+        'default' => array(
+          'label' => 'hidden',
+        ),
+      ),
     ),
   );
 }
