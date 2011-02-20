@@ -434,6 +434,11 @@ function conduit_view($node, $view_mode) {
         '#access' => (bool) $view->total_rows,
         '#weight' => 11,
       );
+
+      // Print help text when there are no jobs or groups contained by a group.
+      if (!$node->content['conduit_group']['#access'] && !$node->content['conduit_job']['#access']) {
+        drupal_set_message(t('Use the links on the left to create jobs or sub-groups.'));
+      }
     }
     else {
       // Add meta information to job node.
