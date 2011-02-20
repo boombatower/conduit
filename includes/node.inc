@@ -461,7 +461,8 @@ function conduit_view_meta(&$node) {
     '#attributes' => array(
       'id' => 'conduit-meta-status',
       'class' => array('conduit-' . $status),
-      'alt' => $status,
+      'alt' => ucfirst($status),
+      'title' => ucfirst($status)
     ),
   );
   $node->content['meta']['updated'] = array(
@@ -480,7 +481,10 @@ function conduit_view_meta(&$node) {
       '#title' => '<div></div>',
       '#href' => 'node/' . $siblings[0],
       '#options' => array('html' => TRUE),
-      '#attributes' => array('id' => 'conduit-previous'),
+      '#attributes' => array(
+        'id' => 'conduit-previous',
+        'title' => t('Previous'),
+      ),
     );
     $node->content['meta']['actions']['next'] = array(
       '#type' => 'link',
@@ -489,6 +493,7 @@ function conduit_view_meta(&$node) {
       '#options' => array('html' => TRUE),
       '#attributes' => array(
         'id' => 'conduit-next',
+        'title' => t('Next'),
       ),
     );
   }
@@ -542,7 +547,10 @@ function conduit_view_repeat_form($form, &$form_state, $nid) {
   $form['submit'] = array(
     '#type' => 'image_button',
     '#src' => drupal_get_path('module', 'conduit') . '/images/repeat.png',
-    '#attributes' => array('alt' => 'Repeat'),
+    '#attributes' => array(
+      'alt' => t('Repeat'),
+      'title' => t('Repeat'),
+    ),
   );
   return $form;
 }
