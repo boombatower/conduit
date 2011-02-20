@@ -7,13 +7,13 @@
   background-color: #eeeeee;
   margin-bottom: 20px;
   padding: 10px;
-  height: 64px;
+  height: 48px;
 }
 
 /* Set all icons to 64x64 */
 #conduit-meta-status, #conduit-previous div, #conduit-next div {
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
 }
 
 #conduit-meta-status {
@@ -36,6 +36,8 @@
 
 .conduit-meta div.form-item {
   float: left;
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
 }
 
 #conduit-actions {
