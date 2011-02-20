@@ -85,9 +85,15 @@
   background-image: none;
 }
 
-/* Log output */
-td.views-field-conduit-log-value-raw div {
+/* Log and execute output */
+td.views-field-conduit-log-value-raw div, .field-name-conduit-result-conduit-execute {
   white-space: pre-wrap;
   font-family: monospace;
   font-size: 130%;
+}
+
+.field-name-conduit-result-conduit-execute {
+  margin-top: 20px;
+  padding: 5px 10px;
+  border-left: 10px solid #eeeeee;
 }
