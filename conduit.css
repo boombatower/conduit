@@ -20,8 +20,8 @@
   float: left;
 }
 
-#conduit-meta-status.conduit-accepted {
-  background-image: url('images/status-accepted.png');
+#conduit-meta-status.conduit-active {
+  background-image: url('images/status-active.png');
 }
 #conduit-meta-status.conduit-setup {
   background-image: url('images/status-setup.png');

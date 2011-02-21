@@ -297,7 +297,7 @@ function conduit_types() {
  *   Word representation of a job status code.
  */
 function conduit_status($status) {
-  static $map = array('accepted', 'setup', 'fail', 'pass');
+  static $map = array('active', 'setup', 'fail', 'pass');
   return isset($map[$status]) ? $map[$status] : FALSE;
 }
 
