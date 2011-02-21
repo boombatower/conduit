@@ -518,6 +518,7 @@ function conduit_view_meta(&$node) {
  */
 function conduit_view_meta_siblings($self, $parent) {
   $view = views_get_view('conduit_job');
+  $view->set_current_page(0); // Ensure that any pagers do not interfere.
   $view->set_arguments(array($parent));
   $view->execute();
   if (($count = count($view->result)) == 1) {
