@@ -37,6 +37,10 @@ conduit_include('node');
 function conduit_permission() {
   $permissions = array();
 
+  $permissions['view all conduit content'] = array(
+    'title' => t('View all content'),
+    'description' => t('Override the default behavior of only allowing the onwer to view their own content.'),
+  );
   $permissions['view conduit log'] = array(
     'title' => t('View log'),
     'description' => t('View the log for a job.'),

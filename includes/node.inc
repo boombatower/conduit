@@ -44,6 +44,17 @@ function conduit_node_info_job($plugin, $description = NULL) {
 }
 
 /**
+ * Implements hook_node_access().
+ */
+function conduit_node_access($node, $op, $account) {
+  if ($op == 'view') {
+    if (conduit_node_type(is_string($node) ? $node : $node->type)) {
+      return user_access('view all conduit content', $account) || $node->uid == $account->uid ? NODE_ACCESS_ALLOW : NODE_ACCESS_DENY;
+    }
+  }
+}
+
+/**
  * Implements hook_form().
  */
 function conduit_form($node, &$form_state) {
