@@ -24,11 +24,26 @@ $handler->display->display_options['pager']['options']['expose']['items_per_page
 $handler->display->display_options['style_plugin'] = 'table';
 $handler->display->display_options['style_options']['columns'] = array(
   'title' => 'title',
+  'entity_id_3' => 'entity_id_3',
+  'entity_id_2' => 'entity_id_2',
 );
-$handler->display->display_options['style_options']['default'] = '-1';
+$handler->display->display_options['style_options']['default'] = 'title';
 $handler->display->display_options['style_options']['info'] = array(
   'title' => array(
     'sortable' => 1,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+  ),
+  'entity_id_3' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
+    'align' => '',
+    'separator' => '',
+  ),
+  'entity_id_2' => array(
+    'sortable' => 0,
+    'default_sort_order' => 'asc',
     'align' => '',
     'separator' => '',
   ),

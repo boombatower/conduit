@@ -45,6 +45,10 @@ $handler->display->display_options['fields']['title']['alter']['html'] = 0;
 $handler->display->display_options['fields']['title']['hide_empty'] = 0;
 $handler->display->display_options['fields']['title']['empty_zero'] = 0;
 $handler->display->display_options['fields']['title']['link_to_node'] = 1;
+/* Sort criterion: Node: Title */
+$handler->display->display_options['sorts']['title']['id'] = 'title';
+$handler->display->display_options['sorts']['title']['table'] = 'node';
+$handler->display->display_options['sorts']['title']['field'] = 'title';
 /* Argument: User: Uid */
 $handler->display->display_options['arguments']['uid']['id'] = 'uid';
 $handler->display->display_options['arguments']['uid']['table'] = 'users';

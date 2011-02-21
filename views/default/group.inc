@@ -46,6 +46,10 @@ $handler->display->display_options['fields']['title']['alter']['html'] = 0;
 $handler->display->display_options['fields']['title']['hide_empty'] = 0;
 $handler->display->display_options['fields']['title']['empty_zero'] = 0;
 $handler->display->display_options['fields']['title']['link_to_node'] = 1;
+/* Sort criterion: Node: Title */
+$handler->display->display_options['sorts']['title']['id'] = 'title';
+$handler->display->display_options['sorts']['title']['table'] = 'node';
+$handler->display->display_options['sorts']['title']['field'] = 'title';
 /* Argument: Fields: conduit_parent (conduit_parent) - nid */
 $handler->display->display_options['arguments']['conduit_parent_nid']['id'] = 'conduit_parent_nid';
 $handler->display->display_options['arguments']['conduit_parent_nid']['table'] = 'field_data_conduit_parent';
