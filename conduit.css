@@ -2,6 +2,33 @@
  * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
  */
 
+.view-conduit-job .views-field-title {
+  width: 200px;
+}
+
+.view-conduit-job .views-field-entity-id-3 {
+  width: 50px;
+  text-align: center;
+}
+
+.view-conduit-job .field-name-conduit-status {
+  background-image: url('images/status-active-small.png');
+  background-repeat: no-repeat;
+  color: transparent;
+  height: 22px;
+  width: 22px;
+  margin: auto;
+}
+.view-conduit-job .conduit-status-1 .field-name-conduit-status {
+  background-image: url('images/status-setup-small.png');
+}
+.view-conduit-job .conduit-status-2 .field-name-conduit-status {
+  background-image: url('images/status-fail-small.png');
+}
+.view-conduit-job .conduit-status-3 .field-name-conduit-status {
+  background-image: url('images/status-pass-small.png');
+}
+
 .conduit-meta {
   border: 1px solid #cccccc;
   background-color: #eeeeee;

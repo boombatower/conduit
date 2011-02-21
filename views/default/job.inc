@@ -22,6 +22,7 @@ $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '1';
 $handler->display->display_options['pager']['options']['expose']['items_per_page_options_all'] = 0;
 $handler->display->display_options['style_plugin'] = 'table';
+$handler->display->display_options['style_options']['row_class'] = 'conduit-status-[entity_id_3]';
 $handler->display->display_options['style_options']['columns'] = array(
   'title' => 'title',
   'entity_id_3' => 'entity_id_3',
