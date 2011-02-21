@@ -41,6 +41,10 @@ function conduit_permission() {
     'title' => t('View log'),
     'description' => t('View the log for a job.'),
   );
+  $permissions['repeat conduit job'] = array(
+    'title' => t('Repeat job'),
+    'description' => t('Repeat a job without editting.'),
+  );
 
   // Worker permissions.
   $permissions['claim conduit item'] = array(

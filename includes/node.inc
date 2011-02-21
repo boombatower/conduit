@@ -597,6 +597,7 @@ function conduit_view_repeat_form($form, &$form_state, $nid) {
       'alt' => t('Repeat'),
       'title' => t('Repeat'),
     ),
+    '#access' => user_access('repeat conduit job'),
   );
   return $form;
 }
