@@ -17,7 +17,18 @@
  */
 function conduit_api_claim($category) {
   conduit_include('queue');
-  return conduit_queue_claim($category);
+  if ($properties = conduit_queue_claim($category)) {
+    $item = $properties['item'];
+    $lock = conduit_api_lock_acquire($item->data['nid']);
+
+    // Update chunk state to processing.
+    $job = node_load($item->data['nid'], $item->data['vid']);
+    $job->conduit_chunk_status[LANGUAGE_NONE][$item->data['delta']]['value'] = 0;
+    node_save($job);
+
+    lock_release($lock);
+  }
+  return $properties;
 }
 
 /**
@@ -50,7 +61,7 @@ function conduit_api_result($item, $status, $result, $log) {
   // Attempt to load the job node related to the queue item.
   if ($job = node_load($item->data['nid'], $item->data['vid'], TRUE)) {
     // Ensure that the chunk has not already been saved.
-    if ($job->conduit_chunk_status[LANGUAGE_NONE][$item->data['delta']]['value']) {
+    if ($job->conduit_chunk_status[LANGUAGE_NONE][$item->data['delta']]['value'] > 0) {
       return FALSE;
     }
 
@@ -67,7 +78,7 @@ function conduit_api_result($item, $status, $result, $log) {
     foreach ($job->conduit_chunk_status[LANGUAGE_NONE] as $chunk) {
       // Chunk value of -1 represent an incomplete chunk, 0 a failed chunk, and
       // 1 a chunk that passed.
-      if ($chunk['value']) {
+      if ($chunk['value'] > 0) {
         $status = min($status, $chunk['value']);
       }
       else {

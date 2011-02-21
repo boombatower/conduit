@@ -320,7 +320,7 @@ function conduit_insert($node) {
     $node->conduit_status[LANGUAGE_NONE][0]['value'] = 0;
     $node->conduit_summary[LANGUAGE_NONE][0]['value'] = t('The job has not yet been performed.');
     for ($i = 0; $i < $chunk_count; $i++) {
-      $node->conduit_chunk_status[LANGUAGE_NONE][$i]['value'] = 0;
+      $node->conduit_chunk_status[LANGUAGE_NONE][$i]['value'] = -1;
       $node->conduit_log[LANGUAGE_NONE][$i]['value'] = '[placeholder]';
     }
 
@@ -329,6 +329,9 @@ function conduit_insert($node) {
 
     // Allow all modules to react to a job being queued.
     module_invoke_all('conduit_queued', $node, $chunk_count);
+
+    // Disable field suppression so that initialized states are saved.
+    field_suppress_state(FALSE);
   }
 }
 
@@ -470,6 +473,43 @@ function conduit_view_meta(&$node) {
       'title' => ucfirst($status)
     ),
   );
+
+  // While incomplete show chunk progress bars.
+  if (!$node->conduit_done[LANGUAGE_NONE][0]['value']) {
+    // Determine the number of chunks in the three states.
+    $queued = $processing = $complete = 0;
+    foreach ($node->conduit_chunk_status[LANGUAGE_NONE] as $chunk) {
+      if ($chunk['value'] == -1) $queued++;
+      elseif ($chunk['value'] == 0) $processing++;
+      else $complete++;
+    }
+
+    $node->content['meta']['chunks'] = array(
+      '#type' => 'container',
+      '#attributes' => array('id' => 'conduit-chunks'),
+    );
+    $chunks = &$node->content['meta']['chunks'];
+    $chunks['complete'] = $chunks['active'] = array(
+      '#type' => 'container',
+      '#attributes' => array(),
+      array(
+        '#type' => 'container',
+        '#attributes' => array(),
+        array('#markup' => ''),
+      ),
+      array(
+        '#type' => 'container',
+        '#attributes' => array('style' => 'width: '),
+      ),
+    );
+
+    $chunks['active'][0][0]['#markup'] = t('Active');
+    $chunks['active'][1]['#attributes']['style'] .= round($processing / ($queued + $processing) * 100) . '%;';
+
+    $chunks['complete'][0][0]['#markup'] = t('Complete');
+    $chunks['complete'][1]['#attributes']['style'] .= round($complete / $node->conduit_chunk_count[LANGUAGE_NONE][0]['value'] * 100) . '%;';
+  }
+
   $node->content['meta']['updated'] = array(
     '#type' => 'item',
     '#title' => t('Updated'),

@@ -18,7 +18,6 @@
 
 #conduit-meta-status {
   float: left;
-  margin-right: 10px;
 }
 
 #conduit-meta-status.conduit-accepted {
@@ -34,10 +33,40 @@
   background-image: url('images/status-pass.png');
 }
 
+#conduit-chunks {
+  float: left;
+  height: 48px;
+  margin-left: 10px;
+}
+
+#conduit-chunks > div {
+  width: 100px;
+  border: 1px solid #cccccc;
+  background-color: white;
+}
+
+#conduit-chunks > div:nth-child(2) {
+  margin-top: 1px;
+}
+
+#conduit-chunks > div > div:nth-child(1) {
+  float: left;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  line-height: 21px;
+}
+
+#conduit-chunks > div > div:nth-child(2) {
+  background-color: #eeeeee;
+  height: 21px;
+}
+
 .conduit-meta div.form-item {
   float: left;
   margin-top: 0.3em;
   margin-bottom: 0.3em;
+  margin-left: 10px;
 }
 
 #conduit-actions {
