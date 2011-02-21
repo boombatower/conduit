@@ -320,6 +320,8 @@ function conduit_client_permissions() {
       $permissions[] = "$operation $type content";
     }
   }
+  $permission[] = 'view conduit log';
+  $permission[] = 'repeat conduit job';
   return $permissions;
 }
 
