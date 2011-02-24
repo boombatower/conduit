@@ -255,7 +255,7 @@ function conduit_conduit_default_properties() {
  * A tree of groups will be treated in same manor with the root group having
  * the least precedence.
  *
- * Order[group]: base_defaults, (optional) parents(s), self.
+ * Order[group]: (optional) parents(s), self.
  * Order[job]: base_defaults, plugin_defaults, parents(s), self.
  *
  * @param $node
@@ -264,11 +264,11 @@ function conduit_conduit_default_properties() {
  *   Associative array of properties.
  */
 function conduit_properties_merge($node) {
-  // Always start with the base defaults.
-  $properties = module_invoke('conduit', 'conduit_default_properties');
+  $properties = array();
 
-  // If the node is a job then merge the plugin defaults.
+  // If the node is a job then merge the base and plugin defaults.
   if ($info = conduit_job_info($node->type)) {
+    $properties = module_invoke('conduit', 'conduit_default_properties');
     $plugin_defaults = module_invoke($info['module'], 'conduit_default_properties');
     $properties = array_replace_recursive($properties, $plugin_defaults);
   }

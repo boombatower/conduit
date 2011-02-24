@@ -120,7 +120,7 @@ function conduit_node_type($type) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form, &$form_state) {
-  if (!is_array($properties = $node->conduit_properties[LANGUAGE_NONE][0]['value'])) {
+  if (!is_array($node->conduit_properties[LANGUAGE_NONE][0]['value'])) {
     // Any errors with the properties definition will be dealt with by the
     // serial field validation.
     return;
@@ -128,6 +128,12 @@ function conduit_validate($node, $form, &$form_state) {
 
   // Merge properties so each key is assigned a value.
   $properties = conduit_properties_merge($node);
+
+  // Add base defaults if node is a group.
+  if ($node->type == 'conduit_group') {
+    $base_defaults = module_invoke('conduit', 'conduit_default_properties');
+    $properties = array_replace_recursive($base_defaults, $properties);
+  }
 
   // Conduit validates base properties.
   module_invoke('conduit', 'conduit_validate', $properties);
