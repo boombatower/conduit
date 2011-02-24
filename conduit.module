@@ -205,12 +205,14 @@ function conduit_block_info_alter(&$blocks, $theme, $code_blocks) {
  * Implements hook_page_alter().
  */
 function conduit_page_alter(&$page) {
-  if (($node = menu_get_object()) && $node->type == 'conduit_group' && isset($page['content']['system_main']['nodes'])) {
-    $node = current($page['content']['system_main']['nodes']);
-    $page['sidebar_first']['views_-exp-conduit_group-default']['#access'] = $node['conduit_group']['#access'];
-    $page['sidebar_first']['views_-exp-conduit_job-default']['#access'] = $node['conduit_job']['#access'];
+  if (isset($page['sidebar_first']['views_-exp-conduit_group-default'])) {
+    if (isset($page['content']['system_main']['nodes'])) {
+      $node = current($page['content']['system_main']['nodes']);
+    }
+    $page['sidebar_first']['views_-exp-conduit_group-default']['#access'] = isset($node) ? $node['conduit_group']['#access'] : FALSE;
+    $page['sidebar_first']['views_-exp-conduit_job-default']['#access'] = isset($node) ? $node['conduit_job']['#access'] : FALSE;
   }
-  elseif (($user = menu_get_object('user'))) {
+  elseif (isset($page['sidebar_first']['views_-exp-conduit_group_user-default'])) {
     $page['sidebar_first']['views_-exp-conduit_group_user-default']['#access'] = isset($page['content']['system_main']['conduit_group']) ?
       $page['content']['system_main']['conduit_group']['#access'] : FALSE;
   }
