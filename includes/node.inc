@@ -666,15 +666,22 @@ function conduit_node_properties_type($node) {
  */
 function conduit_node_properties($node) {
   $page = array();
+  if ($node->type != 'conduit_group') {
+    $page['job_id'] = array(
+      '#type' => 'item',
+      '#title' => t('Job ID'),
+      '#markup' => $node->nid,
+    );
+  }
   $page['conduit_properties'] = array(
     '#type' => 'item',
-    '#title' => 'Self',
+    '#title' => t('Self'),
     '#markup' => serial_display($node->conduit_properties[LANGUAGE_NONE][0]['value']),
     '#access' => (bool) $node->conduit_properties[LANGUAGE_NONE][0]['value'],
   );
   $page['conduit_properties_merged'] = array(
     '#type' => 'item',
-    '#title' => 'Merged',
+    '#title' => t('Merged'),
     '#markup' => serial_display($node->conduit_properties_merged),
     '#access' => $node->conduit_properties[LANGUAGE_NONE][0]['value'] != $node->conduit_properties_merged,
   );
