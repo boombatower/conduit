@@ -64,6 +64,22 @@ function conduit_permission() {
 }
 
 /**
+ * Implements hook_menu().
+ */
+function conduit_menu() {
+  $items = array();
+  $items['node/%node/properties'] = array(
+    'title' => 'Properties',
+    'page callback' => 'conduit_node_properties',
+    'page arguments' => array(1),
+    'access callback' => 'conduit_node_properties_type',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+  );
+  return $items;
+}
+
+/**
  * Implements hook_user_view().
  */
 function conduit_user_view($account, $view_mode, $langcode) {

@@ -649,18 +649,28 @@ function conduit_view_breadcrumb($node, $breadcrumb = array()) {
 }
 
 /**
- * Implements hook_node_view_alter().
+ * Determine if node is a conduit type and the user has update access.
  */
-function conduit_node_view_alter(&$build) {
-  if ($build['#view_mode'] == 'full' && isset($build['conduit_properties'])) {
-    // If the merged properties differ from the properties of the node then add
-    // the merged set of properties to the node view.
-    if ($build['#node']->conduit_properties[LANGUAGE_NONE][0]['value'] != $build['#node']->conduit_properties_merged) {
-      $build['conduit_properties_inherit'] = array(
-        '#type' => 'markup',
-        '#markup' => serial_display($build['#node']->conduit_properties_merged),
-        '#weight' => $build['conduit_properties']['#weight'] + 0.1,
-      );
-    }
-  }
+function conduit_node_properties_type($node) {
+  return conduit_node_type($node->type) && node_access('update', $node);
+}
+
+/**
+ * Display properties, both 'self' and 'merged'.
+ */
+function conduit_node_properties($node) {
+  $page = array();
+  $page['conduit_properties'] = array(
+    '#type' => 'item',
+    '#title' => 'Self',
+    '#markup' => serial_display($node->conduit_properties[LANGUAGE_NONE][0]['value']),
+    '#access' => (bool) $node->conduit_properties[LANGUAGE_NONE][0]['value'],
+  );
+  $page['conduit_properties_merged'] = array(
+    '#type' => 'item',
+    '#title' => 'Merged',
+    '#markup' => serial_display($node->conduit_properties_merged),
+    '#access' => $node->conduit_properties[LANGUAGE_NONE][0]['value'] != $node->conduit_properties_merged,
+  );
+  return $page;
 }
