@@ -2,6 +2,10 @@
  * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
  */
 
+#edit-submit-conduit-group-user, #edit-submit-conduit-group, #edit-submit-conduit-job {
+  margin-top: 0;
+}
+
 .view-conduit-job .views-field-title {
   width: 200px;
 }

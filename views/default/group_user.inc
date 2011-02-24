@@ -16,12 +16,14 @@ $handler->display->display_options['access']['type'] = 'none';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
 $handler->display->display_options['exposed_form']['type'] = 'basic';
+$handler->display->display_options['exposed_form']['options']['submit_button'] = 'Filter';
 $handler->display->display_options['pager']['type'] = 'full';
 $handler->display->display_options['pager']['options']['items_per_page'] = '15';
 $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
 $handler->display->display_options['style_plugin'] = 'list';
 $handler->display->display_options['row_plugin'] = 'fields';
+$handler->display->display_options['exposed_block'] = TRUE;
 /* Empty text: Global: Text area */
 $handler->display->display_options['empty']['area']['id'] = 'area';
 $handler->display->display_options['empty']['area']['table'] = 'views';
@@ -81,11 +83,11 @@ $handler->display->display_options['filters']['title']['exposed'] = TRUE;
 $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
 $handler->display->display_options['filters']['title']['expose']['label'] = 'Group title';
 $handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
-$handler->display->display_options['filters']['title']['expose']['identifier'] = 'title';
+$handler->display->display_options['filters']['title']['expose']['identifier'] = 'group_title';
 $translatables['conduit_group_user'] = array(
   t('Defaults'),
   t('more'),
-  t('Apply'),
+  t('Filter'),
   t('Reset'),
   t('Sort By'),
   t('Asc'),

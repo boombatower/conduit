@@ -436,7 +436,7 @@ function conduit_view($node, $view_mode) {
       $view->execute();
       $node->content['conduit_group'] = array(
         '#markup' => $view->preview('default', array($node->nid)),
-        '#access' => (bool) $view->total_rows,
+        '#access' => (bool) $view->total_rows || !empty($_GET['group_title']),
         '#weight' => 10,
       );
 
@@ -445,7 +445,7 @@ function conduit_view($node, $view_mode) {
       $view->execute();
       $node->content['conduit_job'] = array(
         '#markup' => $view->preview('default', array($node->nid)),
-        '#access' => (bool) $view->total_rows,
+        '#access' => (bool) $view->total_rows || !empty($_GET['job_title']),
         '#weight' => 11,
       );
 
