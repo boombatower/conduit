@@ -665,7 +665,7 @@ function conduit_view_breadcrumb($node, $breadcrumb = array()) {
  * Determine if node is a conduit type and the user has update access.
  */
 function conduit_node_properties_type($node) {
-  return conduit_node_type($node->type) && node_access('update', $node);
+  return conduit_node_type($node->type) && node_access('view', $node);
 }
 
 /**
