@@ -200,6 +200,10 @@ function conduit_install_fields() {
       'field_name' => 'conduit_status',
       'type' => 'number_integer',
     ),
+    'conduit_elapse' => array(
+      'field_name' => 'conduit_elapse',
+      'type' => 'number_integer',
+    ),
     'conduit_summary' => array(
       'field_name' => 'conduit_summary',
       'type' => 'text',
@@ -344,6 +348,20 @@ function conduit_install_instances_job($type) {
       'label' => $t('Status'),
       'description' => $t('Indicates the lowest status acheived by all completed job chunks.'),
       'settings' => array('min' => '-1'),
+      'widget' => array(
+        'type' => 'number',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
+    ),
+    'job_conduit_elapse' => array(
+      'field_name' => 'conduit_elapse',
+      'label' => $t('Time elapsed'),
+      'description' => $t('Indicates the the length of time elapsed processing the job.'),
+      'settings' => array('min' => '0'),
       'widget' => array(
         'type' => 'number',
       ),

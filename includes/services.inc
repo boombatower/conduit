@@ -62,6 +62,13 @@ function conduit_services_resources() {
               'source' => 'data',
               'optional' => FALSE,
             ),
+            array(
+              'name' => 'elapse',
+              'type' => 'int',
+              'description' => 'Indicates the the length of time elapsed processing the chunk.',
+              'source' => 'data',
+              'optional' => FALSE,
+            ),
           ),
         ),
       ),
