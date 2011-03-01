@@ -173,8 +173,9 @@ function conduit_install_category_update($type) {
  * Implements hook_install_fields().
  */
 function conduit_install_fields() {
+  $t = get_t();
   return array(
-    // Conduit group and job fields.
+    // Group and job fields.
     'conduit_parent' => array(
       'field_name' => 'conduit_parent',
       'type' => 'node_reference',
@@ -187,7 +188,7 @@ function conduit_install_fields() {
       'type' => 'serial_long',
     ),
 
-    // Conduit job fields.
+    // Job fields.
     'conduit_done' => array(
       'field_name' => 'conduit_done',
       'type' => 'number_boolean',
@@ -222,6 +223,15 @@ function conduit_install_fields() {
         'views_base_table' => TRUE,
       ),
     ),
+
+    // User fields.
+    'conduit_public' => array(
+      'field_name' => 'conduit_public',
+      'type' => 'list_boolean',
+      'settings' => array(
+        'allowed_values' => array($t('Private'), $t('Public')),
+      ),
+    ),
   );
 }
 
@@ -231,7 +241,7 @@ function conduit_install_fields() {
 function conduit_install_instances() {
   $t = get_t();
   return array(
-    // Conduit group instances.
+    // Group instances.
     'group_conduit_parent' => array(
       'entity_type' => 'node',
       'bundle' => 'conduit_group',
@@ -259,6 +269,23 @@ function conduit_install_instances() {
       'description' => $t('Array of properties in valid PHP syntax, excluding the array( ... ). For example "foo", "bar" would produce an array with those two values.'),
       'widget' => array(
         'type' => 'serial_textarea',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
+    ),
+
+    // User instances.
+    'user_conduit_public' => array(
+      'entity_type' => 'user',
+      'bundle' => 'user',
+      'field_name' => 'conduit_public',
+      'label' => $t('Public'),
+      'description' => $t('Allow public viewing of groups and jobs owned by this account.'),
+      'widget' => array(
+        'type' => 'options_onoff',
       ),
       'display' => array(
         'default' => array(
