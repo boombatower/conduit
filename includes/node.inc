@@ -335,7 +335,7 @@ function conduit_insert($node) {
     $node->conduit_done[LANGUAGE_NONE][0]['value'] = (int) FALSE;
     $node->conduit_chunk_count[LANGUAGE_NONE][0]['value'] = $chunk_count;
     $node->conduit_status[LANGUAGE_NONE][0]['value'] = 0;
-    $node->conduit_elapse[LANGUAGE_NONE][0]['value'] = 0;
+    $node->conduit_duration[LANGUAGE_NONE][0]['value'] = 0;
     $node->conduit_summary[LANGUAGE_NONE][0]['value'] = t('The job has not yet been performed.');
     for ($i = 0; $i < $chunk_count; $i++) {
       $node->conduit_chunk_status[LANGUAGE_NONE][$i]['value'] = -1;
@@ -533,11 +533,11 @@ function conduit_view_meta(&$node) {
     '#title' => t('Updated'),
     '#markup' => t('%time ago', array('%time' => format_interval(REQUEST_TIME - $node->revision_timestamp))),
   );
-  $node->content['meta']['elapse'] = array(
+  $node->content['meta']['duration'] = array(
     '#type' => 'item',
-    '#title' => t('Time elapsed'),
-    '#markup' => format_interval($node->conduit_elapse[LANGUAGE_NONE][0]['value']),
-    '#access' => (bool) $node->conduit_elapse[LANGUAGE_NONE][0]['value'],
+    '#title' => t('Duration'),
+    '#markup' => format_interval($node->conduit_duration[LANGUAGE_NONE][0]['value']),
+    '#access' => (bool) $node->conduit_duration[LANGUAGE_NONE][0]['value'],
   );
 
   $node->content['meta']['actions'] = array(

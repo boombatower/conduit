@@ -42,12 +42,12 @@ function conduit_api_claim($category) {
  *   The result of processing the chunk.
  * @param $log
  *   The log generated while processing the chunk.
- * @param $elapse
+ * @param $duration
  *   Indicates the the length of time elapsed processing the chunk.
  * @return
  *   TRUE if successfull, otherwise FALSE.
  */
-function conduit_api_result($item, $status, $result, $log, $elapse) {
+function conduit_api_result($item, $status, $result, $log, $duration) {
   $item = (object) $item;
 
   // Acquire a lock to modify the node.
@@ -71,7 +71,7 @@ function conduit_api_result($item, $status, $result, $log, $elapse) {
     if ($status == CONDUIT_STATUS_SETUP) $job->conduit_summary[LANGUAGE_NONE][0]['value'] = $result;
 
     // Add the time elapsed processing the chunk to the overall elapse time.
-    $job->conduit_elapse[LANGUAGE_NONE][0]['value'] += $elapse;
+    $job->conduit_duration[LANGUAGE_NONE][0]['value'] += $duration;
 
     // Store the chunk status and log.
     $job->conduit_chunk_status[LANGUAGE_NONE][$item->data['delta']]['value'] = $status;

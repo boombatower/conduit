@@ -410,6 +410,14 @@ function conduit_views_api() {
 }
 
 /**
+ * Implements hook_views_data_alter().
+ */
+function conduit_views_data_alter(&$data) {
+  $data['field_data_conduit_duration']['conduit_duration_value']['field']['handler'] = 'views_handler_field_time_interval';
+  $data['field_revision_conduit_duration']['conduit_duration_value']['field']['handler'] = 'views_handler_field_time_interval';
+}
+
+/**
  * Implements hook_views_pre_render().
  */
 function conduit_views_pre_render($view) {
