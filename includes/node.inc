@@ -636,9 +636,8 @@ function conduit_view_repeat_form($form, &$form_state, $nid) {
  * Repeat the given job by creating a new revision.
  */
 function conduit_view_repeat_form_submit($form, &$form_state) {
-  if ($node = node_load($form_state['values']['nid'])) {
-    $node->revision = TRUE;
-    node_save($node);
+  conduit_include('api');
+  if (conduit_api_repeat($form_state['values']['nid'])) {
     drupal_set_message(t('A new revision has been created.'));
   }
 }

@@ -114,6 +114,23 @@ function conduit_api_result($item, $status, $result, $log, $duration) {
 }
 
 /**
+ * Repeat a job by creating a new revision.
+ *
+ * @param $nid
+ *   Job node ID to repeat.
+ * @return
+ *   TRUE if the job node was found and repeated, otherwise FALSE.
+ */
+function conduit_api_repeat($nid) {
+  if ($node = node_load($nid)) {
+    $node->revision = TRUE;
+    node_save($node);
+    return TRUE;
+  }
+  return FALSE;
+}
+
+/**
  * Acquire a Conduit API lock for a specific node.
  *
  * @param $nid
