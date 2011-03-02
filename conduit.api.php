@@ -23,7 +23,7 @@
  * @param $properties
  *   Merged array of properties.
  */
-function hook_conduit_conduit_validate(array $properties) {
+function hook_conduit_validate(array $properties) {
   extract($properties);
   if (!is_numeric($custom)) {
     conduit_validate_error('custom', t('must be numeric'));
