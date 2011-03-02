@@ -139,8 +139,9 @@ function conduit_validate($node, $form, &$form_state) {
     $properties = array_replace_recursive($base_defaults, $properties);
   }
 
-  // Conduit validates base properties.
+  // Conduit validates base properties and invoke general validation hook.
   module_invoke('conduit', 'conduit_validate', $properties);
+  module_invoke_all('conduit_validate_all', $properties);
 
   if ($node->type != 'conduit_group') {
     // The module responsible for the job type validate its properties.

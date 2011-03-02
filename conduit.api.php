@@ -110,8 +110,61 @@ function hook_conduit_result($node, $delta, $result) {
 }
 
 /*
- * Hooks designed for use in modules that provide queue processing.
+ * General hooks that do not have to be implemented by plugin modules.
  */
+
+/**
+ * Alter properties after they have been merged and validated.
+ *
+ * This can be useful if certain properties need to be overriden for particular
+ * node types or other conditions.
+ *
+ * @param $properties
+ *   Merged associative array of properties.
+ * @param $node
+ *   Node to which merged properties relate.
+ */
+function hook_conduit_properties_alter(array &$properties, $node) {
+  if ($node->type == 'conduit_job_my_custom_type' && $properties['custom']) {
+    $properties['mask'] = '/.*/';
+  }
+}
+
+/**
+ * Alter default properties before they are used for merging or validation.
+ *
+ * This can be useful if properties need to be added by modules that do not
+ * provide job types for conduit or if base properties need to be added or
+ * changed.
+ *
+ * @param $properties
+ *   Associative array of default properties.
+ * @param $module
+ *   Module that provided the default properties.
+ */
+function hook_conduit_default_properties_alter(array &$properties, $module) {
+  if ($module == 'conduit') {
+    $properties['non_plugin_property'] = 'foo';
+  }
+}
+
+/**
+ * Perform property validation before a group or job is created.
+ *
+ * Unlike hook_conduit_validate() this hook is called for all modules instead
+ * of just the plugin module or base property validation. If a module added or
+ * alter properties using hook_conduit_default_properties_alter() then this
+ * hook can be used to validate user input for those properties.
+ *
+ * @param $properties
+ *   Merged associative array of properties.
+ */
+function hook_conduit_validate_all(array $properties) {
+  extract($properties);
+  if (!is_bool($non_plugin_property)) {
+    conduit_validate_error('non_plugin_property', t('must be a boolean (true or false)'));
+  }
+}
 
 /**
  * Respond to queuing of job.

@@ -232,7 +232,7 @@ function conduit_flush_caches() {
  * Implements hook_conduit_default_properties().
  */
 function conduit_conduit_default_properties() {
-  return array(
+  $properties = array(
     'context' => 3,
     'mask' => '/.*/',
     'newline' => 'unix',
@@ -244,6 +244,11 @@ function conduit_conduit_default_properties() {
     'vcs' => array(),
     'verbose' => FALSE,
   );
+
+  // Allow modules to alter the base default properties.
+  $module = 'conduit';
+  drupal_alter('conduit_default_properties', $properties, $module);
+  return $properties;
 }
 
 /**
@@ -270,6 +275,8 @@ function conduit_properties_merge($node) {
   if ($info = conduit_job_info($node->type)) {
     $properties = module_invoke('conduit', 'conduit_default_properties');
     $plugin_defaults = module_invoke($info['module'], 'conduit_default_properties');
+    // Allow modules to alter the default properties for the plugin.
+    drupal_alter('conduit_default_properties', $plugin_defaults, $info['module']);
     $properties = array_replace_recursive($properties, $plugin_defaults);
   }
 
@@ -281,6 +288,9 @@ function conduit_properties_merge($node) {
   // Merge the entity's properties.
   $self = !empty($node->conduit_properties) ? $node->conduit_properties[LANGUAGE_NONE][0]['value'] : array();
   $properties = array_replace_recursive($properties, $self);
+
+  // Allow modules to alter the final merged properties.
+  drupal_alter('conduit_properties', $properties, $node);
 
   // If the node is a job then assign the plugin value.
   if ($info) {
