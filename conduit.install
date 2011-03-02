@@ -374,7 +374,7 @@ function conduit_install_instances_job($type) {
       'field_name' => 'conduit_status',
       'label' => $t('Status'),
       'description' => $t('Indicates the lowest status acheived by all completed job chunks.'),
-      'settings' => array('min' => '-1'),
+      'settings' => array('min' => '0'),
       'widget' => array(
         'type' => 'number',
       ),
@@ -415,7 +415,7 @@ function conduit_install_instances_job($type) {
       'field_name' => 'conduit_chunk_status',
       'label' => $t('Chunk status'),
       'description' => $t('Indicates a particular job chunk status.'),
-      'settings' => array('min' => '0'),
+      'settings' => array('min' => '-1'),
       'widget' => array(
         'type' => 'number',
       ),
