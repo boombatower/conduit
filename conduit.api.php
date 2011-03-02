@@ -18,19 +18,6 @@
  */
 
 /**
- * Perform property validation before a group or job is created.
- *
- * @param $properties
- *   Merged array of properties.
- */
-function hook_conduit_validate(array $properties) {
-  extract($properties);
-  if (!is_numeric($custom)) {
-    conduit_validate_error('custom', t('must be numeric'));
-  }
-}
-
-/**
  * Define the default properties associated with the module's job type.
  *
  * @return
@@ -41,6 +28,19 @@ function hook_conduit_default_properties() {
     'foo' => 'bar',
     'baz' => 'faz',
   );
+}
+
+/**
+ * Perform property validation before a group or job is created.
+ *
+ * @param $properties
+ *   Merged associative array of properties.
+ */
+function hook_conduit_validate(array $properties) {
+  extract($properties);
+  if (!is_numeric($custom)) {
+    conduit_validate_error('custom', t('must be numeric'));
+  }
 }
 
 /**
