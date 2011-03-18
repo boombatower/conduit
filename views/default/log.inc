@@ -11,6 +11,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Defaults */
 $handler = $view->new_display('default', 'Defaults', 'default');
+$handler->display->display_options['title'] = 'Log';
 $handler->display->display_options['access']['type'] = 'perm';
 $handler->display->display_options['access']['perm'] = 'view conduit log';
 $handler->display->display_options['cache']['type'] = 'none';
@@ -43,7 +44,7 @@ $handler->display->display_options['style_options']['info'] = array(
 );
 $handler->display->display_options['style_options']['override'] = 1;
 $handler->display->display_options['style_options']['sticky'] = 0;
-/* Field: Field tables: conduit_log=>Delta */
+/* Field: Field tables: conduit_log => Delta */
 $handler->display->display_options['fields']['delta_raw']['id'] = 'delta_raw';
 $handler->display->display_options['fields']['delta_raw']['table'] = 'field_data_conduit_log';
 $handler->display->display_options['fields']['delta_raw']['field'] = 'delta_raw';
@@ -60,7 +61,7 @@ $handler->display->display_options['fields']['delta_raw']['element_label_colon']
 $handler->display->display_options['fields']['delta_raw']['element_default_classes'] = 1;
 $handler->display->display_options['fields']['delta_raw']['hide_empty'] = 0;
 $handler->display->display_options['fields']['delta_raw']['empty_zero'] = 0;
-/* Field: Field tables: conduit_log=>Value */
+/* Field: Field tables: conduit_log => Value */
 $handler->display->display_options['fields']['conduit_log_value_raw']['id'] = 'conduit_log_value_raw';
 $handler->display->display_options['fields']['conduit_log_value_raw']['table'] = 'field_data_conduit_log';
 $handler->display->display_options['fields']['conduit_log_value_raw']['field'] = 'conduit_log_value_raw';
@@ -78,7 +79,7 @@ $handler->display->display_options['fields']['conduit_log_value_raw']['element_l
 $handler->display->display_options['fields']['conduit_log_value_raw']['element_default_classes'] = 1;
 $handler->display->display_options['fields']['conduit_log_value_raw']['hide_empty'] = 0;
 $handler->display->display_options['fields']['conduit_log_value_raw']['empty_zero'] = 0;
-/* Argument: Field tables: conduit_log=>Entity id */
+/* Argument: Field tables: conduit_log => Entity id */
 $handler->display->display_options['arguments']['entity_id_raw']['id'] = 'entity_id_raw';
 $handler->display->display_options['arguments']['entity_id_raw']['table'] = 'field_data_conduit_log';
 $handler->display->display_options['arguments']['entity_id_raw']['field'] = 'entity_id_raw';
@@ -86,7 +87,7 @@ $handler->display->display_options['arguments']['entity_id_raw']['default_action
 $handler->display->display_options['arguments']['entity_id_raw']['style_plugin'] = 'default_summary';
 $handler->display->display_options['arguments']['entity_id_raw']['default_argument_type'] = 'fixed';
 $handler->display->display_options['arguments']['entity_id_raw']['validate_type'] = 'node';
-$handler->display->display_options['arguments']['entity_id_raw']['validate_options']['types'] = drupal_map_assoc(array_filter(array_keys(node_type_get_types()), 'conduit_job_info'));;
+$handler->display->display_options['arguments']['entity_id_raw']['validate_options']['types'] = drupal_map_assoc(array_filter(array_keys(node_type_get_types()), 'conduit_job_info'));
 $handler->display->display_options['arguments']['entity_id_raw']['validate_options']['access'] = 0;
 $handler->display->display_options['arguments']['entity_id_raw']['break_phrase'] = 0;
 $handler->display->display_options['arguments']['entity_id_raw']['not'] = 0;
@@ -99,6 +100,7 @@ $handler->display->display_options['menu']['title'] = 'Log';
 $handler->display->display_options['menu']['weight'] = '1';
 $translatables['conduit_log'] = array(
   t('Defaults'),
+  t('Log'),
   t('more'),
   t('Apply'),
   t('Reset'),
@@ -109,7 +111,8 @@ $translatables['conduit_log'] = array(
   t('- All -'),
   t('Offset'),
   t('Delta'),
-  t('Log'),
+  t('.'),
+  t(','),
   t('All'),
   t('Log page'),
 );
