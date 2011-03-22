@@ -115,7 +115,7 @@
 }
 
 /* Override default form padding and margin */
-#center .conduit-meta form {
+.conduit-meta form {
   float: left;
   margin-bottom: 0;
 }
