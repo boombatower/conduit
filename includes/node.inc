@@ -103,7 +103,9 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
 function conduit_node_load($nodes, $types) {
   if (array_filter($types, 'conduit_node_type')) {
     foreach ($nodes as $node) {
-      $node->conduit_properties_merged = !empty($node->conduit_properties) ? conduit_properties_merge($node) : array();
+      if (conduit_node_type($node->type)) {
+        $node->conduit_properties_merged = !empty($node->conduit_properties) ? conduit_properties_merge($node) : array();
+      }
     }
   }
 }
