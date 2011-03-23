@@ -100,7 +100,7 @@ function conduit_install_node_type_group($type) {
     'format_type' => 'fieldset',
   );
   $group = (object) $group;
-  field_group_create_field_group($group);
+  field_group_save($group);
 }
 
 /**
