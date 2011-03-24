@@ -15,21 +15,22 @@
   text-align: center;
 }
 
-.view-conduit-job .field-name-conduit-status {
+.view-conduit-job td.views-field-entity-id-3 {
   background-image: url('images/status-active-small.png');
   background-repeat: no-repeat;
+  background-position: center;
   color: transparent;
   height: 22px;
   width: 22px;
   margin: auto;
 }
-.view-conduit-job .conduit-status-1 .field-name-conduit-status {
+.view-conduit-job .conduit-status-1 .views-field-entity-id-3 {
   background-image: url('images/status-setup-small.png');
 }
-.view-conduit-job .conduit-status-2 .field-name-conduit-status {
+.view-conduit-job .conduit-status-2 .views-field-entity-id-3 {
   background-image: url('images/status-fail-small.png');
 }
-.view-conduit-job .conduit-status-3 .field-name-conduit-status {
+.view-conduit-job .conduit-status-3 .views-field-entity-id-3 {
   background-image: url('images/status-pass-small.png');
 }
 
@@ -41,7 +42,7 @@
   height: 48px;
 }
 
-/* Set all icons to 64x64 */
+/* Set all icons to 48x48 */
 #conduit-meta-status, #conduit-previous div, #conduit-next div {
   width: 48px;
   height: 48px;
