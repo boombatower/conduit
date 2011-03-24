@@ -403,9 +403,9 @@ function conduit_client_permissions() {
       $permissions[] = "$operation $type content";
     }
   }
-  $permission[] = 'view revisions';
-  $permission[] = 'view conduit log';
-  $permission[] = 'repeat conduit job';
+  $permissions[] = 'view revisions';
+  $permissions[] = 'view conduit log';
+  $permissions[] = 'repeat conduit job';
   return $permissions;
 }
 
