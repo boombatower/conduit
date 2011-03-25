@@ -73,6 +73,25 @@ function conduit_services_resources() {
         ),
       ),
     ),
+    'job' => array(
+      'actions' => array(
+        'repeat' => array(
+          'help' => 'Repeat a job by creating a new revision.',
+          'callback' => 'conduit_api_repeat',
+          'file' => array('type' => 'inc', 'module' => 'conduit', 'name' => 'includes/api'),
+          'access arguments' => array('repeat conduit job'),
+          'args' => array(
+            array(
+              'name' => 'id',
+              'type' => 'int',
+              'description' => 'Job node ID to repeat.',
+              'source' => 'data',
+              'optional' => FALSE,
+            ),
+          ),
+        ),
+      ),
+    ),
   );
 }
 
@@ -129,6 +148,14 @@ function conduit_default_services_endpoint($export) {
           'enabled' => 1,
         ),
         'result' => array(
+          'enabled' => 1,
+        ),
+      ),
+    ),
+    'job' => array(
+      'alias' => '',
+      'actions' => array(
+        'repeat' => array(
           'enabled' => 1,
         ),
       ),
