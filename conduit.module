@@ -140,14 +140,16 @@ function conduit_block_view($delta = '') {
   // Only bother generating the list of jobs and group that can be created for
   // users with the 'conduit client' role.
   if (in_array('conduit client', $user->roles)) {
-    // Check to see if on a user's own account page or a group/job node.
+    // Check to see if on a user's own account page or a group/job node owned
+    // by the user. To simplify things don't display the block to users viewing
+    // user's groups/jobs.
     $types = array();
     $router_item = menu_get_item($_GET['q']);
     if ($router_item['path'] == 'user/%' && ($account = menu_get_object('user')) && $account->uid == $user->uid) {
       $types = conduit_types();
       $types = array('conduit_group' => $types['conduit_group']);
     }
-    elseif ($router_item['path'] == 'node/%' && ($node = menu_get_object()) && conduit_node_type($node->type)) {
+    elseif ($router_item['path'] == 'node/%' && ($node = menu_get_object()) && conduit_node_type($node->type) && $node->uid == $user->uid) {
       $parent = $node->type == 'conduit_group' ? $node->nid : $node->conduit_parent[LANGUAGE_NONE][0]['nid'];
       $types = conduit_types();
     }
