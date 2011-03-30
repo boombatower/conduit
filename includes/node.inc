@@ -670,9 +670,21 @@ function conduit_view_breadcrumb($node, $breadcrumb = array()) {
 
 /**
  * Determine if node is a conduit type and the user has update access.
+ *
+ * @param $node
+ *   A node object.
+ * @param $revision
+ *   (Optional) A boolean flag to indicate if the node object represents one of
+ *   the previous revisions instead of the current revision.
+ * @return
+ *   TRUE if access is granted, otherwise FALSE.
  */
-function conduit_node_properties_type($node) {
-  return conduit_node_type($node->type) && node_access('view', $node);
+function conduit_node_properties_access($node, $revision = FALSE) {
+  $access = &drupal_static(__FUNCTION__, array());
+  if (!isset($access[$node->vid])) {
+    $access[$node->vid] = conduit_node_type($node->type) && ($revision ? _node_revision_access($node) : node_access('view', $node));
+  }
+  return $access[$node->vid];
 }
 
 /**

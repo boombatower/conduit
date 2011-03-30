@@ -68,16 +68,36 @@ function conduit_permission() {
  */
 function conduit_menu() {
   $items = array();
+
   $items['node/%node/properties'] = array(
     'title' => 'Properties',
     'page callback' => 'conduit_node_properties',
     'page arguments' => array(1),
-    'access callback' => 'conduit_node_properties_type',
+    'access callback' => 'conduit_node_properties_access',
     'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
   );
+  $items['node/%node/revisions/%/properties'] = $items['node/%node/properties'];
+  $items['node/%node/revisions/%/properties']['load arguments'] = array(3);
+  $items['node/%node/revisions/%/properties']['access arguments'][] = TRUE;
+
   return $items;
 }
+
+/**
+ * Implements hook_menu_alter().
+ */
+function conduit_menu_alter(&$items) {
+  // Move view router item one level down to become parent for tabs.
+  $items['node/%node/revisions/%'] = $items['node/%node/revisions/%/view'];
+
+  // Override view router item to create a default local task.
+  $items['node/%node/revisions/%/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+  );
+}
+
 
 /**
  * Implements hook_user_view().
