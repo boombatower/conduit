@@ -680,6 +680,8 @@ function conduit_node_properties_type($node) {
  */
 function conduit_node_properties($node) {
   $page = array();
+  drupal_set_title(t('Properties'));
+
   if ($node->type != 'conduit_group') {
     $page['job_id'] = array(
       '#type' => 'item',
