@@ -1,4 +1,5 @@
 <?php
+
 $view = new view;
 $view->name = 'conduit_log';
 $view->description = '';
@@ -9,8 +10,8 @@ $view->core = 7;
 $view->api_version = '3.0-alpha1';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
-/* Display: Defaults */
-$handler = $view->new_display('default', 'Defaults', 'default');
+/* Display: Master */
+$handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['title'] = 'Log';
 $handler->display->display_options['access']['type'] = 'perm';
 $handler->display->display_options['access']['perm'] = 'view conduit log';
@@ -79,32 +80,33 @@ $handler->display->display_options['fields']['conduit_log_value_raw']['element_l
 $handler->display->display_options['fields']['conduit_log_value_raw']['element_default_classes'] = 1;
 $handler->display->display_options['fields']['conduit_log_value_raw']['hide_empty'] = 0;
 $handler->display->display_options['fields']['conduit_log_value_raw']['empty_zero'] = 0;
-/* Argument: Field tables: conduit_log => Entity id */
+/* Contextual filter: Field tables: conduit_log => Entity id */
 $handler->display->display_options['arguments']['entity_id_raw']['id'] = 'entity_id_raw';
 $handler->display->display_options['arguments']['entity_id_raw']['table'] = 'field_data_conduit_log';
 $handler->display->display_options['arguments']['entity_id_raw']['field'] = 'entity_id_raw';
 $handler->display->display_options['arguments']['entity_id_raw']['default_action'] = 'not found';
-$handler->display->display_options['arguments']['entity_id_raw']['style_plugin'] = 'default_summary';
 $handler->display->display_options['arguments']['entity_id_raw']['default_argument_type'] = 'fixed';
-$handler->display->display_options['arguments']['entity_id_raw']['validate_type'] = 'node';
+$handler->display->display_options['arguments']['entity_id_raw']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['entity_id_raw']['specify_validation'] = 1;
+$handler->display->display_options['arguments']['entity_id_raw']['validate']['type'] = 'node';
 $handler->display->display_options['arguments']['entity_id_raw']['validate_options']['types'] = drupal_map_assoc(array_filter(array_keys(node_type_get_types()), 'conduit_job_info'));
 $handler->display->display_options['arguments']['entity_id_raw']['validate_options']['access'] = 0;
 $handler->display->display_options['arguments']['entity_id_raw']['break_phrase'] = 0;
 $handler->display->display_options['arguments']['entity_id_raw']['not'] = 0;
 
-/* Display: Log page */
-$handler = $view->new_display('page', 'Log page', 'page_log');
+/* Display: Page */
+$handler = $view->new_display('page', 'Page', 'page');
 $handler->display->display_options['path'] = 'node/%/log';
 $handler->display->display_options['menu']['type'] = 'tab';
 $handler->display->display_options['menu']['title'] = 'Log';
 $handler->display->display_options['menu']['weight'] = '1';
 $translatables['conduit_log'] = array(
-  t('Defaults'),
+  t('Master'),
   t('Log'),
   t('more'),
   t('Apply'),
   t('Reset'),
-  t('Sort By'),
+  t('Sort by'),
   t('Asc'),
   t('Desc'),
   t('Items per page'),
@@ -114,5 +116,5 @@ $translatables['conduit_log'] = array(
   t('.'),
   t(','),
   t('All'),
-  t('Log page'),
+  t('Page'),
 );
