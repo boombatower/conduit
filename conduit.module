@@ -251,6 +251,62 @@ function conduit_flush_caches() {
 }
 
 /**
+ * Conduit user access rules.
+ *
+ * Called by conduit_node_access().
+ *
+ * @param $account
+ *   A user object of the account attempting to be viewed.
+ * @param $user
+ *   The user object attempting to view the account.
+ * @return
+ *   TRUE if access granted, otherwise FALSE.
+ */
+function conduit_user_access($account, $user = NULL) {
+  // Default to global user if non specified.
+  if (!$user) $user = $GLOBALS['user'];
+
+  // If the user being viewed has public option enabled then allow access.
+  if (isset($account->conduit_public[LANGUAGE_NONE]) && $account->conduit_public[LANGUAGE_NONE][0]['value']) {
+    return TRUE;
+  }
+  // Check to see if master the user has the override permission otherwise
+  // check if the standard access rules pass.
+  return user_access('view all conduit content', $user) || conduit_user_view_access($account, $user);
+}
+
+/**
+ * Adapted from user_view_access() to accept second parameter of $user.
+ *
+ * @param $account
+ *   A user object of the account attempting to be viewed.
+ * @param $user
+ *   The user object attempting to view the account.
+ * @return
+ *   TRUE if access granted, otherwise FALSE.
+ * @see user_view_access()
+ */
+function conduit_user_view_access($account, $user) {
+  $uid = is_object($account) ? $account->uid : (int) $account;
+
+  // Never allow access to view the anonymous user account.
+  if ($uid) {
+    // Admins can view all, users can view own profiles at all times.
+    if ($user->uid == $uid || user_access('administer users', $user)) {
+      return TRUE;
+    }
+    elseif (user_access('access user profiles', $user)) {
+      // At this point, load the complete account object.
+      if (!is_object($account)) {
+        $account = user_load($uid);
+      }
+      return (is_object($account) && $account->status);
+    }
+  }
+  return FALSE;
+}
+
+/**
  * Implements hook_conduit_default_properties().
  */
 function conduit_conduit_default_properties() {

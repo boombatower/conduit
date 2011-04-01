@@ -47,14 +47,10 @@ function conduit_node_info_job($plugin, $description = NULL) {
  * Implements hook_node_access().
  */
 function conduit_node_access($node, $op, $account) {
-  if ($op == 'view') {
-    if (conduit_node_type(is_string($node) ? $node : $node->type)) {
-      $author = user_load($node->uid);
-      if ($author->conduit_public[LANGUAGE_NONE][0]['value']) {
-        return NODE_ACCESS_ALLOW;
-      }
-      return user_access('view all conduit content', $account) || $node->uid == $account->uid ? NODE_ACCESS_ALLOW : NODE_ACCESS_DENY;
-    }
+  // Only alter node access if $op is view and conduit type.
+  if ($op == 'view' && conduit_node_type(is_string($node) ? $node : $node->type)) {
+    $author = user_load($node->uid);
+    return conduit_user_access($author, $account) ? NODE_ACCESS_ALLOW : NODE_ACCESS_DENY;
   }
 }
 
