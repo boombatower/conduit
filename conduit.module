@@ -95,6 +95,7 @@ function conduit_menu_alter(&$items) {
   $items['node/%node/revisions/%/view'] = array(
     'title' => 'View',
     'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
   );
 }
 
