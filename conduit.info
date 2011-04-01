@@ -16,3 +16,6 @@ dependencies[] = serial
 dependencies[] = services
 dependencies[] = services_sessauth
 dependencies[] = views (3.x)
+
+files[] = views/plugins/views_plugin_argument_validate_user_conduit.inc
+files[] = conduit.test
