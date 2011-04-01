@@ -656,7 +656,7 @@ function conduit_view_breadcrumb($node, $breadcrumb = array()) {
 
   // If the node has a parent the recurse.
   if (empty($node->conduit_parent)) {
-    $breadcrumb[] = theme('username', array('account' => user_load($node->uid)));
+    $breadcrumb[] = l(format_username(user_load($node->uid)), 'user/' . $node->uid . '/groups');
   }
   else {
     $breadcrumb = conduit_view_breadcrumb(node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']), $breadcrumb);

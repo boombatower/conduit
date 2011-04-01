@@ -90,8 +90,16 @@ $handler->display->display_options['filters']['title']['expose']['label'] = 'Gro
 $handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
 $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
 $handler->display->display_options['filters']['title']['expose']['identifier'] = 'group_title';
+
+/* Display: Page */
+$handler = $view->new_display('page', 'Page', 'page');
+$handler->display->display_options['path'] = 'user/%/groups';
+$handler->display->display_options['menu']['type'] = 'tab';
+$handler->display->display_options['menu']['title'] = 'Groups';
+$handler->display->display_options['menu']['weight'] = '0';
 $translatables['conduit_group_user'] = array(
   t('Master'),
+  t('Groups'),
   t('more'),
   t('Filter'),
   t('Reset'),
@@ -105,4 +113,5 @@ $translatables['conduit_group_user'] = array(
   t('No groups were found.'),
   t('All'),
   t('Group title'),
+  t('Page'),
 );
