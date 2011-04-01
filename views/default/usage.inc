@@ -12,6 +12,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Defaults */
 $handler = $view->new_display('default', 'Defaults', 'default');
+$handler->display->display_options['title'] = 'Usage';
 $handler->display->display_options['group_by'] = TRUE;
 $handler->display->display_options['access']['type'] = 'none';
 $handler->display->display_options['cache']['type'] = 'none';
@@ -53,12 +54,12 @@ $handler->display->display_options['style_options']['info'] = array(
 $handler->display->display_options['style_options']['override'] = 1;
 $handler->display->display_options['style_options']['sticky'] = 0;
 $handler->display->display_options['style_options']['order'] = 'desc';
-/* Relationship: Node: Author */
+/* Relationship: Content: Author */
 $handler->display->display_options['relationships']['uid']['id'] = 'uid';
 $handler->display->display_options['relationships']['uid']['table'] = 'node';
 $handler->display->display_options['relationships']['uid']['field'] = 'uid';
 $handler->display->display_options['relationships']['uid']['required'] = 0;
-/* Field: Node revision: Title */
+/* Field: Content revision: Title */
 $handler->display->display_options['fields']['title_1']['id'] = 'title_1';
 $handler->display->display_options['fields']['title_1']['table'] = 'node_revision';
 $handler->display->display_options['fields']['title_1']['field'] = 'title';
@@ -96,7 +97,7 @@ $handler->display->display_options['fields']['conduit_duration_value_1']['elemen
 $handler->display->display_options['fields']['conduit_duration_value_1']['hide_empty'] = 0;
 $handler->display->display_options['fields']['conduit_duration_value_1']['empty_zero'] = 0;
 $handler->display->display_options['fields']['conduit_duration_value_1']['granularity'] = '2';
-/* Field: Node revision: Created date */
+/* Field: Content revision: Created date */
 $handler->display->display_options['fields']['timestamp']['id'] = 'timestamp';
 $handler->display->display_options['fields']['timestamp']['table'] = 'node_revision';
 $handler->display->display_options['fields']['timestamp']['field'] = 'timestamp';
@@ -114,49 +115,53 @@ $handler->display->display_options['fields']['timestamp']['element_default_class
 $handler->display->display_options['fields']['timestamp']['hide_empty'] = 0;
 $handler->display->display_options['fields']['timestamp']['empty_zero'] = 0;
 $handler->display->display_options['fields']['timestamp']['date_format'] = 'time ago';
-/* Argument: User: Uid */
+/* Contextual filter: User: Uid */
 $handler->display->display_options['arguments']['uid']['id'] = 'uid';
 $handler->display->display_options['arguments']['uid']['table'] = 'users';
 $handler->display->display_options['arguments']['uid']['field'] = 'uid';
 $handler->display->display_options['arguments']['uid']['relationship'] = 'uid';
 $handler->display->display_options['arguments']['uid']['default_action'] = 'not found';
-$handler->display->display_options['arguments']['uid']['style_plugin'] = 'default_summary';
 $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'fixed';
-$handler->display->display_options['arguments']['uid']['validate_type'] = 'user';
+$handler->display->display_options['arguments']['uid']['default_argument_skip_url'] = 0;
+$handler->display->display_options['arguments']['uid']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['arguments']['uid']['specify_validation'] = 1;
+$handler->display->display_options['arguments']['uid']['validate']['type'] = 'user_conduit';
 $handler->display->display_options['arguments']['uid']['validate_options']['restrict_roles'] = 0;
+$handler->display->display_options['arguments']['uid']['validate_options']['roles'] = array(
+  3 => '3',
+);
 $handler->display->display_options['arguments']['uid']['break_phrase'] = 0;
 $handler->display->display_options['arguments']['uid']['not'] = 0;
-/* Filter: Node: Type */
+/* Filter criterion: Content: Type */
 $handler->display->display_options['filters']['type']['id'] = 'type';
 $handler->display->display_options['filters']['type']['table'] = 'node';
 $handler->display->display_options['filters']['type']['field'] = 'type';
-$handler->display->display_options['filters']['type']['value'] = array(
-  'conduit_job_conduit_execute' => 'conduit_job_conduit_execute',
-  'conduit_job_drupal_coder' => 'conduit_job_drupal_coder',
-  'conduit_job_drupal_plumber' => 'conduit_job_drupal_plumber',
-  'conduit_job_drupal_scan' => 'conduit_job_drupal_scan',
-);
-/* Filter: Fields (historical data): Done (conduit_done) */
+$handler->display->display_options['filters']['type']['value'] = drupal_map_assoc(array_filter(array_keys(node_type_get_types()), 'conduit_job_info'));
+/* Filter criterion: Fields (historical data): Done (conduit_done) */
 $handler->display->display_options['filters']['conduit_done_value']['id'] = 'conduit_done_value';
 $handler->display->display_options['filters']['conduit_done_value']['table'] = 'field_revision_conduit_done';
 $handler->display->display_options['filters']['conduit_done_value']['field'] = 'conduit_done_value';
 $handler->display->display_options['filters']['conduit_done_value']['value']['value'] = '1';
-/* Filter: Node revision: Created date */
+/* Filter criterion: Content revision: Created date */
 $handler->display->display_options['filters']['timestamp']['id'] = 'timestamp';
 $handler->display->display_options['filters']['timestamp']['table'] = 'node_revision';
 $handler->display->display_options['filters']['timestamp']['field'] = 'timestamp';
-$handler->display->display_options['filters']['timestamp']['operator'] = '<=';
+$handler->display->display_options['filters']['timestamp']['operator'] = '>=';
 $handler->display->display_options['filters']['timestamp']['value']['min'] = '-1 day';
 $handler->display->display_options['filters']['timestamp']['value']['max'] = 'now';
 $handler->display->display_options['filters']['timestamp']['value']['value'] = '-1 month';
 $handler->display->display_options['filters']['timestamp']['value']['type'] = 'offset';
-$handler->display->display_options['filters']['timestamp']['expose']['operator'] = 'timestamp_op';
+$handler->display->display_options['filters']['timestamp']['exposed'] = TRUE;
+$handler->display->display_options['filters']['timestamp']['expose']['operator_id'] = 'timestamp_op';
 $handler->display->display_options['filters']['timestamp']['expose']['label'] = 'Completed';
-$handler->display->display_options['filters']['timestamp']['expose']['identifier'] = 'completed';
-$handler->display->display_options['filters']['timestamp']['expose']['single'] = TRUE;
+$handler->display->display_options['filters']['timestamp']['expose']['operator'] = 'timestamp_op';
+$handler->display->display_options['filters']['timestamp']['expose']['identifier'] = 'timestamp';
+$handler->display->display_options['filters']['timestamp']['expose']['multiple'] = FALSE;
 
 /* Display: Page */
-$handler = $view->new_display('page', 'Page', 'page_1');
+$handler = $view->new_display('page', 'Page', 'page');
 $handler->display->display_options['path'] = 'user/%/usage';
 $handler->display->display_options['menu']['type'] = 'tab';
 $handler->display->display_options['menu']['title'] = 'Usage';
@@ -250,7 +255,7 @@ $handler->display->display_options['defaults']['row_plugin'] = FALSE;
 $handler->display->display_options['defaults']['row_options'] = FALSE;
 $handler->display->display_options['defaults']['footer'] = FALSE;
 $handler->display->display_options['defaults']['fields'] = FALSE;
-/* Field: Node: Type */
+/* Field: Content: Type */
 $handler->display->display_options['fields']['type']['id'] = 'type';
 $handler->display->display_options['fields']['type']['table'] = 'node';
 $handler->display->display_options['fields']['type']['field'] = 'type';
@@ -268,7 +273,7 @@ $handler->display->display_options['fields']['type']['hide_empty'] = 0;
 $handler->display->display_options['fields']['type']['empty_zero'] = 0;
 $handler->display->display_options['fields']['type']['link_to_node'] = 0;
 $handler->display->display_options['fields']['type']['machine_name'] = 0;
-/* Field: Node: Type */
+/* Field: Content: Type */
 $handler->display->display_options['fields']['type_1']['id'] = 'type_1';
 $handler->display->display_options['fields']['type_1']['table'] = 'node';
 $handler->display->display_options['fields']['type_1']['field'] = 'type';
@@ -312,10 +317,11 @@ $handler->display->display_options['displays'] = array(
 );
 $translatables['conduit_usage'] = array(
   t('Defaults'),
+  t('Usage'),
   t('more'),
   t('Filter'),
   t('Reset'),
-  t('Sort By'),
+  t('Sort by'),
   t('Asc'),
   t('Desc'),
   t('Items per page'),

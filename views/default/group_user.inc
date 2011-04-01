@@ -12,6 +12,7 @@ $view->disabled = FALSE; /* Edit this to true to make a default view disabled in
 
 /* Display: Master */
 $handler = $view->new_display('default', 'Master', 'default');
+$handler->display->display_options['title'] = 'Groups';
 $handler->display->display_options['access']['type'] = 'none';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
@@ -57,9 +58,12 @@ $handler->display->display_options['arguments']['uid']['table'] = 'users';
 $handler->display->display_options['arguments']['uid']['field'] = 'uid';
 $handler->display->display_options['arguments']['uid']['default_action'] = 'not found';
 $handler->display->display_options['arguments']['uid']['default_argument_type'] = 'fixed';
+$handler->display->display_options['arguments']['uid']['default_argument_skip_url'] = 0;
+$handler->display->display_options['arguments']['uid']['summary']['number_of_records'] = '0';
 $handler->display->display_options['arguments']['uid']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['uid']['summary_options']['items_per_page'] = '25';
 $handler->display->display_options['arguments']['uid']['specify_validation'] = 1;
-$handler->display->display_options['arguments']['uid']['validate']['type'] = 'user';
+$handler->display->display_options['arguments']['uid']['validate']['type'] = 'user_conduit';
 $handler->display->display_options['arguments']['uid']['validate_options']['restrict_roles'] = 0;
 $handler->display->display_options['arguments']['uid']['break_phrase'] = 0;
 $handler->display->display_options['arguments']['uid']['not'] = 0;
