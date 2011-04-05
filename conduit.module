@@ -129,7 +129,7 @@ function conduit_block_view($delta = '') {
     // user's groups/jobs.
     $types = array();
     $router_item = menu_get_item();
-    if ($router_item['path'] == 'user/%' && ($account = menu_get_object('user')) && $account->uid == $user->uid) {
+    if ($router_item['path'] == 'user/%/groups' && arg(1) == $user->uid) {
       $types = conduit_types();
       $types = array('conduit_group' => $types['conduit_group']);
     }
