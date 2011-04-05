@@ -2,8 +2,12 @@
  * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
  */
 
-#edit-submit-conduit-group-user, #edit-submit-conduit-group, #edit-submit-conduit-job {
+#edit-submit-conduit-group-user, #edit-submit-conduit-group, #edit-submit-conduit-job, #edit-submit-conduit-usage {
   margin-top: 0;
+}
+
+#views-exposed-form-conduit-usage-page #edit-timestamp-op {
+  width: 135px;
 }
 
 .view-conduit-job .views-field-title {

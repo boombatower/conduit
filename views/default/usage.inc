@@ -156,12 +156,15 @@ $handler->display->display_options['filters']['timestamp']['value']['type'] = 'o
 $handler->display->display_options['filters']['timestamp']['exposed'] = TRUE;
 $handler->display->display_options['filters']['timestamp']['expose']['operator_id'] = 'timestamp_op';
 $handler->display->display_options['filters']['timestamp']['expose']['label'] = 'Completed';
+$handler->display->display_options['filters']['timestamp']['expose']['use_operator'] = TRUE;
 $handler->display->display_options['filters']['timestamp']['expose']['operator'] = 'timestamp_op';
 $handler->display->display_options['filters']['timestamp']['expose']['identifier'] = 'timestamp';
 $handler->display->display_options['filters']['timestamp']['expose']['multiple'] = FALSE;
 
 /* Display: Page */
 $handler = $view->new_display('page', 'Page', 'page');
+$handler->display->display_options['defaults']['exposed_block'] = FALSE;
+$handler->display->display_options['exposed_block'] = TRUE;
 $handler->display->display_options['path'] = 'user/%/usage';
 $handler->display->display_options['menu']['type'] = 'tab';
 $handler->display->display_options['menu']['title'] = 'Usage';
