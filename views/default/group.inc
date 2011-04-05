@@ -80,7 +80,7 @@ $handler->display->display_options['filters']['title']['field'] = 'title';
 $handler->display->display_options['filters']['title']['operator'] = 'contains';
 $handler->display->display_options['filters']['title']['exposed'] = TRUE;
 $handler->display->display_options['filters']['title']['expose']['operator_id'] = 'title_op';
-$handler->display->display_options['filters']['title']['expose']['label'] = 'Group title';
+$handler->display->display_options['filters']['title']['expose']['label'] = 'Group';
 $handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
 $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
 $handler->display->display_options['filters']['title']['expose']['identifier'] = 'group_title';
@@ -98,5 +98,5 @@ $translatables['conduit_group'] = array(
   t('No groups'),
   t('No groups were found.'),
   t('All'),
-  t('Group title'),
+  t('Group'),
 );

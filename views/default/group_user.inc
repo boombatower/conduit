@@ -24,7 +24,6 @@ $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
 $handler->display->display_options['style_plugin'] = 'list';
 $handler->display->display_options['row_plugin'] = 'fields';
-$handler->display->display_options['exposed_block'] = TRUE;
 /* No results behavior: Global: Text area */
 $handler->display->display_options['empty']['area']['id'] = 'area';
 $handler->display->display_options['empty']['area']['table'] = 'views';
@@ -86,13 +85,15 @@ $handler->display->display_options['filters']['title']['field'] = 'title';
 $handler->display->display_options['filters']['title']['operator'] = 'contains';
 $handler->display->display_options['filters']['title']['exposed'] = TRUE;
 $handler->display->display_options['filters']['title']['expose']['operator_id'] = 'title_op';
-$handler->display->display_options['filters']['title']['expose']['label'] = 'Group title';
+$handler->display->display_options['filters']['title']['expose']['label'] = 'Group';
 $handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
 $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
 $handler->display->display_options['filters']['title']['expose']['identifier'] = 'group_title';
 
 /* Display: Page */
 $handler = $view->new_display('page', 'Page', 'page');
+$handler->display->display_options['defaults']['exposed_block'] = FALSE;
+$handler->display->display_options['exposed_block'] = TRUE;
 $handler->display->display_options['path'] = 'user/%/groups';
 $handler->display->display_options['menu']['type'] = 'tab';
 $handler->display->display_options['menu']['title'] = 'Groups';
@@ -112,6 +113,6 @@ $translatables['conduit_group_user'] = array(
   t('No groups'),
   t('No groups were found.'),
   t('All'),
-  t('Group title'),
+  t('Group'),
   t('Page'),
 );

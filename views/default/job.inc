@@ -137,12 +137,12 @@ $handler->display->display_options['filters']['title']['field'] = 'title';
 $handler->display->display_options['filters']['title']['operator'] = 'contains';
 $handler->display->display_options['filters']['title']['exposed'] = TRUE;
 $handler->display->display_options['filters']['title']['expose']['operator_id'] = 'title_op';
-$handler->display->display_options['filters']['title']['expose']['label'] = 'Job Title';
+$handler->display->display_options['filters']['title']['expose']['label'] = 'Job';
 $handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
 $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
 $handler->display->display_options['filters']['title']['expose']['identifier'] = 'job_title';
 $translatables['conduit_job'] = array(
-  t('Defaults'),
+  t('Master'),
   t('more'),
   t('Filter'),
   t('Reset'),
@@ -158,5 +158,5 @@ $translatables['conduit_job'] = array(
   t('Status'),
   t('Summary'),
   t('All'),
-  t('Job Title'),
+  t('Job'),
 );
