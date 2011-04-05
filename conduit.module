@@ -237,6 +237,16 @@ function conduit_page_alter(&$page) {
 }
 
 /**
+ * Implements hook_field_access().
+ */
+function conduit_field_access($op, $field, $entity_type, $entity, $account) {
+  // Only allow the public field to be editted on conduit client users.
+  if ($field['field_name'] == 'conduit_public' && $op == 'edit') {
+    return in_array('conduit client', $entity->roles);
+  }
+}
+
+/**
  * Implements hook_flush_caches().
  */
 function conduit_flush_caches() {
