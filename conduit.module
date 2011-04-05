@@ -174,53 +174,65 @@ function conduit_block_view($delta = '') {
 
 /**
  * Implements hook_block_info_alter().
+ *
+ * Enable exposed views filter blocks.
  */
 function conduit_block_info_alter(&$blocks, $theme, $code_blocks) {
   foreach ($blocks['views'] as &$block) {
-    unset($type);
-    if (strpos($block['info'], 'conduit_job') !== FALSE || strpos($block['info'], 'conduit_group') !== FALSE) $type = 'conduit_group';
-    if (strpos($block['info'], 'conduit_group_user') !== FALSE) $type = 'user';
-    if (isset($type)) {
-      if (empty($block['status'])) {
+    foreach (array('conduit_job', 'conduit_group', 'conduit_group_user', 'conduit_usage') as $view) {
+      if (strpos($block['info'], $view) !== FALSE) {
         $block['status'] = 1;
         $block['region'] = 'sidebar_first';
         $block['weight'] = -9;
-        $block['pages'] = "node/add/*\nnode/*/edit";
-        if ($type == 'user') {
-          $block['visibility'] = BLOCK_VISIBILITY_LISTED;
-          $block['pages'] = "user\nuser/*";
-        }
-      }
-      elseif ($type != 'user') {
-        // Restrict filter blocks to the content type they are related to.
-        $form_state = array(
-          'values' => array(
-            'types' => array($type => $type),
-            'op' => 'Save block',
-          ),
-        );
-        module_load_include('admin.inc', 'block');
-        drupal_form_submit('block_admin_configure', $form_state, $block['module'], $block['delta']);
-        drupal_get_messages();
+        break;
       }
     }
   }
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter(): views_exposed_form.
+ */
+function conduit_form_views_exposed_form_alter(&$form, &$form_state) {
+  $view = conduit_view_block_form_info($form['#id']);
+  if ($view == 'conduit_group_user' || $view == 'conduit_usage') {
+    $router_item = menu_get_item();
+    $form['#access'] = $router_item['path'] == 'user/%/' . ($view == 'conduit_usage' ? 'usage' : 'groups');
+  }
+  elseif ($view == 'conduit_group' || $view == 'conduit_job') {
+    $router_item = menu_get_item();
+    $node = menu_get_object();
+    $form['#access'] = ($router_item['path'] == 'node/%' || $router_item['path'] == 'node/%/revisions/%') && $node->type == 'conduit_group';
+  }
+}
+
+/**
+ * Get the view name from an exposed block filter form.
+ *
+ * @param $form_id
+ *   The form ID of an exposed block filter form.
+ * @return
+ *   View name related to exposed block filter form.
+ */
+function conduit_view_block_form_info($form_id) {
+  if (preg_match('/views-exposed-form-(.*?)-\w+$/m', $form_id, $match)) {
+    return str_replace('-', '_', $match[1]);
+  }
+  return FALSE;
+}
+
+/**
  * Implements hook_page_alter().
  */
 function conduit_page_alter(&$page) {
+  // Further restrict access to group and job blocks based on current node's
+  // group and job views #access property.
   if (isset($page['sidebar_first']['views_-exp-conduit_group-default'])) {
     if (isset($page['content']['system_main']['nodes'])) {
       $node = current($page['content']['system_main']['nodes']);
     }
     $page['sidebar_first']['views_-exp-conduit_group-default']['#access'] = isset($node) ? $node['conduit_group']['#access'] : FALSE;
     $page['sidebar_first']['views_-exp-conduit_job-default']['#access'] = isset($node) ? $node['conduit_job']['#access'] : FALSE;
-  }
-  elseif (isset($page['sidebar_first']['views_-exp-conduit_group_user-default'])) {
-    $page['sidebar_first']['views_-exp-conduit_group_user-default']['#access'] = isset($page['content']['system_main']['conduit_group']) ?
-      $page['content']['system_main']['conduit_group']['#access'] : FALSE;
   }
 }
 
