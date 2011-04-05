@@ -262,6 +262,11 @@ function conduit_user_access($account, $user = NULL) {
   // Default to global user if non specified.
   if (!$user) $user = $GLOBALS['user'];
 
+  // Conduit user access only applies to conduit clients.
+  if (!in_array('conduit client', $account->roles)) {
+    return FALSE;
+  }
+
   // If the user being viewed has public option enabled then allow access.
   if (isset($account->conduit_public[LANGUAGE_NONE]) && $account->conduit_public[LANGUAGE_NONE][0]['value']) {
     return TRUE;
