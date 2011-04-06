@@ -98,7 +98,7 @@ function conduit_services_resources() {
 /**
  * Implements hook_default_services_endpoint().
  */
-function conduit_default_services_endpoint($export) {
+function conduit_default_services_endpoint() {
   $enpoints = array();
 
   $endpoint = new stdClass;
