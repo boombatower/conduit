@@ -164,6 +164,10 @@
 }
 
 /* Log and execute output */
+td.views-field-delta-raw {
+  width: 40px;
+}
+
 td.views-field-conduit-log-value-raw div, .field-name-conduit-result-conduit-execute {
   white-space: pre-wrap;
   font-family: monospace;
