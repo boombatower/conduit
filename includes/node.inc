@@ -122,7 +122,7 @@ function conduit_node_type($type) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form, &$form_state) {
-  if (!conduit_node_repeat_access($node)) {
+  if ($node->nid && !conduit_node_repeat_access($node)) {
     form_set_error('op', t('This job is currently not done and thus cannot be repeated.'));
     return;
   }
