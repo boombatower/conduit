@@ -489,7 +489,7 @@ function conduit_view_meta(&$node) {
     '#type' => 'container',
     '#attributes' => array(
       'id' => 'conduit-meta-status',
-      'class' => array('conduit-' . $status),
+      'class' => array('conduit-icon', 'conduit-' . $status),
       'alt' => ucfirst($status),
       'title' => ucfirst($status)
     ),
@@ -547,29 +547,82 @@ function conduit_view_meta(&$node) {
     '#type' => 'container',
     '#attributes' => array('id' => 'conduit-actions'),
   );
-  if ($siblings = conduit_view_meta_siblings($node->nid, $node->conduit_parent[LANGUAGE_NONE][0]['nid'])) {
-    $node->content['meta']['actions']['previous'] = array(
-      '#type' => 'link',
-      '#title' => '<div></div>',
-      '#href' => 'node/' . $siblings[0],
-      '#options' => array('html' => TRUE),
-      '#attributes' => array(
-        'id' => 'conduit-previous',
-        'title' => t('Previous'),
-      ),
-    );
-    $node->content['meta']['actions']['next'] = array(
-      '#type' => 'link',
-      '#title' => '<div></div>',
-      '#href' => 'node/' . $siblings[1],
-      '#options' => array('html' => TRUE),
-      '#attributes' => array(
-        'id' => 'conduit-next',
-        'title' => t('Next'),
-      ),
-    );
+
+  // If there is more then one revision then display relevant action buttons.
+  // When on the current revision display a previous button; when in the middle
+  // display current, previous and next buttons; and when on last revision
+  // display current and next buttons.
+  if (count($revisions = node_revision_list($node)) > 1) {
+    if (current($revisions)->vid != $node->vid) {
+      $node->content['meta']['actions']['revision']['current'] = conduit_view_meta_link(t('Current revision'), 'node/' . $node->nid, 'revision-current');
+    }
+    list($previous, $next) = conduit_view_meta_siblings_revisions($node, $revisions);
+    if ($previous) {
+      $node->content['meta']['actions']['revision']['previous'] = conduit_view_meta_link(t('Previous revision'), 'node/' . $node->nid . '/revisions/' . $previous->vid, 'revision-previous');
+    }
+    if ($next && current($revisions)->vid != $next->vid) {
+      $node->content['meta']['actions']['revision']['next'] = conduit_view_meta_link(t('Next revision'), 'node/' . $node->nid . '/revisions/' . $next->vid, 'revision-next');
+    }
+  }
+
+  // If the job has siblings, there are more then one job in group, then
+  // display next and previous links.
+  if ($siblings = conduit_view_meta_siblings_group($node->nid, $node->conduit_parent[LANGUAGE_NONE][0]['nid'])) {
+    $node->content['meta']['actions']['group']['previous'] = conduit_view_meta_link(t('Previous job in group'), 'node/' . $siblings[0]->nid, 'group-previous');
+    $node->content['meta']['actions']['group']['next'] = conduit_view_meta_link(t('Next job in group'), 'node/' . $siblings[1]->nid, 'group-next');
   }
   $node->content['meta']['actions']['repeat'] = drupal_get_form('conduit_view_repeat_form', $node->nid);
+}
+
+/**
+ * Create a meta icon link.
+ *
+ * @param $title
+ *   The title of link.
+ * @param $href
+ *   The link href path.
+ * @param $id
+ *   The link ID.
+ * @return
+ *   A renderable array defining a meta icon link.
+ */
+function conduit_view_meta_link($title, $href, $id) {
+  $container = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'id' => 'conduit-' . $id,
+      'class' => array('conduit-icon'),
+    ),
+  );
+  return array(
+    '#type' => 'link',
+    '#title' => drupal_render($container),
+    '#href' => $href,
+    '#options' => array('html' => TRUE),
+    '#attributes' => array(
+      'title' => $title,
+    ),
+  );
+}
+
+/**
+ * Find the siblings of the current revision.
+ *
+ * @param $current
+ *   The node object of the current revision.
+ * @param $revisions
+ *   An array of revisions objects from node_revision_list().
+ * @return
+ *   A two element array contining the two sibling reivision objects. If a
+ *   sibling does not existing, aka on the end, then it will be FALSE.
+ */
+function conduit_view_meta_siblings_revisions($current, $revisions) {
+  foreach ($revisions as $index => $revision) {
+    if ($revision->vid == $current->vid) {
+      return array(isset($revisions[$i = $index - 1]) ? $revisions[$i] : FALSE,
+        isset($revisions[$i = $index + 1]) ? $revisions[$i] : FALSE);
+    }
+  }
 }
 
 /**
@@ -580,10 +633,10 @@ function conduit_view_meta(&$node) {
  * @param $parent
  *   Parent group ID.
  * @return
- *   A two element array containing the nids of the two siblings or FALSE if
- *   the parent group only contains a single job.
+ *   A two element array containing the two sibling nodes or FALSE if the
+ *   parent group only contains a single job.
  */
-function conduit_view_meta_siblings($self, $parent) {
+function conduit_view_meta_siblings_group($self, $parent) {
   $view = views_get_view('conduit_job');
   $view->set_current_page(0); // Ensure that any pagers do not interfere.
   $view->set_items_per_page(200); // @TODO Probably want to make util and have it cycle through page or something.
@@ -592,17 +645,10 @@ function conduit_view_meta_siblings($self, $parent) {
   if (($count = count($view->result)) == 1) {
     return FALSE;
   }
-  for ($i = 0; $i < $count; $i++) {
-    if ($view->result[$i]->nid == $self) {
-      if ($i == 0) {
-        return array($view->result[$count - 1]->nid, $view->result[$i + 1]->nid);
-      }
-      elseif ($i == $count - 1) {
-        return array($view->result[$i - 1]->nid, $view->result[0]->nid);
-      }
-      else {
-        return array($previous = $view->result[$i - 1]->nid, $view->result[$i + 1]->nid);
-      }
+  foreach ($view->result as $index => $result) {
+    if ($result->nid == $self) {
+      return array(isset($view->result[$i = $index - 1]) ? $view->result[$i] : $view->result[$count - 1],
+        isset($view->result[$i = $index + 1]) ? $view->result[$i] : $view->result[0]);
     }
   }
 }
@@ -622,8 +668,8 @@ function conduit_view_repeat_form($form, &$form_state, $nid) {
     '#type' => 'image_button',
     '#src' => drupal_get_path('module', 'conduit') . '/images/repeat.png',
     '#attributes' => array(
-      'alt' => t('Repeat'),
-      'title' => t('Repeat'),
+      'alt' => t('Repeat job'),
+      'title' => t('Repeat job'),
     ),
     '#access' => user_access('repeat conduit job'),
   );

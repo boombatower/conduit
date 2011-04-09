@@ -47,7 +47,7 @@
 }
 
 /* Set all icons to 48x48 */
-#conduit-meta-status, #conduit-previous div, #conduit-next div {
+.conduit-icon {
   width: 48px;
   height: 48px;
 }
@@ -109,14 +109,25 @@
   float: right;
 }
 
-#conduit-previous div {
-  background-image: url('images/previous.png');
+#conduit-actions .conduit-icon {
   float: left;
+  margin: 0 3px;
 }
 
-#conduit-next div {
-  background-image: url('images/next.png');
-  float: left;
+#conduit-revision-current {
+  background-image: url('images/revision-current.png');
+}
+#conduit-revision-previous {
+  background-image: url('images/revision-previous.png');
+}
+#conduit-revision-next {
+  background-image: url('images/revision-next.png');
+}
+#conduit-group-previous {
+  background-image: url('images/group-previous.png');
+}
+#conduit-group-next {
+  background-image: url('images/group-next.png');
 }
 
 /* Override default form padding and margin */
