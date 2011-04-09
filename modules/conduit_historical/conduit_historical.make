@@ -8,4 +8,4 @@ projects[drupal] = 7
 
 ; Dependencies
 
-projects[services_historical] = 3
+projects[services_tools] = 3
