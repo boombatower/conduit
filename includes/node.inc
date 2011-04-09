@@ -122,6 +122,11 @@ function conduit_node_type($type) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form, &$form_state) {
+  if (!conduit_node_repeat_access($node)) {
+    form_set_error('op', t('This job is currently not done and thus cannot be repeated.'));
+    return;
+  }
+
   if (!is_array($node->conduit_properties[LANGUAGE_NONE][0]['value'])) {
     // Any errors with the properties definition will be dealt with by the
     // serial field validation.
@@ -571,7 +576,7 @@ function conduit_view_meta(&$node) {
     $node->content['meta']['actions']['group']['previous'] = conduit_view_meta_link(t('Previous job in group'), 'node/' . $siblings[0]->nid, 'group-previous');
     $node->content['meta']['actions']['group']['next'] = conduit_view_meta_link(t('Next job in group'), 'node/' . $siblings[1]->nid, 'group-next');
   }
-  $node->content['meta']['actions']['repeat'] = drupal_get_form('conduit_view_repeat_form', $node->nid);
+  $node->content['meta']['actions']['repeat'] = drupal_get_form('conduit_view_repeat_form', $node, isset($node->content['meta']['actions']['revision']['current']));
 }
 
 /**
@@ -656,13 +661,15 @@ function conduit_view_meta_siblings_group($self, $parent) {
 /**
  * Provide a repeat image button form.
  *
- * @param $nid
- *   Job node ID to repeat.
+ * @param $node
+ *   Job node to repeat.
+ * @param $revision
+ *   TRUE if node represents a revision, otherwise FALSE.
  */
-function conduit_view_repeat_form($form, &$form_state, $nid) {
+function conduit_view_repeat_form($form, &$form_state, $node, $revision) {
   $form['nid'] = array(
     '#type' => 'value',
-    '#value' => $nid,
+    '#value' => $node->nid,
   );
   $form['submit'] = array(
     '#type' => 'image_button',
@@ -671,19 +678,70 @@ function conduit_view_repeat_form($form, &$form_state, $nid) {
       'alt' => t('Repeat job'),
       'title' => t('Repeat job'),
     ),
-    '#access' => user_access('repeat conduit job'),
+    '#access' => !$revision && conduit_node_repeat_access($node),
   );
   return $form;
 }
 
 /**
- * Repeat the given job by creating a new revision.
+ * Check user preferences and either redirect to confirmation or repeat.
  */
 function conduit_view_repeat_form_submit($form, &$form_state) {
+  // If the user preference is to be asked for confirmation then redirect to
+  // the repeat confirmation form.
+  global $user;
+  if (user_load($user->uid)->conduit_ask[LANGUAGE_NONE][0]['value']) {
+    drupal_goto('node/' . $form_state['values']['nid'] . '/repeat');
+  }
+
+  // If no confirmation is required then execute repeat the job.
+  conduit_view_repeat_confirm_form_submit($form, $form_state);
+}
+
+/**
+ * Ask for confirmation before repeating a job.
+ *
+ * @param $node
+ *   The job node to be repeated.
+ */
+function conduit_view_repeat_confirm_form($form, &$form_state, $node) {
+  global $user;
+  $form['nid'] = array(
+    '#type' => 'value',
+    '#value' => $node->nid,
+  );
+  $form['ask'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Always ask for confirmation before repeating a job'),
+    '#description' => t('If unchecked the next time the repeat button is pressed the job will be repeated without a confirmation. This setting may be changed in your <a href="@profile_url">profile<a>.',
+      array('@profile_url' => url('user/' . $user->uid . '/edit', array('fragment' => 'edit-conduit-ask-und')))),
+    '#default_value' => TRUE,
+    '#weight' => 1,
+  );
+  return confirm_form($form, t('Are you sure you want to repeat %title job?', array('%title' => $node->title)), 'node/' . $node->nid, FALSE, t('Repeat'));
+}
+
+/**
+ * Repeat a job and check for user preference change.
+ */
+function conduit_view_repeat_confirm_form_submit($form, &$form_state) {
+  // If the user no longer wishes to be asked for confirmation then update the
+  // user's account with the new preference.
+  if (isset($form_state['values']['ask']) && !$form_state['values']['ask']) {
+    global $user;
+    $edit = array();
+    $edit['conduit_ask'][LANGUAGE_NONE][0]['value'] = (int) FALSE;
+    user_save(user_load($user->uid), $edit);
+  }
+
+  // Attempt to repeat the job and if successful display a message.
   conduit_include('api');
   if (conduit_api_repeat($form_state['values']['nid'])) {
     drupal_set_message(t('A new revision has been created.'));
   }
+
+  // Always redirect back to the job node.
+  $form_state['redirect'] = 'node/' . $form_state['values']['nid'];
 }
 
 /**
@@ -711,7 +769,33 @@ function conduit_view_breadcrumb($node, $breadcrumb = array()) {
 }
 
 /**
- * Determine if node is a conduit type and the user has update access.
+ * Determine if user has access to repeat node.
+ *
+ * The node must be a job and conduit_done must be TRUE, the user must have
+ * view access to the node and the 'repeat conduit job' permission.
+ *
+ * @param $node
+ *   A node object or NID.
+ * @param $revision
+ *   (Optional) A boolean flag to indicate if the node object represents one of
+ *   the previous revisions instead of the current revision.
+ * @return
+ *   TRUE if access is granted, otherwise FALSE.
+ */
+function conduit_node_repeat_access($node) {
+  if (is_numeric($node)) {
+    $node = node_load($node);
+  }
+
+  $access = &drupal_static(__FUNCTION__, array());
+  if (!isset($access[$node->nid])) {
+    $access[$node->nid] = conduit_node_properties_access($node) && $node->type != 'conduit_group' && user_access('repeat conduit job') && $node->conduit_done[LANGUAGE_NONE][0]['value'];
+  }
+  return $access[$node->nid];
+}
+
+/**
+ * Determine if node is a conduit type and the user has view access.
  *
  * @param $node
  *   A node object.

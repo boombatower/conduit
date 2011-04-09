@@ -232,6 +232,13 @@ function conduit_install_fields() {
         'allowed_values' => array($t('Private'), $t('Public')),
       ),
     ),
+    'conduit_ask' => array(
+      'field_name' => 'conduit_ask',
+      'type' => 'list_boolean',
+      'settings' => array(
+        'allowed_values' => array($t('Automaticly repeat job without confirmation'), $t('Ask for confirmation before repeating a job')),
+      ),
+    ),
   );
 }
 
@@ -286,6 +293,25 @@ function conduit_install_instances() {
       'description' => $t('Allow public viewing of groups and jobs owned by this account.'),
       'widget' => array(
         'type' => 'options_onoff',
+      ),
+      'display' => array(
+        'default' => array(
+          'type' => 'hidden',
+        ),
+      ),
+    ),
+    'user_conduit_ask' => array(
+      'entity_type' => 'user',
+      'bundle' => 'user',
+      'field_name' => 'conduit_ask',
+      'label' => $t('Ask for confirmation'),
+      'description' => $t('Always ask for confirmation before repeating a job.'),
+      'default_value' => array(array('value' => 1)),
+      'widget' => array(
+        'type' => 'options_onoff',
+        'settings' => array(
+          'display_label' => TRUE,
+        ),
       ),
       'display' => array(
         'default' => array(

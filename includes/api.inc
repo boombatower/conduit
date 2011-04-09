@@ -122,7 +122,7 @@ function conduit_api_result($item, $status, $result, $log, $duration) {
  *   TRUE if the job node was found and repeated, otherwise FALSE.
  */
 function conduit_api_repeat($nid) {
-  if ($node = node_load($nid)) {
+  if (($node = node_load($nid)) && conduit_node_repeat_access($node)) {
     $node->revision = TRUE;
     node_save($node);
     return TRUE;

@@ -79,7 +79,8 @@ function conduit_services_resources() {
           'help' => 'Repeat a job by creating a new revision.',
           'callback' => 'conduit_api_repeat',
           'file' => array('type' => 'inc', 'module' => 'conduit', 'name' => 'includes/api'),
-          'access arguments' => array('repeat conduit job'),
+          'access callback' => 'conduit_node_repeat_access',
+          'access arguments append' => TRUE,
           'args' => array(
             array(
               'name' => 'id',
