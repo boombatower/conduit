@@ -122,7 +122,9 @@ function conduit_node_type($type) {
  * Implements hook_validate().
  */
 function conduit_validate($node, $form, &$form_state) {
-  if ($node->nid && !conduit_node_repeat_access($node)) {
+  // Only bother running the repeat access check if the node is being updated
+  // and is not a group node.
+  if ($node->nid && $node->type != 'conduit_group' && !conduit_node_repeat_access($node)) {
     form_set_error('op', t('This job is currently not done and thus cannot be repeated.'));
     return;
   }
