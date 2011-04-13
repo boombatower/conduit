@@ -531,6 +531,11 @@ function conduit_views_pre_render($view) {
   if (strpos($view->name, 'conduit') === 0) {
     // Add conduit css to all conduit views.
     drupal_add_css(drupal_get_path('module', 'conduit') . '/conduit.css');
+
+    // Print help text when the user has no groups.
+    if ($view->name = 'conduit_group_user' && empty($view->result)) {
+      drupal_set_message(t('Use the links on the side to create groups.'));
+    }
   }
 }
 

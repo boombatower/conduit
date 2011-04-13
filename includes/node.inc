@@ -468,7 +468,7 @@ function conduit_view($node, $view_mode) {
 
       // Print help text when there are no jobs or groups contained by a group.
       if (!$node->content['conduit_group']['#access'] && !$node->content['conduit_job']['#access'] && node_access('update', $node)) {
-        drupal_set_message(t('Use the links to create jobs or sub-groups.'));
+        drupal_set_message(t('Use the links on the side to create jobs or sub-groups.'));
       }
     }
     else {
