@@ -54,6 +54,14 @@ $handler->display->display_options['style_options']['info'] = array(
 $handler->display->display_options['style_options']['override'] = 1;
 $handler->display->display_options['style_options']['sticky'] = 0;
 $handler->display->display_options['style_options']['order'] = 'desc';
+/* No results behavior: Global: Text area */
+$handler->display->display_options['empty']['area']['id'] = 'area';
+$handler->display->display_options['empty']['area']['table'] = 'views';
+$handler->display->display_options['empty']['area']['field'] = 'area';
+$handler->display->display_options['empty']['area']['label'] = 'No usage';
+$handler->display->display_options['empty']['area']['empty'] = FALSE;
+$handler->display->display_options['empty']['area']['content'] = 'No usage history was found.';
+$handler->display->display_options['empty']['area']['format'] = 'plain_text';
 /* Relationship: Content: Author */
 $handler->display->display_options['relationships']['uid']['id'] = 'uid';
 $handler->display->display_options['relationships']['uid']['table'] = 'node';
@@ -330,6 +338,8 @@ $translatables['conduit_usage'] = array(
   t('Items per page'),
   t('- All -'),
   t('Offset'),
+  t('No usage'),
+  t('No usage history was found.'),
   t('user'),
   t('Title'),
   t('Duration'),
