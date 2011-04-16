@@ -330,6 +330,7 @@ function conduit_user_view_access($account, $user) {
  */
 function conduit_conduit_default_properties() {
   $properties = array(
+    'build' => array(),
     'context' => 3,
     'mask' => '/.*/',
     'newline' => 'unix',

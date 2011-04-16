@@ -168,6 +168,10 @@ function conduit_validate($node, $form, &$form_state) {
 function conduit_conduit_validate(array $properties) {
   extract($properties);
 
+  if (!is_array($build)) {
+    conduit_validate_error('build', t('must be an array'));
+  }
+
   if (!is_numeric($context) || intval($context) != $context) {
     conduit_validate_error('context', t('must be an integer'));
   }
