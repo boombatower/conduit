@@ -624,10 +624,12 @@ function conduit_view_meta_link($title, $href, $id) {
  *   sibling does not existing, aka on the end, then it will be FALSE.
  */
 function conduit_view_meta_siblings_revisions($current, $revisions) {
+  // Drop the array keys which are vids so the items can be referenced easier.
+  $revisions = array_values($revisions);
   foreach ($revisions as $index => $revision) {
     if ($revision->vid == $current->vid) {
-      return array(isset($revisions[$i = $index - 1]) ? $revisions[$i] : FALSE,
-        isset($revisions[$i = $index + 1]) ? $revisions[$i] : FALSE);
+      return array(isset($revisions[$i = $index + 1]) ? $revisions[$i] : FALSE,
+        isset($revisions[$i = $index - 1]) ? $revisions[$i] : FALSE);
     }
   }
 }
