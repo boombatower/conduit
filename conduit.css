@@ -174,7 +174,7 @@ td.views-field-conduit-log-value-raw div, .field-name-conduit-result-conduit-exe
   font-size: 130%;
 }
 
-.field-name-conduit-result-conduit-execute {
+.field-name-conduit-result-conduit-execute .field-item {
   margin-top: 20px;
   padding: 5px 10px;
   border-left: 10px solid #eeeeee;
