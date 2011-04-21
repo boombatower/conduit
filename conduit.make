@@ -11,7 +11,7 @@ projects[drupal] = 7
 projects[boolean] = 1.0
 projects[field_group_views] = 1.0
 projects[field_helper] = 1.1
-projects[field_suppress][type] = 1.0
+projects[field_suppress] = 1.0
 
 projects[references][type] = module
 projects[references][download][type] = git
