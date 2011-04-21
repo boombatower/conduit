@@ -6,7 +6,7 @@ core = 7.x
 dependencies[] = boolean
 dependencies[] = field_group
 dependencies[] = field_group_views
-dependencies[] = field_helper (1.x)
+dependencies[] = field_helper
 dependencies[] = field_suppress
 dependencies[] = list
 dependencies[] = number
@@ -15,7 +15,7 @@ dependencies[] = rest_server
 dependencies[] = serial
 dependencies[] = services
 dependencies[] = services_sessauth
-dependencies[] = views (3.x)
+dependencies[] = views
 
 files[] = views/plugins/views_plugin_argument_validate_user_conduit.inc
 files[] = conduit.test
