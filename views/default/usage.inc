@@ -230,7 +230,7 @@ $handler->display->display_options['fields']['conduit_duration_value_1']['elemen
 $handler->display->display_options['fields']['conduit_duration_value_1']['hide_empty'] = 0;
 $handler->display->display_options['fields']['conduit_duration_value_1']['empty_zero'] = 0;
 $handler->display->display_options['displays'] = array(
-  'page_1' => 'page_1',
+  'page' => 'page',
   'default' => 0,
 );
 
@@ -323,7 +323,7 @@ $handler->display->display_options['fields']['conduit_duration_value_1']['elemen
 $handler->display->display_options['fields']['conduit_duration_value_1']['hide_empty'] = 0;
 $handler->display->display_options['fields']['conduit_duration_value_1']['empty_zero'] = 0;
 $handler->display->display_options['displays'] = array(
-  'page_1' => 'page_1',
+  'page' => 'page',
   'default' => 0,
 );
 $translatables['conduit_usage'] = array(
