@@ -534,7 +534,8 @@ function conduit_views_pre_render($view) {
     drupal_add_css(drupal_get_path('module', 'conduit') . '/conduit.css');
 
     // Print help text when the user has no groups.
-    if ($view->name == 'conduit_group_user' && empty($view->result)) {
+    if ($view->name == 'conduit_group_user' && empty($view->result) &&
+      ($router_item = menu_get_item()) && ($router_item['path'] == 'node/%' || $router_item['path'] == 'user/%/groups')) {
       drupal_set_message(t('Use the links on the side to create groups.'));
     }
   }
