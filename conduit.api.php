@@ -167,7 +167,7 @@ function hook_conduit_validate_all(array $properties) {
 }
 
 /**
- * Respond to queuing of job.
+ * Respond to queuing of a job.
  *
  * @param $node
  *   Queued job node.
