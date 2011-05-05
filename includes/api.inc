@@ -106,6 +106,9 @@ function conduit_api_result($item, $status, $result, $log, $duration) {
     // Remove the complete queue item.
     conduit_include('queue');
     conduit_queue_delete($item);
+
+    // Allow modules to action on job completion event.
+    if ($done) module_invoke_all('conduit_finished', $job);
   }
 
   field_suppress_state(TRUE);

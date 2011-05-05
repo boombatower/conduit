@@ -179,5 +179,17 @@ function hook_conduit_queued($node, $chunk_count) {
 }
 
 /**
+ * Respond to the completion of a job
+ *
+ * @param $node
+ *   The finished job node.
+ */
+function hook_conduit_finished($node) {
+  if ($node->conduit_status[LANGUAGE_NONE][0]['value'] == CONDUIT_STATUS_PASS) {
+    // Send an e-mail of congratulations.
+  }
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
