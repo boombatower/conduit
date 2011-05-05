@@ -87,6 +87,7 @@ function conduit_menu() {
     'page arguments' => array('conduit_view_repeat_confirm_form', 1),
     'access callback' => 'conduit_node_repeat_access',
     'access arguments' => array(1),
+    'type' => MENU_CALLBACK,
   );
 
   return $items;
