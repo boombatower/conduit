@@ -90,6 +90,20 @@ function conduit_menu() {
     'type' => MENU_CALLBACK,
   );
 
+  $items['admin/reports/conduit'] = array(
+    'title' => 'Conduit',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access site reports'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/reports/conduit/queue'] = array(
+    'title' => 'Queue',
+    'description' => 'View a table of the number of items in each category queue.',
+    'page callback' => 'conduit_report_queue',
+    'access arguments' => array('access site reports'),
+  );
+
   return $items;
 }
 
@@ -518,6 +532,22 @@ function conduit_conduit_finished($node) {
     watchdog('conduit', 'Worker crashed on job @nid.@vid.', array('@nid' => $node->nid, '@vid' => $node->vid), WATCHDOG_CRITICAL,
       l('view', 'node/' . $node->nid . '/revisions/' . $node->vid));
   }
+}
+
+/**
+ * Display a table of the number of items in each category queue.
+ */
+function conduit_report_queue() {
+  conduit_include('queue');
+  $rows = array();
+  foreach (conduit_categories() as $category) {
+    $rows[] = array($category, number_format(conduit_queue_count($category)));
+  }
+  return array(
+    '#theme' => 'table',
+    '#header' => array(t('Queue'), t('Count')),
+    '#rows' => $rows,
+  );
 }
 
 /**
