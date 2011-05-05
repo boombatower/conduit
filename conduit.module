@@ -508,6 +508,18 @@ function conduit_client_permissions() {
 }
 
 /**
+ * Implements hook_conduit_finished().
+ */
+function conduit_conduit_finished($node) {
+  // Log any jobs that cause the worker to crash.
+  if ($node->conduit_status[LANGUAGE_NONE][0]['value'] == CONDUIT_STATUS_SETUP &&
+    $node->conduit_summary[LANGUAGE_NONE][0]['value'] == 'Worker crashed') {
+    watchdog('conduit', 'Worker crashed on job @nid.@vid.', array('@nid' => $node->nid, '@vid' => $node->vid), WATCHDOG_CRITICAL,
+      l('view', 'node/' . $node->nid . '/revisions/' . $node->vid));
+  }
+}
+
+/**
  * Implements hook_views_api().
  */
 function conduit_views_api() {
