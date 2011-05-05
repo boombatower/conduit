@@ -83,7 +83,7 @@ function conduit_queue_delete($item) {
 }
 
 /**
- * Delete a item from the queue.
+ * Determine the number of items in the queue.
  *
  * @param $category
  *   The job category from which to count the items.
