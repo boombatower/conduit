@@ -16,7 +16,7 @@ projects[field_suppress] = 1.0
 projects[references][type] = module
 projects[references][download][type] = git
 projects[references][download][url] = http://git.drupal.org/project/references.git
-projects[references][download][revision] = b61bff0f46182e632e2cd5dda78679457db49992
+projects[references][download][revision] = ab321f5f6d72628b88caeb2e618095e49c3ce5f5
 
 projects[serial][type] = module
 projects[serial][download][type] = git
