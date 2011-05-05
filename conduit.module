@@ -375,17 +375,17 @@ function conduit_properties_merge($node) {
     $plugin_defaults = module_invoke($info['module'], 'conduit_default_properties');
     // Allow modules to alter the default properties for the plugin.
     drupal_alter('conduit_default_properties', $plugin_defaults, $info['module']);
-    $properties = array_replace_recursive($properties, $plugin_defaults);
+    $properties = array_replace($properties, $plugin_defaults);
   }
 
   // If the node has a parent then merge its merged properties array.
   if (!empty($node->conduit_parent) && ($parent = node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']))) {
-    $properties = array_replace_recursive($properties, $parent->conduit_properties_merged);
+    $properties = array_replace($properties, $parent->conduit_properties_merged);
   }
 
   // Merge the entity's properties.
   $self = !empty($node->conduit_properties) ? $node->conduit_properties[LANGUAGE_NONE][0]['value'] : array();
-  $properties = array_replace_recursive($properties, $self);
+  $properties = array_replace($properties, $self);
 
   // Allow modules to alter the final merged properties.
   drupal_alter('conduit_properties', $properties, $node);
