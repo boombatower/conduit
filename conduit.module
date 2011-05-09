@@ -519,6 +519,10 @@ function conduit_client_permissions() {
   $permissions[] = 'view revisions';
   $permissions[] = 'view conduit log';
   $permissions[] = 'repeat conduit job';
+
+  // Allow client permissions to be altered.
+  drupal_alter('conduit_client_permissions', $permissions);
+
   return $permissions;
 }
 

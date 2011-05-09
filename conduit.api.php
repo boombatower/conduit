@@ -191,5 +191,15 @@ function hook_conduit_finished($node) {
 }
 
 /**
+ * Alter the permissions for the conduit client role.
+ *
+ * @param $permissions
+ *   An array of permissions for the conduit client role.
+ */
+function hook_conduit_client_permissions_alter(&$permissions) {
+  $permissions[] = 'my modules additional permission';
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
