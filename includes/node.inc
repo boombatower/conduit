@@ -146,7 +146,7 @@ function conduit_validate($node, $form, &$form_state) {
 
   // Conduit validates base properties and invoke general validation hook.
   module_invoke('conduit', 'conduit_validate', $properties);
-  module_invoke_all('conduit_validate_all', $properties);
+  module_invoke_all('conduit_validate_all', $properties, $node);
 
   if ($node->type != 'conduit_group') {
     // The module responsible for the job type validate its properties.

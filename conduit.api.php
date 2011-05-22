@@ -158,8 +158,10 @@ function hook_conduit_default_properties_alter(array &$properties, $module) {
  *
  * @param $properties
  *   Merged associative array of properties.
+ * @param $node
+ *   The job node being validated.
  */
-function hook_conduit_validate_all(array $properties) {
+function hook_conduit_validate_all(array $properties, $node) {
   extract($properties);
   if (!is_bool($non_plugin_property)) {
     conduit_validate_error('non_plugin_property', t('must be a boolean (true or false)'));
