@@ -275,7 +275,14 @@ function conduit_field_access($op, $field, $entity_type, $entity, $account) {
 function conduit_flush_caches() {
   // Rebuild client role permissions.
   if ($role = user_role_load_by_name('conduit client')) {
-    user_role_grant_permissions($role->rid, conduit_client_permissions());
+    $permissions = drupal_map_assoc(conduit_client_permissions());
+    $current = user_role_permissions(array($role->rid => $role->rid));
+    foreach ($current[$role->rid] as $permission => $status) {
+      if (!isset($permissions[$permission])) {
+        $permissions[$permission] = FALSE;
+      }
+    }
+    user_role_change_permissions($role->rid, $permissions);
   }
 }
 
