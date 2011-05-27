@@ -121,11 +121,14 @@ function conduit_api_result($item, $status, $result, $log, $duration) {
  *
  * @param $nid
  *   Job node ID to repeat.
+ * @param $force
+ *   (Optional) TRUE to force the job to be repeated without checking any of the
+ *   conditions as defined by conduit_node_repeat_access(). Defaults to FALSE.
  * @return
  *   TRUE if the job node was found and repeated, otherwise FALSE.
  */
-function conduit_api_repeat($nid) {
-  if (($node = node_load($nid)) && conduit_node_repeat_access($node)) {
+function conduit_api_repeat($nid, $force = FALSE) {
+  if (($node = node_load($nid)) && ($force || conduit_node_repeat_access($node))) {
     $node->revision = TRUE;
     node_save($node);
     return TRUE;
