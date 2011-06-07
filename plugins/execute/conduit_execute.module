@@ -18,8 +18,8 @@ function conduit_execute_node_info() {
  */
 function conduit_execute_conduit_validate(array $properties) {
   extract($properties);
-  if (!is_string($command) && !is_array($command)) {
-    conduit_validate_error('command', t('must either be a single command or an array of commands'));
+  if (!is_string($command)) {
+    conduit_validate_error('command', t('must be a single command'));
   }
 }
 
@@ -36,16 +36,6 @@ function conduit_execute_conduit_default_properties() {
  * Implements hook_conduit_queue_build().
  */
 function conduit_execute_conduit_queue_build(array $properties) {
-  // If multiple commands specified then split them up into separate chunks.
-  if (is_array($properties['command'])) {
-    $items = array();
-    foreach ($properties['command'] as $command) {
-      $items[] = array(
-        'command' => $command,
-      );
-    }
-    return $items;
-  }
   return array(array());
 }
 
@@ -63,10 +53,8 @@ function conduit_execute_conduit_init($node, $chunk_count) {
  */
 function conduit_execute_conduit_result($node, $delta, $result) {
   // Generate summary message.
-  $count = $node->conduit_chunk_count[LANGUAGE_NONE][0]['value'];
   $node->conduit_summary[LANGUAGE_NONE][0]['value'] = $node->conduit_status[LANGUAGE_NONE][0]['value'] == CONDUIT_STATUS_PASS ?
-    format_plural($count, 'The command was executed successfully.', 'The commands were executed successfully.') :
-    format_plural($count, 'The command was not executed successfully.', 'The commands were not executed successfully.');
+    t('The command was executed successfully.') : t('The command was not executed successfully.');
 
   $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = $result;
 }
