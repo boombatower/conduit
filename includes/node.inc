@@ -263,7 +263,7 @@ function conduit_conduit_validate(array $properties) {
   // Check for any numberic keys.
   foreach ($properties as $key => $value) {
     if (is_numeric($key)) {
-      conduit_validate_error($key, t('root level property keys must be strings'));
+      conduit_validate_error($key, t('root level property keys must be strings (in other words all properties require a key)'));
       continue;
     }
   }
@@ -323,7 +323,7 @@ function conduit_validate_path($path) {
  */
 function conduit_validate_error($name = NULL, $message = NULL, $index = NULL) {
   $errors = &drupal_static(__FUNCTION__, array());
-  if ($name && $message) {
+  if ($name !== NULL && $message !== NULL) {
     if (!is_null($index)) {
       $name .= is_array($index) ? '[' . implode('][', $index) . ']' : "[$index]";
     }
