@@ -562,6 +562,16 @@ function conduit_report_queue() {
 }
 
 /**
+ * Implements hook_user_presave().
+ */
+function conduit_user_presave(&$edit, $account, $category) {
+  if (!$account->uid) {
+    $edit['conduit_public'][LANGUAGE_NONE][0]['value'] = (int) FALSE;
+    $edit['conduit_ask'][LANGUAGE_NONE][0]['value'] = (int) TRUE;
+  }
+}
+
+/**
  * Implements hook_views_api().
  */
 function conduit_views_api() {
