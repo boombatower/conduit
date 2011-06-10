@@ -799,7 +799,7 @@ function conduit_node_repeat_access($node) {
   if (!isset($access[$node->nid])) {
     // @TODO Temporary fix for lack of proper access API to handle repeat
     // permission on a per user/node basis (node_access('edit', $node)).
-    $access[$node->nid] = conduit_node_properties_access($node) && $node->type != 'conduit_group' && user_access('repeat conduit job') && node_access('edit', $node) && $node->conduit_done[LANGUAGE_NONE][0]['value'];
+    $access[$node->nid] = conduit_node_properties_access($node) && $node->type != 'conduit_group' && user_access('repeat conduit job') && node_access('update', $node) && $node->conduit_done[LANGUAGE_NONE][0]['value'];
   }
   return $access[$node->nid];
 }
