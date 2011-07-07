@@ -23,4 +23,4 @@ projects[serial][download][type] = git
 projects[serial][download][url] = git@git.boombatower.com:reviewdriven/modules/serial
 projects[serial][download][tag] = 7.x-1.0
 
-projects[services] = 3.0-rc1
+projects[services] = 3.0-rc3
