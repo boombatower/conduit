@@ -109,26 +109,31 @@ function conduit_default_services_endpoint() {
   $endpoint->title = 'Conduit';
   $endpoint->server = 'rest_server';
   $endpoint->path = 'conduit';
-  $endpoint->authentication = array(
-    'services_sessauth' => array(),
-  );
+  $endpoint->authentication = array();
   $endpoint->resources = array(
-    'user' => array(
-      'alias' => '',
-      'operations' => array(),
+    'item' => array(
       'actions' => array(
-        'login' => array(
+        'claim' => array(
+          'enabled' => 1,
+        ),
+        'result' => array(
+          'enabled' => 1,
+        ),
+      ),
+    ),
+    'job' => array(
+      'actions' => array(
+        'repeat' => array(
           'enabled' => 1,
         ),
       ),
     ),
     'node' => array(
-      'alias' => '',
       'operations' => array(
-        'create' => array(
+        'retrieve' => array(
           'enabled' => 1,
         ),
-        'retrieve' => array(
+        'create' => array(
           'enabled' => 1,
         ),
         'update' => array(
@@ -142,28 +147,15 @@ function conduit_default_services_endpoint() {
         ),
       ),
     ),
-    'item' => array(
-      'alias' => '',
+    'user' => array(
       'actions' => array(
-        'claim' => array(
-          'enabled' => 1,
-        ),
-        'result' => array(
-          'enabled' => 1,
-        ),
-      ),
-    ),
-    'job' => array(
-      'alias' => '',
-      'actions' => array(
-        'repeat' => array(
+        'login' => array(
           'enabled' => 1,
         ),
       ),
     ),
   );
   $endpoint->debug = 0;
-  $endpoint->status = 1;
 
   $endpoints[$endpoint->name] = $endpoint;
 
