@@ -1,0 +1,6 @@
+name = Conduit mail
+description = Provide mail notifications of job results.
+package = Conduit
+version = 1.0
+core = 7.x
+dependencies[] = conduit
