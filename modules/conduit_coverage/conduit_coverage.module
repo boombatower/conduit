@@ -1,0 +1,133 @@
+<?php
+
+/**
+ * @file
+ * Provides primary Drupal hook implementations.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Implements hook_entity_info().
+ */
+function conduit_coverage_entity_info() {
+  return array(
+    'conduit_coverage' => array(
+      'label' => t('Conduit coverage'),
+      'entity class' => 'Entity',
+      'controller class' => 'EntityAPIController',
+      'base table' => 'conduit_coverage',
+      'entity keys' => array(
+        'id' => 'id',
+        'label' => 'path',
+      ),
+      'fieldable' => FALSE,
+      'module' => 'conduit_coverage',
+      'view callback' => 'conduit_coverage_view',
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function conduit_coverage_menu() {
+  $items['node/%node/coverage/%'] = array(
+    'page callback' => 'conduit_coverage_file_view',
+    'page arguments' => array(1, 3),
+    'access callback' => 'conduit_node_properties_access',
+    'access arguments' => array(1),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+
+/**
+ * Menu callback for displaying a conduit_coverage entity.
+ */
+function conduit_coverage_file_view($node, $entity_id) {
+  // Entire the entity is valid and load the entity.
+  if (!($entity = entity_load_single('conduit_coverage', $entity_id))) {
+    drupal_not_found();
+    return;
+  }
+
+  // Se the breadcrumb based on job breadcrumb and add coverage elements.
+  $breadcrumb = conduit_view_breadcrumb($node);
+  array_unshift($breadcrumb, l(t('Coverage'), 'node/' . $node->nid . '/coverage'));
+  array_unshift($breadcrumb, l($entity->path, ltrim(request_uri(), '/')));
+  $breadcrumb = array_reverse($breadcrumb);
+  drupal_set_breadcrumb($breadcrumb);
+
+  // Display a message if the file data is not available.
+  if (!$entity->file) {
+    if ($node->conduit_done[LANGUAGE_NONE][0]['value']) {
+      drupal_set_message(t('Missing file data.'), 'error');
+    }
+    else {
+      drupal_set_message(t('File data is not yet available.'), 'warning');
+    }
+    return array();
+  }
+
+  // Display the entity.
+  return entity_view('conduit_coverage', array($entity));
+}
+
+/**
+ * Implementation of entity 'view callback'.
+ */
+function conduit_coverage_view($entities) {
+  $elements = array();
+  foreach ($entities as $entity) {
+    // Only display entity if the file data is available.
+    if ($entity->file) {
+      $elements[$entity->id] = array(
+        conduit_coverage_view_lines($entity),
+        '#attached' => array('css' => array(drupal_get_path('module', 'conduit_coverage') . '/conduit_coverage.css')),
+      );
+    }
+  }
+  return $elements;
+}
+
+/**
+ * Generate renderable array of coverage line data.
+ *
+ * @param $entity
+ *   A conduit_coverage entity.
+ * @return
+ *   A renderable array.
+ */
+function conduit_coverage_view_lines($entity) {
+  $lines = explode("\n", $entity->file);
+  $coverage = json_decode($entity->data, TRUE);
+  foreach ($lines as $number => &$line) {
+    $line = htmlentities($line);
+
+    // Coverage data uses line numbers starting from 1 while explode() will
+    // result an in array starting from 0 so offset by 1 in necessary.
+    if (isset($coverage[$number + 1])) {
+      $line = array(
+        'data' => $line,
+        'class' => array('conduit-coverage-' . ($coverage[$number + 1] ? 'covered' : 'uncovered')),
+      );
+    }
+  }
+
+  return array(
+    '#theme' => 'item_list',
+    '#items' => $lines,
+    '#type' => 'ol',
+    '#attributes' => array('id' => 'conduit-coverage-file'),
+  );
+}
+
+/**
+ * Implement hook_views_api().
+ */
+function conduit_coverage_views_api($module, $api) {
+  if ($module == 'views' && $api == 'views_default') {
+    return array('version' => 2);
+  }
+}

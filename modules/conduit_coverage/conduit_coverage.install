@@ -1,0 +1,83 @@
+<?php
+
+/**
+ * @file
+ * Provides installation functions.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Implements hook_install().
+ */
+function conduit_coverage_install() {
+  module_load_include('relation_default.inc', 'conduit_coverage');
+  $relation_types = conduit_coverage_relation_default_relation_types();
+  foreach ($relation_types as $relation_type) {
+    relation_type_save($relation_type);
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function conduit_coverage_uninstall() {
+  module_load_include('relation_default.inc', 'conduit_coverage');
+  $relation_types = conduit_coverage_relation_default_relation_types();
+  foreach ($relation_types as $relation_type) {
+    relation_type_delete($relation_type);
+  }
+}
+
+/**
+ * Implements hook_schema().
+ */
+function conduit_coverage_schema() {
+  $schema['conduit_coverage'] = array(
+    'description' => '',
+    'fields' => array(
+      'id' => array(
+        'description' => 'The primary identifier for a conduit_coverage entity.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'path' => array(
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'executed' => array(
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'executable' => array(
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'data' => array(
+        'description' => '',
+        'type' => 'blob',
+        'size' => 'big',
+      ),
+      'file' => array(
+        'description' => '',
+        'type' => 'blob',
+        'size' => 'big',
+      ),
+    ),
+    'unique keys' => array(
+      'id_path' => array('id', 'path'),
+    ),
+    'primary key' => array('id'),
+  );
+  return $schema;
+}
