@@ -8,6 +8,11 @@
  */
 
 /**
+ * The maximum number of coverage files for a single job.
+ */
+define('CONDUIT_COVERAGE_MAX', 1000);
+
+/**
  * Implements hook_entity_info().
  */
 function conduit_coverage_entity_info() {
@@ -121,6 +126,131 @@ function conduit_coverage_view_lines($entity) {
     '#type' => 'ol',
     '#attributes' => array('id' => 'conduit-coverage-file'),
   );
+}
+
+/**
+ * Get all the relation entities with the job nid as the first endpoint.
+ *
+ * @param $nid
+ *   A job node ID.
+ * @return
+ *   An associative array of relations entities keyed by ID.
+ */
+function conduit_coverage_relations_get($nid) {
+  // Query all conduit_coverage relations related to the job node.
+  $relations = relation_query('node', $nid)
+    ->entityCondition('bundle', 'conduit_coverage')
+    ->range(0, CONDUIT_COVERAGE_MAX)
+    ->execute();
+  $rids = array_keys($relations);
+  return relation_load_multiple($rids);
+}
+
+/**
+ * Get the conduit_coverage entity IDs contained by a set of relations.
+ *
+ * @param $relations
+ *   An array of conduit_coverage relations.
+ * @return
+ *   An associative array of conduit_coverage entity IDs.
+ */
+function conduit_coverage_entity_ids(array $relations) {
+  // Collect the conduit_coverage entity IDs which should always be the second
+  // entity in the relation since the first is the job node.
+  $ids = array();
+  foreach ($relations as $relation) {
+    $id = (int) $relation->endpoints[LANGUAGE_NONE][1]['entity_id'];
+    $ids[$id] = $id;
+  }
+  return $ids;
+}
+
+/**
+ * Implements hook_conduit_queued().
+ */
+function conduit_coverage_conduit_queued($node, $chunk_count) {
+  // Query all conduit_coverage relations related to the job node.
+  if ($relations = conduit_coverage_relations_get($node->nid)) {
+    // @TODO Use rules support once complete (#1282706). In the meantime deleting
+    // entities that make up one end in a relation will cause the relation to be
+    // deleted so there is no need to explicitly delete the relations. When doing
+    // so drupal_set_message() are printed so explicitly deleting solves that.
+    $rids = array_keys($relations);
+    $ids = conduit_coverage_entity_ids($relations);
+    relation_multiple_delete($rids);
+    entity_delete_multiple('conduit_coverage', $ids);
+  }
+}
+
+/**
+ * Save a coverage result.
+ *
+ * Intended to be called from a module implementing a job type that supports
+ * coverage during hook_conduit_result().
+ *
+ * @see hook_conduit_result()
+ */
+function conduit_coverage_result_save($node, $delta, $result) {
+  // Load all relations and related conduit_coverage entity IDs.
+  $relations = conduit_coverage_relations_get($node->nid);
+  $ids = conduit_coverage_entity_ids($relations);
+
+  // Load existing coverage records.
+  $records = array();
+  if ($rids = array_keys($relations)) {
+    $records = db_select('conduit_coverage', 'c')
+      ->fields('c', array('id', 'path', 'data'))
+      ->condition('id', $ids, 'IN')
+      ->execute()
+      ->fetchAllAssoc('path');
+  }
+
+  // Process new coverage data.
+  foreach ($result['coverage'] as &$file) {
+    // Decode file contents if provided.
+    if (!empty($file['file'])) {
+      $file['file'] = base64_decode($file['file']);
+    }
+
+    // If an existing records exists then merge data.
+    if (isset($records[$file['path']])) {
+      $record = $records[$file['path']];
+      $record->data = json_decode($record->data, TRUE);
+      foreach ($file['data'] as $line => &$covered) {
+        $covered = (int) ((bool) $covered) || ((bool) $record->data[$line]);
+      }
+      $file['executed'] = count(array_filter($file['data']));
+
+      // Perpare updated fields for query and execute.
+      $fields = array(
+        'executed' => $file['executed'],
+        'data' => json_encode($file['data']),
+      );
+      if (!empty($file['file'])) $fields['file'] = $file['file'];
+      db_update('conduit_coverage')
+        ->fields($fields)
+        ->condition('id', (int) $record->id)
+        ->execute();
+
+      // Proceed to next record.
+      continue;
+    }
+
+    // Encode coverage data for storage.
+    $file['data'] = json_encode($file['data']);
+
+    // Save the coverage data.
+    $entity = entity_create('conduit_coverage', $file);
+    entity_save('conduit_coverage', $entity);
+
+    // Save the relation between the new coverage entity and the job.
+    $endpoints = array(
+      array('entity_type' => 'node', 'entity_id' => $node->nid),
+      array('entity_type' => 'conduit_coverage', 'entity_id' => $entity->id),
+    );
+    $relation = relation_create('conduit_coverage', $endpoints);
+    relation_save($relation);
+  }
 }
 
 /**
