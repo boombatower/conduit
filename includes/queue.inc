@@ -20,12 +20,14 @@ function conduit_queue_create($job) {
 
   // Plugin builds the item(s) to be queued in association with job.
   $items = module_invoke($info['module'], 'conduit_queue_build', $job->conduit_properties_merged);
+  $count = count($items);
   foreach ($items as $delta => $overrides) {
     $item = array(
       'category' => $info['category'],
       'nid' => $job->nid,
       'vid' => $job->vid,
       'delta' => $delta,
+      'count' => $count,
       'overrides' => $overrides,
     );
     $queue->createItem($item);
