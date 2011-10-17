@@ -50,7 +50,7 @@ function conduit_queue_claim($category) {
     if ($job = node_load($item->data['nid'], $item->data['vid'])) {
       $properties = $job->conduit_properties_merged;
       $properties['item'] = $item;
-      $properties = array_replace_recursive($properties, $item->data['overrides']);
+      $properties = array_replace($properties, $item->data['overrides']);
       unset($properties['item']->data['overrides']);
       return $properties;
     }
