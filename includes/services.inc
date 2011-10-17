@@ -22,7 +22,7 @@ function conduit_services_resources() {
             array(
               'name' => 'category',
               'type' => 'string',
-              'description' => 'The job category from which to claim an item from.',
+              'description' => 'The job category from which to claim an item.',
               'source' => 'data',
               'optional' => FALSE,
             ),
