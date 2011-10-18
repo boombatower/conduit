@@ -1,5 +1,5 @@
 name = Conduit coverage
-description = ...
+description = Provides generic code coverage handling.
 package = Conduit
 version = 1.0
 core = 7.x
