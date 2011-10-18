@@ -441,10 +441,8 @@ function conduit_delete_view($name, $parent) {
 function conduit_view($node, $view_mode) {
   if ($view_mode == 'full' && node_is_page($node)) {
     // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
-    // display them left-to-right so we need to reverse order and remove the
-    // current node from the list.
+    // display them left-to-right so we need to reverse order.
     $breadcrumb = array_reverse(conduit_view_breadcrumb($node));
-    array_pop($breadcrumb);
     drupal_set_breadcrumb($breadcrumb);
 
     // Add conduit css to all conduit node types.
