@@ -7,6 +7,11 @@ projects[field_group_views] = 1.1
 projects[field_helper] = 1.1
 projects[field_suppress] = 1.0
 projects[references] = 2.0
-projects[serial] = 1.2
+
+projects[serial][type] = module
+projects[serial][download][type] = git
+projects[serial][download][url] = git@github.com:boombatower/serial.git
+projects[serial][download][branch] = 7.x-1.x
+
 projects[services] = 3.1
 projects[services_tools] = 3.2
