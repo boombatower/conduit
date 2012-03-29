@@ -1,0 +1,74 @@
+<?php
+/**
+ * @file
+ * Provides primary Drupal hook implementations.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Implements hook_conduit_default_properties_alter().
+ */
+function conduit_mail_conduit_default_properties_alter(array &$properties, $module) {
+  if ($module == 'conduit') {
+    $properties += array(
+      'mail' => '',
+    );
+  }
+}
+
+/**
+ * Implements hook_conduit_validate_all().
+ */
+function conduit_mail_conduit_validate_all(array $properties) {
+  extract($properties);
+
+  if ($mail) {
+    if (is_array($mail)) {
+      foreach ($mail as $key => $address) {
+        if (!valid_email_address($address)) {
+          conduit_validate_error('mail', t('must be a valid e-mail address'), $key);
+        }
+      }
+    }
+    elseif (!is_string($mail) || !valid_email_address($mail)) {
+      conduit_validate_error('mail', t('must be a valid e-mail address'));
+    }
+  }
+}
+
+/**
+ * Implements hook_conduit_finished().
+ */
+function conduit_mail_conduit_finished($node) {
+  $properties = $node->conduit_properties_merged;
+
+  if ($mail = $properties['mail']) {
+    if (is_string($mail)) $mail = array($mail);
+
+    foreach ($mail as $address) {
+      drupal_mail('conduit_mail', 'finished', $address, language_default(), array('job' => $node), NULL, TRUE);
+    }
+  }
+}
+
+/**
+ * Implements hook_mail().
+ */
+function conduit_mail_mail($key, &$message, $params) {
+  $node = $params['job'];
+  $uri = entity_uri('node', $node);
+  $variables = array(
+    '@site_name' => variable_get('site_name', 'Drupal'),
+    '@status' => strtoupper(conduit_status($node->conduit_status[LANGUAGE_NONE][0]['value'])),
+    '@breadcrumb' => strip_tags(implode(' :: ', array_reverse(conduit_view_breadcrumb($node)))),
+    '@summary' => $node->conduit_summary[LANGUAGE_NONE][0]['value'],
+    '@url' => url($uri['path'], array('absolute' => TRUE)),
+  );
+
+  $message['subject'] = t('[@status] @breadcrumb (@site_name)', $variables);
+  $message['body'][] = t("Job:\t\t@breadcrumb", $variables);
+  $message['body'][] = t("Status:\t\t@status", $variables);
+  $message['body'][] = t("Summary:\t@summary", $variables);
+  $message['body'][] = t("Link:\t\t@url", $variables);
+}
