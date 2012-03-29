@@ -1,0 +1,7 @@
+name = Conduit historical
+description = Provides historical Conduit services API definitions.
+package = Conduit
+version = 1.0
+core = 7.x
+dependencies[] = conduit
+dependencies[] = services_historical

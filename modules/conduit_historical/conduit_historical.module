@@ -1,0 +1,28 @@
+<?php
+/**
+ * @file
+ * Provides primary Drupal hook implementations.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Implements hook_services_historical_info().
+ */
+function conduit_historical_services_historical_info() {
+  return array(
+    'conduit' => array(
+      'endpoint' => 'conduit',
+      'version' => '1.0',
+    ),
+  );
+}
+
+/**
+ * Implements hook_services_historical_endpoint().
+ */
+function conduit_historical_services_historical_endpoint() {
+  // @TODO Temporary until a new version is created.
+  $endpoints = conduit_default_services_endpoint();
+  return $endpoints['conduit'];
+}
