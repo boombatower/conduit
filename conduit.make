@@ -24,3 +24,4 @@ projects[serial][download][url] = git@git.boombatower.com:reviewdriven/modules/s
 projects[serial][download][tag] = 7.x-1.0
 
 projects[services] = 3.0
+projects[services_tools] = 3.0
