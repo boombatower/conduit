@@ -102,14 +102,35 @@ function conduit_services_resources() {
 function conduit_default_services_endpoint() {
   $enpoints = array();
 
-  $endpoint = new stdClass;
+  $endpoint = new stdClass();
   $endpoint->disabled = FALSE; /* Edit this to true to make a default endpoint disabled initially */
   $endpoint->api_version = 3;
   $endpoint->name = 'conduit';
-  $endpoint->title = 'Conduit';
   $endpoint->server = 'rest_server';
   $endpoint->path = 'conduit';
-  $endpoint->authentication = array();
+  $endpoint->authentication = array(
+    'services' => 'services',
+  );
+  $endpoint->server_settings = array(
+    'rest_server' => array(
+      'formatters' => array(
+        'bencode' => TRUE,
+        'json' => TRUE,
+        'php' => TRUE,
+        'rss' => TRUE,
+        'xml' => TRUE,
+        'yaml' => TRUE,
+        'jsonp' => FALSE,
+      ),
+      'parsers' => array(
+        'application/json' => TRUE,
+        'application/vnd.php.serialized' => TRUE,
+        'application/x-yaml' => TRUE,
+        'multipart/form-data' => TRUE,
+        'application/x-www-form-urlencoded' => FALSE,
+      ),
+    ),
+  );
   $endpoint->resources = array(
     'item' => array(
       'actions' => array(
