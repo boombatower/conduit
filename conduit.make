@@ -13,5 +13,7 @@ projects[serial][download][type] = git
 projects[serial][download][url] = git@github.com:boombatower/serial.git
 projects[serial][download][branch] = 7.x-1.x
 
-projects[services] = 3.1
+projects[services][version] = 3.1
+projects[services][patch][1355952] = http://drupal.org/files/1355952-drush-make.patch
+
 projects[services_tools] = 3.2
