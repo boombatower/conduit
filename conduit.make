@@ -10,7 +10,7 @@ projects[references] = 2.0
 
 projects[serial][type] = module
 projects[serial][download][type] = git
-projects[serial][download][url] = git@github.com:boombatower/serial.git
+projects[serial][download][url] = git://github.com/boombatower/serial.git
 projects[serial][download][branch] = 7.x-1.x
 
 projects[services][version] = 3.1
