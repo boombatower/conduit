@@ -16,6 +16,11 @@
  * @see conduit_queue_claim()
  */
 function conduit_api_claim($category) {
+  // Fix for services which passes all parameters as an associative array.
+  if (is_array($category)) {
+    extract($category);
+  }
+
   conduit_include('queue');
   if ($properties = conduit_queue_claim($category)) {
     $item = $properties['item'];
@@ -48,6 +53,11 @@ function conduit_api_claim($category) {
  *   TRUE if successfull, otherwise FALSE.
  */
 function conduit_api_result($item, $status, $result, $log, $duration) {
+  // Fix for services which passes all parameters as an associative array.
+  if (is_array($item)) {
+    extract($item);
+  }
+
   $item = (object) $item;
 
   // Acquire a lock to modify the node.
@@ -128,6 +138,11 @@ function conduit_api_result($item, $status, $result, $log, $duration) {
  *   TRUE if the job node was found and repeated, otherwise FALSE.
  */
 function conduit_api_repeat($nid, $force = FALSE) {
+  // Fix for services which passes all parameters as an associative array.
+  if (is_array($nid)) {
+    extract($nid);
+  }
+
   if (($node = node_load($nid)) && ($force || conduit_node_repeat_access($node))) {
     $node->revision = TRUE;
     node_save($node);
@@ -147,6 +162,11 @@ function conduit_api_repeat($nid, $force = FALSE) {
  * @see lock_release()
  */
 function conduit_api_lock_acquire($nid) {
+  // Fix for services which passes all parameters as an associative array.
+  if (is_array($nid)) {
+    extract($nid);
+  }
+
   $lock = 'conduit_api_' . $nid;
   while (!lock_acquire($lock)) {
     sleep(1);
