@@ -68,39 +68,11 @@ function conduit_install_node_type($type, $path = 'job') {
   // Set pathauto patterns.
   variable_set('pathauto_node_' . $type . '_pattern', 'conduit/' . $path . '/[node:title]');
 
-  conduit_install_node_type_group($type);
-
   // If this node type represents a category that does not exist then create
   // the queue for the category.
   if ($category = conduit_install_category_update($type)) {
     DrupalQueue::get('conduit_job_' . $category)->createQueue();
   }
-}
-
-/**
- * Create meta field group for node type.
- *
- * @param $type
- *   Node type.
- */
-function conduit_install_node_type_group($type) {
-  $group = array(
-    'group_name' => ($info = conduit_job_info($type)) ? $info['module'] : $type,
-    'entity_type' => 'node',
-    'bundle' => $type,
-    'mode' => 'form',
-    'parent_name' => '',
-    'label' => 'Meta',
-    'weight' => -10,
-    'children' => array(
-      'conduit_parent',
-      'conduit_properties',
-      'title',
-    ),
-    'format_type' => 'fieldset',
-  );
-  $group = (object) $group;
-  field_group_save($group);
 }
 
 /**
@@ -125,27 +97,10 @@ function conduit_uninstall_node_type($type) {
   variable_del('comment_' . $type);
   variable_del('pathauto_node_' . $type . '_pattern');
 
-  conduit_uninstall_node_type_group($type);
-
   // If this node type represents a category that no longer exists then delete
   // the queue for the category.
   if ($category = conduit_install_category_update($type)) {
     DrupalQueue::get('conduit_job_' . $category)->deleteQueue();
-  }
-}
-
-/**
- * Remove meta field group for node type.
- *
- * @param $type
- *   Node type.
- */
-function conduit_uninstall_node_type_group($type) {
-  $groups = field_group_read_groups(array(
-    'group_name' => $name = (($info = conduit_job_info($type)) ? $info['module'] : $type),
-  ));
-  if ($groups && ($group = $groups['node'][$type]['form'][$name])) {
-    field_group_delete_field_group($group, $group->mode);
   }
 }
 
