@@ -608,8 +608,8 @@ function conduit_views_pre_render($view) {
 /**
  * Implements hook_ctools_plugin_api().
  */
-function conduit_ctools_plugin_api($owner, $api) {
-  if ($owner == 'services' && $api == 'services') {
+function conduit_ctools_plugin_api($module, $api) {
+  if ($module == 'services' && $api == 'services') {
     conduit_include('services');
     return array('version' => 3);
   }
