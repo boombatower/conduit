@@ -33,15 +33,6 @@ function conduit_execute_conduit_default_properties() {
 }
 
 /**
- * Implements hook_conduit_init().
- */
-function conduit_execute_conduit_init($node, $chunk_count) {
-  for ($delta = 0; $delta < $chunk_count; $delta++) {
-    $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = '[placeholder]';
-  }
-}
-
-/**
  * Implements hook_conduit_result().
  */
 function conduit_execute_conduit_result($node, $delta, $result) {
@@ -49,5 +40,6 @@ function conduit_execute_conduit_result($node, $delta, $result) {
   $node->conduit_summary[LANGUAGE_NONE][0]['value'] = $node->conduit_status[LANGUAGE_NONE][0]['value'] == CONDUIT_STATUS_PASS ?
     t('The command was executed successfully.') : t('The command was not executed successfully.');
 
+  // Set the execute field to the executed command output (result).
   $node->conduit_result_conduit_execute[LANGUAGE_NONE][$delta]['value'] = $result;
 }
