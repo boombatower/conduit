@@ -33,13 +33,6 @@ function conduit_execute_conduit_default_properties() {
 }
 
 /**
- * Implements hook_conduit_queue_build().
- */
-function conduit_execute_conduit_queue_build(array $properties) {
-  return array(array());
-}
-
-/**
  * Implements hook_conduit_init().
  */
 function conduit_execute_conduit_init($node, $chunk_count) {

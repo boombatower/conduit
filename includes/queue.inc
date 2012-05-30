@@ -18,8 +18,15 @@ function conduit_queue_create($job) {
   $info = conduit_job_info($job->type);
   $queue = DrupalQueue::get('conduit_job_' . $info['category']);
 
-  // Plugin builds the item(s) to be queued in association with job.
+  // Plugin may build the item(s) to be queued in association with the job.
   $items = module_invoke($info['module'], 'conduit_queue_build', $job->conduit_properties_merged);
+
+  // If the plugin did not provide any items then default to one item with no
+  // overrides. In other words process the job in one shot.
+  if (!$items) {
+    $items = array(array());
+  }
+
   $count = count($items);
   foreach ($items as $delta => $overrides) {
     $item = array(
