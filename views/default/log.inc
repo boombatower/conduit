@@ -7,7 +7,7 @@ $view->tag = '';
 $view->base_table = 'field_data_conduit_log';
 $view->human_name = 'Conduit Log';
 $view->core = 7;
-$view->api_version = '3.0-alpha1';
+$view->api_version = '3.0';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
 /* Display: Master */
@@ -17,6 +17,7 @@ $handler->display->display_options['access']['type'] = 'perm';
 $handler->display->display_options['access']['perm'] = 'view conduit log';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
+$handler->display->display_options['query']['options']['query_comment'] = FALSE;
 $handler->display->display_options['exposed_form']['type'] = 'basic';
 $handler->display->display_options['pager']['type'] = 'full';
 $handler->display->display_options['pager']['options']['items_per_page'] = '20';
@@ -53,16 +54,16 @@ $handler->display->display_options['fields']['delta_raw']['label'] = 'Delta';
 $handler->display->display_options['fields']['delta_raw']['alter']['alter_text'] = 0;
 $handler->display->display_options['fields']['delta_raw']['alter']['make_link'] = 0;
 $handler->display->display_options['fields']['delta_raw']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['delta_raw']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['delta_raw']['alter']['word_boundary'] = 1;
 $handler->display->display_options['fields']['delta_raw']['alter']['ellipsis'] = 1;
 $handler->display->display_options['fields']['delta_raw']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['delta_raw']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['delta_raw']['alter']['html'] = 0;
 $handler->display->display_options['fields']['delta_raw']['element_label_colon'] = 1;
 $handler->display->display_options['fields']['delta_raw']['element_default_classes'] = 1;
 $handler->display->display_options['fields']['delta_raw']['hide_empty'] = 0;
 $handler->display->display_options['fields']['delta_raw']['empty_zero'] = 0;
-/* Field: Field tables: conduit_log => Value */
+/* Field: Field tables: Log => Value */
 $handler->display->display_options['fields']['conduit_log_value_raw']['id'] = 'conduit_log_value_raw';
 $handler->display->display_options['fields']['conduit_log_value_raw']['table'] = 'field_data_conduit_log';
 $handler->display->display_options['fields']['conduit_log_value_raw']['field'] = 'conduit_log_value_raw';
@@ -70,10 +71,10 @@ $handler->display->display_options['fields']['conduit_log_value_raw']['label'] =
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['alter_text'] = 0;
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['make_link'] = 0;
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['conduit_log_value_raw']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['word_boundary'] = 1;
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['ellipsis'] = 1;
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['conduit_log_value_raw']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['conduit_log_value_raw']['alter']['html'] = 0;
 $handler->display->display_options['fields']['conduit_log_value_raw']['element_type'] = 'div';
 $handler->display->display_options['fields']['conduit_log_value_raw']['element_label_colon'] = 1;
@@ -100,21 +101,3 @@ $handler->display->display_options['path'] = 'node/%/log';
 $handler->display->display_options['menu']['type'] = 'tab';
 $handler->display->display_options['menu']['title'] = 'Log';
 $handler->display->display_options['menu']['weight'] = '1';
-$translatables['conduit_log'] = array(
-  t('Master'),
-  t('Log'),
-  t('more'),
-  t('Apply'),
-  t('Reset'),
-  t('Sort by'),
-  t('Asc'),
-  t('Desc'),
-  t('Items per page'),
-  t('- All -'),
-  t('Offset'),
-  t('Delta'),
-  t('.'),
-  t(','),
-  t('All'),
-  t('Page'),
-);

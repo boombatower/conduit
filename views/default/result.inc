@@ -7,7 +7,7 @@ $view->tag = 'default';
 $view->base_table = 'node_revision';
 $view->human_name = 'Conduit result';
 $view->core = 7;
-$view->api_version = '3.0-alpha1';
+$view->api_version = '3.0';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
 /* Display: Master */
@@ -17,6 +17,7 @@ $handler->display->display_options['access']['type'] = 'perm';
 $handler->display->display_options['access']['perm'] = 'access site reports';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
+$handler->display->display_options['query']['options']['query_comment'] = FALSE;
 $handler->display->display_options['exposed_form']['type'] = 'basic';
 $handler->display->display_options['pager']['type'] = 'full';
 $handler->display->display_options['pager']['options']['items_per_page'] = '50';
@@ -75,11 +76,11 @@ $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
 $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
 $handler->display->display_options['fields']['title']['alter']['external'] = 0;
 $handler->display->display_options['fields']['title']['alter']['replace_spaces'] = 0;
-$handler->display->display_options['fields']['title']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['title']['alter']['nl2br'] = 0;
 $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 0;
 $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 0;
 $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['title']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['title']['alter']['html'] = 0;
 $handler->display->display_options['fields']['title']['element_label_colon'] = 1;
 $handler->display->display_options['fields']['title']['element_default_classes'] = 1;
@@ -96,11 +97,11 @@ $handler->display->display_options['fields']['conduit_summary-revision_id']['alt
 $handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['absolute'] = 0;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['external'] = 0;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['replace_spaces'] = 0;
-$handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['nl2br'] = 0;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['word_boundary'] = 1;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['ellipsis'] = 1;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['alter']['html'] = 0;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['element_label_colon'] = 1;
 $handler->display->display_options['fields']['conduit_summary-revision_id']['element_default_classes'] = 1;
@@ -118,11 +119,11 @@ $handler->display->display_options['fields']['name']['alter']['make_link'] = 0;
 $handler->display->display_options['fields']['name']['alter']['absolute'] = 0;
 $handler->display->display_options['fields']['name']['alter']['external'] = 0;
 $handler->display->display_options['fields']['name']['alter']['replace_spaces'] = 0;
-$handler->display->display_options['fields']['name']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['name']['alter']['nl2br'] = 0;
 $handler->display->display_options['fields']['name']['alter']['word_boundary'] = 1;
 $handler->display->display_options['fields']['name']['alter']['ellipsis'] = 1;
 $handler->display->display_options['fields']['name']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['name']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['name']['alter']['html'] = 0;
 $handler->display->display_options['fields']['name']['element_label_colon'] = 1;
 $handler->display->display_options['fields']['name']['element_default_classes'] = 1;
@@ -130,7 +131,7 @@ $handler->display->display_options['fields']['name']['hide_empty'] = 0;
 $handler->display->display_options['fields']['name']['empty_zero'] = 0;
 $handler->display->display_options['fields']['name']['link_to_user'] = 1;
 $handler->display->display_options['fields']['name']['overwrite_anonymous'] = 0;
-/* Field: Content revision: Created date */
+/* Field: Content revision: Updated date */
 $handler->display->display_options['fields']['timestamp']['id'] = 'timestamp';
 $handler->display->display_options['fields']['timestamp']['table'] = 'node_revision';
 $handler->display->display_options['fields']['timestamp']['field'] = 'timestamp';
@@ -140,11 +141,11 @@ $handler->display->display_options['fields']['timestamp']['alter']['make_link'] 
 $handler->display->display_options['fields']['timestamp']['alter']['absolute'] = 0;
 $handler->display->display_options['fields']['timestamp']['alter']['external'] = 0;
 $handler->display->display_options['fields']['timestamp']['alter']['replace_spaces'] = 0;
-$handler->display->display_options['fields']['timestamp']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['timestamp']['alter']['nl2br'] = 0;
 $handler->display->display_options['fields']['timestamp']['alter']['word_boundary'] = 0;
 $handler->display->display_options['fields']['timestamp']['alter']['ellipsis'] = 0;
 $handler->display->display_options['fields']['timestamp']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['timestamp']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['timestamp']['alter']['html'] = 0;
 $handler->display->display_options['fields']['timestamp']['element_label_colon'] = 1;
 $handler->display->display_options['fields']['timestamp']['element_default_classes'] = 1;
@@ -177,22 +178,3 @@ $handler->display->display_options['menu']['title'] = 'Result';
 $handler->display->display_options['menu']['description'] = 'View job results for entire site.';
 $handler->display->display_options['menu']['weight'] = '0';
 $handler->display->display_options['menu']['name'] = 'management';
-$translatables['conduit_result'] = array(
-  t('Master'),
-  t('Result'),
-  t('more'),
-  t('Apply'),
-  t('Reset'),
-  t('Sort by'),
-  t('Asc'),
-  t('Desc'),
-  t('Items per page'),
-  t('- All -'),
-  t('Offset'),
-  t('user'),
-  t('Title'),
-  t('Summary'),
-  t('User'),
-  t('Date'),
-  t('Page'),
-);
