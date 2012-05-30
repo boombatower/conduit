@@ -157,7 +157,7 @@ function conduit_block_view($delta = '') {
       $types = array('conduit_group' => $types['conduit_group']);
     }
     elseif ($router_item['path'] == 'node/%' && ($node = menu_get_object()) && conduit_node_type($node->type) && $node->uid == $user->uid) {
-      $parent = $node->type == 'conduit_group' ? $node->nid : $node->conduit_parent[LANGUAGE_NONE][0]['nid'];
+      $parent = $node->type == 'conduit_group' ? $node->nid : $node->conduit_parent[LANGUAGE_NONE][0]['target_id'];
       $types = conduit_types();
     }
 
@@ -401,7 +401,7 @@ function conduit_properties_merge($node) {
   }
 
   // If the node has a parent then merge its merged properties array.
-  if (!empty($node->conduit_parent) && ($parent = node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']))) {
+  if (!empty($node->conduit_parent) && ($parent = node_load($node->conduit_parent[LANGUAGE_NONE][0]['target_id']))) {
     $properties = array_replace($properties, $parent->conduit_properties_merged);
   }
 

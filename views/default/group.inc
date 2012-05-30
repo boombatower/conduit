@@ -7,7 +7,7 @@ $view->tag = '';
 $view->base_table = 'node';
 $view->human_name = 'Conduit group';
 $view->core = 0;
-$view->api_version = '3.0-alpha1';
+$view->api_version = '3.0';
 $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
 
 /* Display: Master */
@@ -15,6 +15,7 @@ $handler = $view->new_display('default', 'Master', 'default');
 $handler->display->display_options['access']['type'] = 'none';
 $handler->display->display_options['cache']['type'] = 'none';
 $handler->display->display_options['query']['type'] = 'views_query';
+$handler->display->display_options['query']['options']['query_comment'] = FALSE;
 $handler->display->display_options['exposed_form']['type'] = 'basic';
 $handler->display->display_options['exposed_form']['options']['submit_button'] = 'Filter';
 $handler->display->display_options['pager']['type'] = 'full';
@@ -39,10 +40,10 @@ $handler->display->display_options['fields']['title']['label'] = '';
 $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
 $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
 $handler->display->display_options['fields']['title']['alter']['absolute'] = 0;
-$handler->display->display_options['fields']['title']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
 $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
 $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
+$handler->display->display_options['fields']['title']['alter']['trim'] = 0;
 $handler->display->display_options['fields']['title']['alter']['html'] = 0;
 $handler->display->display_options['fields']['title']['hide_empty'] = 0;
 $handler->display->display_options['fields']['title']['empty_zero'] = 0;
@@ -51,21 +52,24 @@ $handler->display->display_options['fields']['title']['link_to_node'] = 1;
 $handler->display->display_options['sorts']['title']['id'] = 'title';
 $handler->display->display_options['sorts']['title']['table'] = 'node';
 $handler->display->display_options['sorts']['title']['field'] = 'title';
-/* Contextual filter: Fields: Parent (conduit_parent) - nid */
-$handler->display->display_options['arguments']['conduit_parent_nid']['id'] = 'conduit_parent_nid';
-$handler->display->display_options['arguments']['conduit_parent_nid']['table'] = 'field_data_conduit_parent';
-$handler->display->display_options['arguments']['conduit_parent_nid']['field'] = 'conduit_parent_nid';
-$handler->display->display_options['arguments']['conduit_parent_nid']['default_action'] = 'not found';
-$handler->display->display_options['arguments']['conduit_parent_nid']['default_argument_type'] = 'fixed';
-$handler->display->display_options['arguments']['conduit_parent_nid']['summary']['format'] = 'default_summary';
-$handler->display->display_options['arguments']['conduit_parent_nid']['specify_validation'] = 1;
-$handler->display->display_options['arguments']['conduit_parent_nid']['validate']['type'] = 'node';
-$handler->display->display_options['arguments']['conduit_parent_nid']['validate_options']['types'] = array(
+/* Contextual filter: Content: Parent (conduit_parent) */
+$handler->display->display_options['arguments']['conduit_parent_target_id']['id'] = 'conduit_parent_target_id';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['table'] = 'field_data_conduit_parent';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['field'] = 'conduit_parent_target_id';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['default_action'] = 'not found';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['default_argument_type'] = 'fixed';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['default_argument_skip_url'] = 0;
+$handler->display->display_options['arguments']['conduit_parent_target_id']['summary']['number_of_records'] = '0';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['summary']['format'] = 'default_summary';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['summary_options']['items_per_page'] = '25';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['specify_validation'] = 1;
+$handler->display->display_options['arguments']['conduit_parent_target_id']['validate']['type'] = 'node';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['validate_options']['types'] = array(
   'conduit_group' => 'conduit_group',
 );
-$handler->display->display_options['arguments']['conduit_parent_nid']['validate_options']['access'] = '1';
-$handler->display->display_options['arguments']['conduit_parent_nid']['break_phrase'] = 0;
-$handler->display->display_options['arguments']['conduit_parent_nid']['not'] = 0;
+$handler->display->display_options['arguments']['conduit_parent_target_id']['validate_options']['access'] = '1';
+$handler->display->display_options['arguments']['conduit_parent_target_id']['break_phrase'] = 0;
+$handler->display->display_options['arguments']['conduit_parent_target_id']['not'] = 0;
 /* Filter criterion: Content: Type */
 $handler->display->display_options['filters']['type']['id'] = 'type';
 $handler->display->display_options['filters']['type']['table'] = 'node';
@@ -84,19 +88,3 @@ $handler->display->display_options['filters']['title']['expose']['label'] = 'Gro
 $handler->display->display_options['filters']['title']['expose']['use_operator'] = FALSE;
 $handler->display->display_options['filters']['title']['expose']['operator'] = 'title_op';
 $handler->display->display_options['filters']['title']['expose']['identifier'] = 'group_title';
-$translatables['conduit_group'] = array(
-  t('Master'),
-  t('more'),
-  t('Filter'),
-  t('Reset'),
-  t('Sort by'),
-  t('Asc'),
-  t('Desc'),
-  t('Items per page'),
-  t('- All -'),
-  t('Offset'),
-  t('No groups'),
-  t('No groups were found.'),
-  t('All'),
-  t('Group'),
-);

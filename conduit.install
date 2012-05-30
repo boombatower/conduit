@@ -133,9 +133,17 @@ function conduit_install_fields() {
     // Group and job fields.
     'conduit_parent' => array(
       'field_name' => 'conduit_parent',
-      'type' => 'node_reference',
+      'type' => 'entityreference',
       'settings' => array(
-        'referenceable_types' => array('conduit_group'),
+        'target_type' => 'node',
+        'handler_settings' => array(
+          'target_bundles' => array('conduit_group' => 'conduit_group'),
+          'sort' => array(
+            'type' => 'property',
+            'property' => 'title',
+            'direction' => 'ASC',
+          ),
+        ),
       ),
     ),
     'conduit_properties' => array(
@@ -212,9 +220,9 @@ function conduit_install_instances() {
       'description' => $t('Reference to parent group.'),
       'required' => FALSE,
       'widget' => array(
-        'type' => 'node_reference_autocomplete',
+        'type' => 'entityreference_autocomplete',
         'settings' => array(
-          'autocomplete_match' => 'starts_with',
+          'match_operator' => 'STARTS_WITH',
         ),
       ),
       'display' => array(
@@ -295,9 +303,9 @@ function conduit_install_instances_job($type) {
       'description' => $t('Reference to parent group.'),
       'required' => TRUE,
       'widget' => array(
-        'type' => 'node_reference_autocomplete',
+        'type' => 'entityreference_autocomplete',
         'settings' => array(
-          'autocomplete_match' => 'starts_with',
+          'match_operator' => 'STARTS_WITH',
         ),
       ),
       'display' => array(

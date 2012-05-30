@@ -3,10 +3,11 @@ api = 2
 core = 7.x
 
 projects[boolean] = 1.0
+projects[entity] = 1.0-rc3
+projects[entityreference] = 1.0-rc1
 projects[field_group_views] = 1.1
 projects[field_helper] = 1.1
 projects[field_suppress] = 1.0
-projects[references] = 2.0
 
 projects[serial][type] = module
 projects[serial][download][type] = git

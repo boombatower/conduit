@@ -104,7 +104,7 @@ function drush_conduit_group($title = '', $properties = '', $parent = NULL, $own
   $group->language = LANGUAGE_NONE;
   $group->title = $title;
   if ($parent) {
-    $group->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;
+    $group->conduit_parent[LANGUAGE_NONE][0]['target_id'] = $parent;
   }
   $group->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
   node_save($group);
@@ -127,7 +127,7 @@ function drush_conduit_job($title = '', $parent = NULL, $module = 'conduit_execu
   $job->type = 'conduit_job_' . $module;
   $job->language = LANGUAGE_NONE;
   $job->title = $title;
-  $job->conduit_parent[LANGUAGE_NONE][0]['nid'] = $parent;
+  $job->conduit_parent[LANGUAGE_NONE][0]['target_id'] = $parent;
   $job->conduit_properties[LANGUAGE_NONE][0]['value'] = $properties;
   node_save($job);
   echo "Created job #{$job->nid}.\n";

@@ -70,8 +70,8 @@ function conduit_form_alter(&$form, &$form_state, $form_id) {
   }
 
   // If parent value exists then asign it to the default value.
-  if (isset($_GET['parent'])) {
-    $form['conduit_parent'][LANGUAGE_NONE][0]['nid']['#default_value'] = $_GET['parent'];
+  if (isset($_GET['parent']) && ($node = node_load($_GET['parent']))) {
+    $form['conduit_parent'][LANGUAGE_NONE][0]['target_id']['#default_value'] = $node->title . ' (' . $node->nid . ')';
   }
 
   $form['title']['#description'] = t('Displayed when being referenced.');
@@ -576,7 +576,7 @@ function conduit_view_meta(&$node) {
 
   // If the job has siblings, there are more then one job in group, then
   // display next and previous links.
-  if ($siblings = conduit_view_meta_siblings_group($node->nid, $node->conduit_parent[LANGUAGE_NONE][0]['nid'])) {
+  if ($siblings = conduit_view_meta_siblings_group($node->nid, $node->conduit_parent[LANGUAGE_NONE][0]['target_id'])) {
     $node->content['meta']['actions']['group']['previous'] = conduit_view_meta_link(t('Previous job in group'), 'node/' . $siblings[0]->nid, 'group-previous');
     $node->content['meta']['actions']['group']['next'] = conduit_view_meta_link(t('Next job in group'), 'node/' . $siblings[1]->nid, 'group-next');
   }
@@ -769,7 +769,7 @@ function conduit_view_breadcrumb($node, $breadcrumb = array()) {
     $breadcrumb[] = l(format_username(user_load($node->uid)), 'user/' . $node->uid . '/groups');
   }
   else {
-    $breadcrumb = conduit_view_breadcrumb(node_load($node->conduit_parent[LANGUAGE_NONE][0]['nid']), $breadcrumb);
+    $breadcrumb = conduit_view_breadcrumb(node_load($node->conduit_parent[LANGUAGE_NONE][0]['target_id']), $breadcrumb);
   }
   return $breadcrumb;
 }
