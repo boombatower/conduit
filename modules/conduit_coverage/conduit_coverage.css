@@ -1,0 +1,46 @@
+
+/**
+ * CSS for code coverage results.
+ *
+ * @author Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+table.conduit-coverage caption {
+  font-weight: bold;
+}
+
+table.conduit-coverage tr.conduit-coverage-covered.odd {
+  background-color: #b6ffb6;
+}
+
+table.conduit-coverage tr.conduit-coverage-covered.even {
+  background-color: #9bff9b;
+}
+
+table.conduit-coverage tr.conduit-coverage-uncovered.odd {
+  background-color: #ffc9c9;
+}
+
+table.conduit-coverage tr.conduit-coverage-uncovered.even {
+  background-color: #ffacac;
+}
+
+ol#conduit-coverage-file {
+  line-height: 1em;
+  overflow: hidden;
+  padding-left: 60px;
+}
+
+ol#conduit-coverage-file li {
+  white-space: pre;
+  font-family: courier new, monospace;
+  color: #cccccc;
+}
+
+ol#conduit-coverage-file li.conduit-coverage-covered {
+  color: green;
+}
+
+ol#conduit-coverage-file li.conduit-coverage-uncovered {
+  color: red;
+}
