@@ -398,6 +398,9 @@ function conduit_install_instances_job($type) {
         'default' => array(
           'label' => 'hidden',
         ),
+        'teaser' => array(
+          'label' => 'hidden',
+        ),
       ),
     ),
     'job_conduit_chunk_status' => array(

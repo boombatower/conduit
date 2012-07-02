@@ -439,45 +439,56 @@ function conduit_delete_view($name, $parent) {
  * Implements hook_view().
  */
 function conduit_view($node, $view_mode) {
-  if ($view_mode == 'full' && node_is_page($node)) {
-    // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
-    // display them left-to-right so we need to reverse order.
-    $breadcrumb = array_reverse(conduit_view_breadcrumb($node));
-    drupal_set_breadcrumb($breadcrumb);
+  // Add conduit css to all conduit node types.
+  drupal_add_css(drupal_get_path('module', 'conduit') . '/conduit.css');
 
-    // Add conduit css to all conduit node types.
-    drupal_add_css(drupal_get_path('module', 'conduit') . '/conduit.css');
+  if ($node->type == 'conduit_group') {
+    // Add a list of groups and jobs on group nodes.
+    $view = views_get_view('conduit_group');
+    $view->override_path = $_GET['q'];
+    $view->execute();
+    $node->content['conduit_group'] = array(
+      '#markup' => $view->preview('default', array($node->nid)),
+      '#access' => (bool) $view->total_rows || !empty($_GET['group_title']),
+      '#weight' => 10,
+    );
 
-    if ($node->type == 'conduit_group') {
-      // Add a list of groups and jobs on group nodes.
-      $view = views_get_view('conduit_group');
-      $view->override_path = $_GET['q'];
-      $view->execute();
-      $node->content['conduit_group'] = array(
-        '#markup' => $view->preview('default', array($node->nid)),
-        '#access' => (bool) $view->total_rows || !empty($_GET['group_title']),
-        '#weight' => 10,
-      );
+    $view = views_get_view('conduit_job');
+    $view->override_path = $_GET['q'];
+    $view->execute();
+    $node->content['conduit_job'] = array(
+      '#markup' => $view->preview('default', array($node->nid)),
+      '#access' => (bool) $view->total_rows || !empty($_GET['job_title']),
+      '#weight' => 11,
+    );
 
-      $view = views_get_view('conduit_job');
-      $view->override_path = $_GET['q'];
-      $view->execute();
-      $node->content['conduit_job'] = array(
-        '#markup' => $view->preview('default', array($node->nid)),
-        '#access' => (bool) $view->total_rows || !empty($_GET['job_title']),
-        '#weight' => 11,
-      );
-
-      // Print help text when there are no jobs or groups contained by a group.
-      if (!$node->content['conduit_group']['#access'] && !$node->content['conduit_job']['#access'] && node_access('update', $node)) {
-        drupal_set_message(t('Use the links on the side to create jobs or sub-groups.'));
-      }
-    }
-    else {
-      // Add meta information to job node.
-      conduit_view_meta($node);
+    // Print help text when there are no jobs or groups contained by a group.
+    if (!$node->content['conduit_group']['#access'] && !$node->content['conduit_job']['#access'] && node_access('update', $node)) {
+      drupal_set_message(t('Use the links on the side to create jobs or sub-groups.'));
     }
   }
+  else {
+    // Add meta information to job node.
+    conduit_view_meta($node);
+  }
+
+  // The breadcrumbs are order top-down, but drupal_set_breadcrumb() will
+  // display them left-to-right so we need to reverse order.
+  $breadcrumb = array_reverse(conduit_view_breadcrumb($node));
+
+  // Only set the breadcrumb if the node is being viewed as a page to ensure
+  // that it is not set when viewing a list of conduit nodes. When viewing a
+  // list alter the node title to give the user context, but ensure that the
+  // change is done after conduit_view_meta() so that when repeat form is
+  // invoked the title is not changed to the altered version.
+  if (node_is_page($node)) {
+    drupal_set_breadcrumb($breadcrumb);
+  }
+  else {
+    // Override the title since the breadcrumb includes the node title
+    $node->title = strip_tags(implode(' » ', $breadcrumb));
+  }
+
   return $node;
 }
 
